@@ -1,0 +1,18 @@
+generated: '2026-07-11'
+method: derived
+source: openapi/nordpool-market-data-openapi.yml
+schemes:
+- name: oauth2
+  source: openapi/nordpool-market-data-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://sts.nordpoolgroup.com/connect/authorize
+    tokenUrl: https://sts.nordpoolgroup.com/connect/token
+  description: Oauth2 Authentication
+scopes:
+- scope: marketdata_api
+  description: '...'
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/nordpool-market-data-openapi.yml

@@ -1,0 +1,2907 @@
+{
+ "info": {
+  "_postman_id": "a0a9e4cf-1acc-497e-8551-0f5fbc7ed1f5",
+  "name": "Nord Pool Market Data API",
+  "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+  "description": {
+   "content": "Nord Pool Market Data API v2 - day-ahead auction prices, intraday statistics, power system data, system price, and exchange rates for the European power markets. Generated from the provider's published OpenAPI definition (https://data-api.nordpoolgroup.com/swagger/v2/swagger.json). Requires a Nord Pool Power Data Services subscription; obtain an OAuth 2.0 bearer token from https://sts.nordpoolgroup.com and set it on the collection.",
+   "type": "text/plain"
+  }
+ },
+ "item": [
+  {
+   "id": "c8b8af57-e87e-4873-960e-09440298a4d6",
+   "name": "Auction",
+   "description": {
+    "content": "",
+    "type": "text/plain"
+   },
+   "item": [
+    {
+     "id": "3c6707b7-5a61-4db7-9a50-ec8dfcb75d1e",
+     "name": "Aggregated bidding curves",
+     "request": {
+      "name": "Aggregated bidding curves",
+      "description": {
+       "content": "Returns aggregated bid curves for a date and region.\n \nAggregated bidding curves explains why the price forms as it does in a region for a market. If we plot aggregated supply and demand curves in the same chart, then the intersection of these two curves should happen on the realized price point.\n            \nSome regions contain multiple delivery areas. In this case, the intersection point will explain what the price would have been if no capacity constraint existed in between the sub-areas. Usually regions consisting of multiple delivery areas are aggregated if the amount of trading activity in the sub-areas is  small enough that it would reveal the trading strategy of the few traders active in the area. \n            \nThis endpoint returns aggregated bidding curve data for each delivery period for the queried CET date.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "Auction",
+        "{market}",
+        "BidCurves",
+        "ByRegion"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "region",
+         "value": "",
+         "description": "",
+         "disabled": false
+        },
+        {
+         "key": "date",
+         "value": "",
+         "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "a097a24a-11cd-46ba-8df0-a7bab773ea1c",
+     "name": "ATC Capacities",
+     "request": {
+      "name": "ATC Capacities",
+      "description": {
+       "content": "ATC capacities constrains how much power can flow in between two areas. The matching algorithm takes these capacities into account when optimizing power flow from low price to high price areas. Note that for some regions in some markets, flow based capacity constraints are used instead or in combination with ATC capacities.\n            \nCapacities are given for each delivery period for the delivery date in question, and are separated into import and export capacities.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "Auction",
+        "Capacities",
+        "ByAreas"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "market",
+         "value": "",
+         "description": "",
+         "disabled": false
+        },
+        {
+         "key": "areas",
+         "value": "",
+         "description": "Comma-separated list of areas (e.g., NO1, NO2). ",
+         "disabled": false
+        },
+        {
+         "key": "date",
+         "value": "",
+         "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "b43bd2a5-e395-4d37-8d48-c74167bdd683",
+     "name": "Yearly ATC capacities",
+     "request": {
+      "name": "Yearly ATC capacities",
+      "description": {
+       "content": "Returns a list of auction capacities for a market, year and one area.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "Auction",
+        "Capacities",
+        "Yearly",
+        "ByArea"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "market",
+         "value": "",
+         "description": "",
+         "disabled": false
+        },
+        {
+         "key": "area",
+         "value": "",
+         "description": "One area. For example NO1. ",
+         "disabled": false
+        },
+        {
+         "key": "year",
+         "value": "",
+         "description": "Year in CET (format: yyyy, e.g., 2024)",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "57ce8abd-51e1-42f1-b133-01c3f844c8c0",
+     "name": "Flow-based Constraints",
+     "request": {
+      "name": "Flow-based Constraints",
+      "description": {
+       "content": "Returns a list of flow-based constraints per market, date and one domain\n            \nFlow-based capacity constraints represent limits on critical network elements in the power grid. Flow-based constraints are used in combination with ATC capacities to calculate flows inside of flow-based regions.\n            \nFlow-based capacity constraints are given per delivery period. Each period contains multiple constraints, and each constraint consists of:\n- **RAM (Remaining Available Margin)** - the available margin for the critical network element, which serves as an upper bound on the total consumption of this element by different bidding areas.\n - A list of **PTDFs (Power Transfer Distribution Factors**) for each Bidding Zone in the corresponding Flow-Based region. A PTDF indicates how much a bidding zone's Net-Position contributes to the load of the critical network element (limited by RAM).\n            \nTo see if a constraint is binding (or how close it is to being reached), multiply the Net-Position (NP) for each Bidding Zone by its respective PTDF. Then, sum the results of each multiplication. This must result in a value that is lower or equal to the RAM.\n            \nWhen the sum equals the RAM, the corresponding constraint (CNEC) is binding. This can be exemplified by the following formula:\n            \n`PTDF1 * NP1 + PTDF2 * NP2 + ... + PTDFn * NPn \u2264 RAM`\n            \nEuphemia ensures that these constraints will always be respected.\n            \nThe Net-Position of a Bidding Zone is defined as Total Export - Total Import for a Bidding Zone. In our data model, this is easiest gotten from the Flow model, and refers to -(totalNetPosition) for each delivery period and area.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "Auction",
+        "FlowBasedConstraints",
+        "ByDomain"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "market",
+         "value": "",
+         "description": "",
+         "disabled": false
+        },
+        {
+         "key": "flowBasedDomain",
+         "value": "",
+         "description": "",
+         "disabled": false
+        },
+        {
+         "key": "date",
+         "value": "",
+         "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "25b56f7d-0b01-424c-9e08-19965cb7e214",
+     "name": "Auction Flows",
+     "request": {
+      "name": "Auction Flows",
+      "description": {
+       "content": "Returns a list of auction flows per area for a market, date and list of areas.\n            \nFlows are describing how much power are exchanged in between areas.\n            \nThis is the flow coming from Euphemia - note that in the Nordic region a post coupling calculation is done to adjust this flow. See Scheduled Physical Flows for Nordic Day-ahead flows after 30th of October 2024.\n            \nFlows are always described from an area point of view. Some flows will have a loss on the cable - imports in an area is always after losses, and exports are before losses.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "Auction",
+        "Flows",
+        "ByAreas"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "market",
+         "value": "",
+         "description": "",
+         "disabled": false
+        },
+        {
+         "key": "areas",
+         "value": "",
+         "description": "Comma-separated list of areas (e.g., NO1, NO2).",
+         "disabled": false
+        },
+        {
+         "key": "date",
+         "value": "",
+         "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "e129852c-03b3-4ffa-81b5-b4c68ca2ffa1",
+     "name": "Yearly Auction Flows",
+     "request": {
+      "name": "Yearly Auction Flows",
+      "description": {
+       "content": "Returns a list of auction flows for a market, year and one area.\n            \nFlows are describing how much power are exchanged in between areas.\n            \nThis is the flow coming from Euphemia - note that in the Nordic region a post coupling calculation is done to adjust this flow. See Scheduled Physical Flows for Nordic Day-ahead flows after 30th of October 2024.\n            \nFlows are always described from an area point of view. Some flows will have a loss on the cable - imports in an area is always after losses, and exports are before losses.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "Auction",
+        "Flows",
+        "Yearly",
+        "ByArea"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "market",
+         "value": "",
+         "description": "",
+         "disabled": false
+        },
+        {
+         "key": "area",
+         "value": "",
+         "description": "One area. For example NO1.",
+         "disabled": false
+        },
+        {
+         "key": "year",
+         "value": "",
+         "description": "Year in CET (format: yyyy, e.g., 2024)",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "dd4c4e1a-fb9f-4f65-87f6-ed8420408ae0",
+     "name": "Auction Price Indices",
+     "request": {
+      "name": "Auction Price Indices",
+      "description": {
+       "content": "Price indices are normalized prices for a set resolution, for one delivery area or a group of delivery areas.\n            \nIf official prices exists in a certain resolution, then official prices are used. If no centrally agreed official price exists for a resolution, then an average price is calculated.\n            \nNote that settlement is always done in the lowest trading resolution for the market and area, price indices are just an indication of what the average price would be in different resolutions.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "Auction",
+        "PriceIndices",
+        "ByIndexNames"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "market",
+         "value": "",
+         "description": "",
+         "disabled": false
+        },
+        {
+         "key": "indexNames",
+         "value": "",
+         "description": "A comma-separated list of index names (e.g. NO1, NO2, FI, BE).",
+         "disabled": false
+        },
+        {
+         "key": "currency",
+         "value": "",
+         "description": "Currency of returned prices. Note that local currencies are not available for all areas, and",
+         "disabled": false
+        },
+        {
+         "key": "date",
+         "value": "",
+         "description": "Delivery date, referring to CET date. Format: yyyy-MM-dd (e.g. 2025-02-20)",
+         "disabled": false
+        },
+        {
+         "key": "resolution",
+         "value": "",
+         "description": "The data-resolution of the requested price data: PT1H = 1h, PT30M = 30min, PT15M = 15min",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "521552d2-a7d7-43ec-ae8a-c7f04bed24a7",
+     "name": "Yearly Auction Price Indices",
+     "request": {
+      "name": "Yearly Auction Price Indices",
+      "description": {
+       "content": "Price indices are normalized prices for a set resolution, for one delivery area or a group of delivery areas.\n            \nIf official prices exists in a certain resolution, then official prices are used. If no centrally agreed official price exists for a resolution, then an average price is calculated.\n            \nNote that settlement is always done in the lowest trading resolution for the market and area, price indices are just an indication of what the average price would be in different resolutions.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "Auction",
+        "PriceIndices",
+        "Yearly",
+        "ByIndexName"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "market",
+         "value": "",
+         "description": "",
+         "disabled": false
+        },
+        {
+         "key": "indexName",
+         "value": "",
+         "description": "One area. For example NO1.",
+         "disabled": false
+        },
+        {
+         "key": "currency",
+         "value": "",
+         "description": "Currency of returned price indices. Note that local currencies are not available for all indices, and",
+         "disabled": false
+        },
+        {
+         "key": "year",
+         "value": "",
+         "description": "Year in CET (format: yyyy, e.g., 2024)",
+         "disabled": false
+        },
+        {
+         "key": "resolution",
+         "value": "",
+         "description": "The data-resolution of the requested price data: PT1H = 1h, PT30M = 30min, PT15M = 15min",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "0d73ebb4-ddb2-4604-873d-d20035db7564",
+     "name": "Auction Prices",
+     "request": {
+      "name": "Auction Prices",
+      "description": {
+       "content": "Returns a list of auction prices for a market, currency, date and list of areas.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "Auction",
+        "Prices",
+        "ByAreas"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "market",
+         "value": "",
+         "description": "",
+         "disabled": false
+        },
+        {
+         "key": "areas",
+         "value": "",
+         "description": "Comma-separated list of areas (e.g., NO1, NO2).",
+         "disabled": false
+        },
+        {
+         "key": "currency",
+         "value": "",
+         "description": "Currency of returned prices. Note that local currencies are not available for all areas, and",
+         "disabled": false
+        },
+        {
+         "key": "date",
+         "value": "",
+         "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "0d9f2bad-9ac6-4c46-96c7-a761036e0f3a",
+     "name": "Yearly Auction Prices",
+     "request": {
+      "name": "Yearly Auction Prices",
+      "description": {
+       "content": "Returns a list of auction prices for a market, currency, year and one area.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "Auction",
+        "Prices",
+        "Yearly",
+        "ByArea"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "market",
+         "value": "",
+         "description": "",
+         "disabled": false
+        },
+        {
+         "key": "area",
+         "value": "",
+         "description": "One area. For example NO1.",
+         "disabled": false
+        },
+        {
+         "key": "currency",
+         "value": "",
+         "description": "Currency of returned prices. Note that local currencies are not available for all areas, and",
+         "disabled": false
+        },
+        {
+         "key": "year",
+         "value": "",
+         "description": "Year in CET (format: yyyy, e.g., 2024)",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "acb3e96e-e478-4799-a6de-035dbed4bd57",
+     "name": "Auction Scheduled Physical Flows",
+     "request": {
+      "name": "Auction Scheduled Physical Flows",
+      "description": {
+       "content": "Scheduled physical flows are published for the day-ahead market after the Nordic Flow-based go-live on the 30th of October 2024.\n            \nScheduled physical flows are re-calculated flows for Nordic flow-based regions. The Nordic Flow-based implementation sometimes ends up breaching physical constraints in the power grid, and a post-coupling re-calculation is done and published to the JAO publication tool, which is the source of this data.\n            \nThe re-calculated flows should end up with every area having the same net position (+/- ~0.1MW) as the original flows coming from Euphemia, but internal flows inside the regions might be re-routed. \n            \nScheduled physical flows are the basis of what capacities are later released to intraday auctions as well as the intraday market. The need to re-calculate flows coming from Euphemia only exist in the Nordic flow-based regions. \n            \nScheduled physical flows are always described from an area point of view. Some flows will have a loss on the cable - imports in an area is always after losses, and exports are before losses.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "Auction",
+        "ScheduledPhysicalFlows",
+        "ByAreas"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "market",
+         "value": "",
+         "description": "Market for which the flows are requested. Supported: DayAhead.",
+         "disabled": false
+        },
+        {
+         "key": "areas",
+         "value": "",
+         "description": "Comma-separated list of areas (e.g., NO1, NO2).",
+         "disabled": false
+        },
+        {
+         "key": "date",
+         "value": "",
+         "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-11-01.",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "aa65c2bb-f7a3-4bcd-b4e1-dc3cd02319b4",
+     "name": "Yearly Scheduled Physical Flows",
+     "request": {
+      "name": "Yearly Scheduled Physical Flows",
+      "description": {
+       "content": "Scheduled physical flows are published for the day-ahead market after the Nordic Flow-based go-live on the 30th of October 2024.\n            \nScheduled physical flows are re-calculated flows for Nordic flow-based regions. The Nordic Flow-based implementation sometimes ends up breaching physical constraints in the power grid, and a post-coupling re-calculation is done and published to the JAO publication tool, which is the source of this data.\n            \nThe re-calculated flows should end up with every area having the same net position (+/- ~0.1MW) as the original flows coming from Euphemia, but internal flows inside the regions might be re-routed. \n            \nScheduled physical flows are the basis of what capacities are later released to intraday auctions as well as the intraday market. The need to re-calculate flows coming from Euphemia only exist in the Nordic flow-based regions.\n            \nThis endpoint returns all scheduled physical flows for a year and area.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "Auction",
+        "ScheduledPhysicalFlows",
+        "Yearly",
+        "ByArea"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "market",
+         "value": "",
+         "description": "",
+         "disabled": false
+        },
+        {
+         "key": "area",
+         "value": "",
+         "description": "One area. For example NO1.",
+         "disabled": false
+        },
+        {
+         "key": "year",
+         "value": "",
+         "description": "Year in CET (format: yyyy, e.g., 2024)",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "bd2ece74-04ae-46cb-b12d-7da104dc3154",
+     "name": "Auction Volumes",
+     "request": {
+      "name": "Auction Volumes",
+      "description": {
+       "content": "Returns a list of auction volumes for a market, date and list of areas.\n            \nNote that this volume only reflect Nord Pool's part of the traded volume, not the market total volume.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "Auction",
+        "Volumes",
+        "ByAreas"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "market",
+         "value": "",
+         "description": "",
+         "disabled": false
+        },
+        {
+         "key": "areas",
+         "value": "",
+         "description": "Comma-separated list of areas (e.g., NO1, NO2).",
+         "disabled": false
+        },
+        {
+         "key": "date",
+         "value": "",
+         "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "edc7eee5-cc58-41c8-acbe-0a8e2d90f76d",
+     "name": "Yearly Auction Volumes",
+     "request": {
+      "name": "Yearly Auction Volumes",
+      "description": {
+       "content": "Returns a list of auction volumes for a market, year and one area.\n            \nNote that this volume only reflect Nord Pool's part of the traded volume, not the market total volume.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "Auction",
+        "Volumes",
+        "Yearly",
+        "ByArea"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "market",
+         "value": "",
+         "description": "",
+         "disabled": false
+        },
+        {
+         "key": "area",
+         "value": "",
+         "description": "One area. For example NO1.",
+         "disabled": false
+        },
+        {
+         "key": "year",
+         "value": "",
+         "description": "Year in CET (format: yyyy, e.g., 2024)",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    }
+   ]
+  },
+  {
+   "id": "59c5e753-d187-4e4d-9ad2-0bd92a9f6c89",
+   "name": "BalanceMarket",
+   "description": {
+    "content": "",
+    "type": "text/plain"
+   },
+   "item": [
+    {
+     "id": "529b12fa-9f14-42dc-b38f-31a837a93422",
+     "name": "Manual Frequency Restoration Reserves",
+     "request": {
+      "name": "Manual Frequency Restoration Reserves",
+      "description": {
+       "content": "Returns a list of Manual Frequency Restoration Reserves (mFRR) for a date, currency and a list of areas.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "BalanceMarket",
+        "ManualFrequencyRestorationReserves",
+        "ByAreas"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "areas",
+         "value": "",
+         "description": "Comma-separated list of areas (e.g., NO1, NO2).",
+         "disabled": false
+        },
+        {
+         "key": "currency",
+         "value": "",
+         "description": "Currency of returned prices. Restricted to 1 currency per query. Supported: EUR, SEK, NOK, DKK",
+         "disabled": false
+        },
+        {
+         "key": "date",
+         "value": "",
+         "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "f2f0fd8f-99cd-4fd0-b541-6dacfb3322d2",
+     "name": "Yearly Manual Frequency Restoration Reserves",
+     "request": {
+      "name": "Yearly Manual Frequency Restoration Reserves",
+      "description": {
+       "content": "Returns an annual summary of Manual Frequency Restoration Reserves (mFRR) for a year, currency and one area.\n            \n This yearly summary is updated in a rolling manner, and is updated daily.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "BalanceMarket",
+        "ManualFrequencyRestorationReserves",
+        "Yearly",
+        "ByArea"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "area",
+         "value": "",
+         "description": "One area. For example NO1.",
+         "disabled": false
+        },
+        {
+         "key": "currency",
+         "value": "",
+         "description": "Currency of returned prices. Restricted to 1 currency per query. Supported: EUR, SEK, NOK, DKK",
+         "disabled": false
+        },
+        {
+         "key": "year",
+         "value": "",
+         "description": "Year in CET (format: yyyy, e.g., 2024)",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    }
+   ]
+  },
+  {
+   "id": "1c5ff8b0-7983-46a2-bdaa-4d88ca488e16",
+   "name": "ExchangeRate",
+   "description": {
+    "content": "",
+    "type": "text/plain"
+   },
+   "item": [
+    {
+     "id": "403e3e89-08fc-476a-801e-6eca209f8023",
+     "name": "Exchange rates",
+     "request": {
+      "name": "Exchange rates",
+      "description": {
+       "content": "Returns the exchange rate used for a specific date.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "ExchangeRate",
+        "Daily"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "date",
+         "value": "",
+         "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "df7d56b1-a105-4326-aee6-1c40bf65b733",
+     "name": "Yearly Exchange rates",
+     "request": {
+      "name": "Yearly Exchange rates",
+      "description": {
+       "content": "Returns the exchange rates for a specific year.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "ExchangeRate",
+        "Yearly"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "year",
+         "value": "",
+         "description": "Delivery year, referring to CET year. Format yyyy, for example 2024",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    }
+   ]
+  },
+  {
+   "id": "6614b1f8-567f-4c8d-af0c-7cba78dfaad5",
+   "name": "Intraday",
+   "description": {
+    "content": "",
+    "type": "text/plain"
+   },
+   "item": [
+    {
+     "id": "3340127b-3061-4dc1-a266-27169d3e5071",
+     "name": "Intraday Contract Statistics",
+     "request": {
+      "name": "Intraday Contract Statistics",
+      "description": {
+       "content": "Returns intraday contract statistics for a date and a list of areas.\n            \nAll intraday trades where at least one leg (buy or/and sell) belongs to Nord Pool, Independent Bulgarian Energy Exchange (IBEX), Bursa Rom\u00e2n\u0103 de M\u0103rfuri S.A (BRM) or Elma Orkuvi\u00f0skipti (ELMA) and one leg belongs to queried area are included in the calculation of contract statistics. However, trades where both legs belong to other PXs are excluded from the statistics.\nThe calculation includes local and SIDC trades, as well as block trades and wash trades (trades where the same legal entity is on both the buy and sell sides). \n            \nIntraday contract statistics are updated every 15 minutes for open contracts spanning today, tomorrow, and day after tomorrow.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "Intraday",
+        "ContractStatistics",
+        "ByAreas"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "areas",
+         "value": "",
+         "description": "Comma-separated list of areas (e.g., NO1, NO2).",
+         "disabled": false
+        },
+        {
+         "key": "date",
+         "value": "",
+         "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "54513006-81ad-4fbd-bd15-bdabc02eef78",
+     "name": "Intraday Contract Total Statistics",
+     "request": {
+      "name": "Intraday Contract Total Statistics",
+      "description": {
+       "content": "Returns total intraday contract statistics for a date.\n            \nAll intraday trades where at least one leg (buy or/and sell) belongs to Nord Pool, Independent Bulgarian Energy Exchange (IBEX) or Bursa Rom\u00e2n\u0103 de M\u0103rfuri S.A (BRM) and the currency is EUR are included in the calculation of contract statistics. However, trades where both legs belong to other PXs are excluded from the statistics. The calculation includes local and SIDC trades, as well as block trades and wash trades (trades where the same legal entity is on both the buy and sell sides).\n            \nIntraday contract statistics are updated every 15 minutes for open contracts spanning today, tomorrow, and day after tomorrow.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "Intraday",
+        "ContractStatistics",
+        "Total"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "date",
+         "value": "",
+         "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "e66be6f1-6e1e-4b65-96b7-a7a9e1cad26a",
+     "name": "Intraday Yearly Contract Statistics",
+     "request": {
+      "name": "Intraday Yearly Contract Statistics",
+      "description": {
+       "content": "Returns intraday contract statistics for a year and one area.\n            \nAll intraday trades where at least one leg (buy or/and sell) belongs to Nord Pool, Independent Bulgarian Energy Exchange (IBEX), Bursa Rom\u00e2n\u0103 de M\u0103rfuri S.A (BRM) or Elma Orkuvi\u00f0skipti (ELMA) and one leg belongs to queried area are included in the calculation of contract statistics. However, trades where both legs belong to other PXs are excluded from the statistics. The calculation includes local and SIDC trades, as well as block trades and wash trades (trades where the same legal entity is on both the buy and sell sides). \n\nThis aggregate is updated once per day, and includes data up until yesterday (CET).",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "Intraday",
+        "ContractStatistics",
+        "Yearly",
+        "ByArea"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "area",
+         "value": "",
+         "description": "One area. For example NO1.",
+         "disabled": false
+        },
+        {
+         "key": "year",
+         "value": "",
+         "description": "Year in CET (format: yyyy, e.g., 2024)",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "877a304b-c015-44b9-992f-e64d6ce83193",
+     "name": "Intraday Yearly Total Contract Statistics",
+     "request": {
+      "name": "Intraday Yearly Total Contract Statistics",
+      "description": {
+       "content": "Returns all total intraday contract statistics for a year.\n            \nAll intraday trades where at least one leg (buy or/and sell) belongs to Nord Pool, Independent Bulgarian Energy Exchange (IBEX) or Bursa Rom\u00e2n\u0103 de M\u0103rfuri S.A (BRM) and the currency is EUR are included in the calculation of contract statistics. However, trades where both legs belong to other PXs are excluded from the statistics. The calculation includes local and SIDC trades, as well as block trades and wash trades (trades where the same legal entity is on both the buy and sell sides).\n\nThis aggregate is updated once per day, and includes data up until yesterday (CET).",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "Intraday",
+        "ContractStatistics",
+        "Yearly",
+        "Total"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "year",
+         "value": "",
+         "description": "Year in CET (format: yyyy, e.g., 2024)",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "8cc07e4b-fb31-4abf-a7a5-a08b7f365c8c",
+     "name": "Intraday Hourly Statistics",
+     "request": {
+      "name": "Intraday Hourly Statistics",
+      "description": {
+       "content": "Returns intraday hourly statistics for a date and a list of areas.\n            \n Intraday hourly statistics provide a comprehensive overview of all trading activity for a specific delivery hour. These statistics are derived from the trade data available for the selected delivery hour.\n            \nAll intraday trades where at least one leg (buy or/and sell) belongs to Nord Pool, Independent Bulgarian Energy Exchange (IBEX), Bursa Rom\u00e2n\u0103 de M\u0103rfuri S.A (BRM) or Elma Orkuvi\u00f0skipti (ELMA) and one leg belongs to queried area are included in the calculation of hourly statistics. However, trades where both legs belong to other PXs are excluded from the statistics. The calculation includes local and SIDC trades, as well as block trades and wash trades (trades where the same legal entity is on both the buy and sell sides). \n            \nIntraday hourly statistics are updated every 15 minutes for open contracts spanning today, tomorrow, and day after tomorrow.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "Intraday",
+        "HourlyStatistics",
+        "ByAreas"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "areas",
+         "value": "",
+         "description": "Comma-separated list of areas (e.g., NO1, NO2).",
+         "disabled": false
+        },
+        {
+         "key": "date",
+         "value": "",
+         "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "cd8fbc56-8daa-42fc-ac37-d697627bcfd3",
+     "name": "Intraday Hourly Total Statistics",
+     "request": {
+      "name": "Intraday Hourly Total Statistics",
+      "description": {
+       "content": "Returns total intraday hourly statistics for a date.\n            \nIntraday hourly statistics provide a comprehensive overview of all trading activity for a specific delivery hour across all areas. These statistics are derived from the trade data available for the selected delivery hour.\n            \nAll intraday trades where at least one leg (buy or/and sell) belongs to Nord Pool, Independent Bulgarian Energy Exchange (IBEX) or Bursa Rom\u00e2n\u0103 de M\u0103rfuri S.A (BRM) in trading currency EUR are included in the calculation of hourly statistics. However, trades where both legs belong to other PXs are excluded from the statistics. The calculation includes local and SIDC trades, as well as block trades and wash trades (trades where the same legal entity is on both the buy and sell sides). \n            \nIntraday hourly statistics are updated every 15 minutes for open contracts spanning today, tomorrow, and day after tomorrow.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "Intraday",
+        "HourlyStatistics",
+        "Total"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "date",
+         "value": "",
+         "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "7b53b87c-1d6c-4b54-b7d3-e4c55c2696be",
+     "name": "Intraday Yearly Hourly Statistics",
+     "request": {
+      "name": "Intraday Yearly Hourly Statistics",
+      "description": {
+       "content": "Returns all intraday hourly statistics for a year and one area.\n            \nThis aggregate is updated once per day, and includes data up until yesterday (CET).\n            \nIntraday hourly statistics provide a comprehensive overview of all trading activity for a specific delivery hour. These statistics are derived from the trade data available for the selected delivery hour.\n            \nAll intraday trades where at least one leg (buy or/and sell) belongs to Nord Pool, Independent Bulgarian Energy Exchange (IBEX), Bursa Rom\u00e2n\u0103 de M\u0103rfuri S.A (BRM) or Elma Orkuvi\u00f0skipti (ELMA) and one leg belongs to queried area are included in the calculation of hourly statistics. However, trades where both legs belong to other PXs are excluded from the statistics. The calculation includes local and SIDC trades, as well as block trades and wash trades (trades where the same legal entity is on both the buy and sell sides).",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "Intraday",
+        "HourlyStatistics",
+        "Yearly",
+        "ByArea"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "area",
+         "value": "",
+         "description": "One area. For example NO1.",
+         "disabled": false
+        },
+        {
+         "key": "year",
+         "value": "",
+         "description": "Year in CET (format: yyyy, e.g., 2024)",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "ad4d3145-31d8-43e4-b21b-8ea0783b2f21",
+     "name": "Intraday Yearly Hourly Total Statistics",
+     "request": {
+      "name": "Intraday Yearly Hourly Total Statistics",
+      "description": {
+       "content": "Returns total intraday hourly statistics for a year.\n            \nThis aggregate is updated once per day, and includes data up until yesterday (CET).\n\n Intraday hourly statistics provide a comprehensive overview of all trading activity for a specific delivery hour across all areas. These statistics are derived from the trade data available for the selected delivery hour.\n            \nAll intraday trades where at least one leg (buy or/and sell) belongs to Nord Pool, Independent Bulgarian Energy Exchange (IBEX) or Bursa Rom\u00e2n\u0103 de M\u0103rfuri S.A (BRM) in trading currency EUR are included in the calculation of hourly statistics. However, trades where both legs belong to other PXs are excluded from the statistics. The calculation includes local and SIDC trades, as well as block trades and wash trades (trades where the same legal entity is on both the buy and sell sides).",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "Intraday",
+        "HourlyStatistics",
+        "Yearly",
+        "Total"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "year",
+         "value": "",
+         "description": "Year in CET (format: yyyy, e.g., 2024)",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "5eb878a9-2664-45e2-b69a-632cf7934ed0",
+     "name": "Intraday Hub to Hub Capacities",
+     "request": {
+      "name": "Intraday Hub to Hub Capacities",
+      "description": {
+       "content": "Returns transmission capacity changes available between two areas, no matter the path through the power grid.\nIt's not a border/cable capacity but rather the sum of all available paths that power could flow.\nData is available with a delay of approximately 25 minutes.\n\n**Note**: The delivery start time must be provided in a full-hour format, such as 2025-03-01T**01:00:00**Z.\nProviding the delivery start time like 2025-03-01T**01:59:59**Z results in a bad request error,\nas hub to hub capacities are updated on an hourly basis and such inputs would not give meaningful responses.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "Intraday",
+        "HubToHubCapacities",
+        "ByAreaFrom"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "areaFrom",
+         "value": "",
+         "description": "Delivery area (e.g., NO1).",
+         "disabled": false
+        },
+        {
+         "key": "areaTo",
+         "value": "",
+         "description": "Delivery area (e.g., NO1).",
+         "disabled": true
+        },
+        {
+         "key": "deliveryStart",
+         "value": "",
+         "description": "Delivery start time of a contract, referring to a full hour in UTC. ",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "51976a87-17df-4257-b21c-32d01f66ec2e",
+     "name": "Intraday Order Book By Contract",
+     "request": {
+      "name": "Intraday Order Book By Contract",
+      "description": {
+       "content": "Returns all intraday order book changes for the given contract and area, where the contract delivery start is within the given UTC date.\nThis data corresponds to the local view data type in the Intraday system.\n            \nOrder book data becomes available with a delay of 2\u20133 hours after the contract is closed. It contains event messages called revisions that come from XBID\nand/or NPM (Nord Pool Matcher). Each revision represents either:\n- A **delta** (\"isSnapshot\": false) that contains only the newly added or updated order information compared to previous revisions.\nFor example, if previous revision contains orders I1, I2, and I3, and new orders I4 and I5 are added, the delta revision will only contain I4 and I5.\n \n- A **snapshot** (\"isSnapshot\": true) that provides the full set of actual orders for the contract at current moment(e.g., I1 to I5).\nSnapshots may occur between delta revisions, for instance, when the connection to XBID is temporarily lost.\nIn such cases, previous revisions must be overwritten with the snapshot's data. Although rare, this scenario is possible.\n            \nRevisions are sequential but might be empty or occasionally duplicated.\n            \nEach non-empty revision consists of the buy and/or sell orders for the specified area. The order details include \norder id, price, volume, deleted flag, updated time and priority time. If an order is removed, the associated data will include \"deleted\": true and volume = 0.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "Intraday",
+        "OrderBook",
+        "ByContractId"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "area",
+         "value": "",
+         "description": "Delivery area (e.g., NO1).",
+         "disabled": false
+        },
+        {
+         "key": "deliveryDateUtc",
+         "value": "",
+         "description": "Delivery date of the contract, referring to UTC date. Format yyyy-MM-dd, for example 2025-03-20",
+         "disabled": false
+        },
+        {
+         "key": "contractId",
+         "value": "",
+         "description": "The contract id",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "9c378049-6dd1-471a-8860-67e711c842fd",
+     "name": "Intraday Available Order Book contracts",
+     "request": {
+      "name": "Intraday Available Order Book contracts",
+      "description": {
+       "content": "Returns a list of contracts with available order books for a given UTC date and area.\nThe response includes details about each contract, such as its delivery period, opening and closing times, and whether it is a local contract.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "Intraday",
+        "OrderBook",
+        "ContractsIds",
+        "ByArea"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "area",
+         "value": "",
+         "description": "Delivery area (e.g., NO1).",
+         "disabled": false
+        },
+        {
+         "key": "deliveryDateUtc",
+         "value": "",
+         "description": "Delivery date, referring to UTC date. Format yyyy-MM-dd, for example 2025-03-20",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "202fb41b-391e-4a8a-a996-1513c6c06f85",
+     "name": "Intraday Order Revisions By Update Time",
+     "request": {
+      "name": "Intraday Order Revisions By Update Time",
+      "description": {
+       "content": "Returns intraday contracts with orders for a given area, where order revisions have an updated time in between updatedTimeFrom and updatedTimeTo.\nData is available with a delay of approximately 20 minutes.\n\n**Note**: The time difference between updatedTimeFrom and updatedTimeTo cannot exceed **4** hours.\nThis limitation was introduced for performance reasons to restrict the response size.\nDuring periods of high load on the system, responses may take longer than expected.\nIn such situations, it is recommended to query data in hourly intervals, for example\nupdatedTimeFrom=2025-04-01T**01:00:00**Z and updatedTimeTo=2025-04-01T**02:00:00**Z.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "Intraday",
+        "OrderRevisions",
+        "ByUpdatedTime"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "area",
+         "value": "",
+         "description": "Delivery area (e.g., NO1).",
+         "disabled": false
+        },
+        {
+         "key": "updatedTimeFrom",
+         "value": "",
+         "description": "Order update date and time starts, referring to a UTC datetime. Format yyyy-MM-ddTHH:mm:ssZ, for example 2024-08-15T01:00:00Z",
+         "disabled": false
+        },
+        {
+         "key": "updatedTimeTo",
+         "value": "",
+         "description": "Order update date and time ends, referring to a UTC datetime. Format yyyy-MM-ddTHH:mm:ssZ, for example 2024-08-15T01:00:00Z",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "60fd6ab5-7704-4051-b4ed-40866f823c43",
+     "name": "Intraday Orders By Contract",
+     "request": {
+      "name": "Intraday Orders By Contract",
+      "description": {
+       "content": "Returns intraday orders for the given contract which starts at the given time for a given area.\nData is available with a delay of approximately 20 minutes.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "Intraday",
+        "Orders",
+        "ByContractId"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "area",
+         "value": "",
+         "description": "Delivery area (e.g., NO1).",
+         "disabled": false
+        },
+        {
+         "key": "deliveryStart",
+         "value": "",
+         "description": "Delivery start time of the contract, referring to a UTC datetime. Format yyyy-MM-ddThh:mm:ssZ, for example 2024-08-15T01:00:00Z",
+         "disabled": false
+        },
+        {
+         "key": "contractId",
+         "value": "",
+         "description": "The contract id",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "844dfa65-e1dd-47e2-8129-88f40524e110",
+     "name": "Intraday Orders By Delivery Time",
+     "request": {
+      "name": "Intraday Orders By Delivery Time",
+      "description": {
+       "content": "Returns intraday contracts with orders for a given area, where the contract delivery start is within the deliveryStartFrom-deliveryStartTo time range.\nData is available with a delay of approximately 20 minutes.\n\n**Note**: The time difference between deliveryStartFrom and deliveryStartTo cannot exceed **4** hours.\nThis limitation was introduced for performance reasons to restrict the response size.\nDuring periods of high load on the system, responses may take longer than expected.\nIn such situations, it is recommended to query data in hourly intervals, for example\ndeliveryStartFrom=2025-04-01T**01:00:00**Z and deliveryStartTo=2025-04-01T**02:00:00**Z.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "Intraday",
+        "Orders",
+        "ByDeliveryStart"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "area",
+         "value": "",
+         "description": "Delivery area (e.g., NO1).",
+         "disabled": false
+        },
+        {
+         "key": "deliveryStartFrom",
+         "value": "",
+         "description": "Earliest delivery start time, referring to a UTC hour. Contracts with delivery start at this hour or later will be included in the response.",
+         "disabled": false
+        },
+        {
+         "key": "deliveryStartTo",
+         "value": "",
+         "description": "Latest delivery start time, referring to a UTC hour. Contracts with delivery start earlier than this hour will be included in the response. ",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "d83c9f06-f108-472b-94d6-69430fe78314",
+     "name": "Intraday Trades By Contract",
+     "request": {
+      "name": "Intraday Trades By Contract",
+      "description": {
+       "content": "Returns an intraday contract with trades for a delivery start time and contract id, where trades have at least one leg matching at least one of the provided areas. \n\nAll trades have at least one leg belongs to Nord Pool. However, trades where both legs belong to other PXs are excluded from the response. \n\nData is available with a delay of approximately 20 minutes.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "Intraday",
+        "Trades",
+        "ByContractId"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "areas",
+         "value": "",
+         "description": "Comma-separated list of areas (e.g., NO1, NO2).",
+         "disabled": false
+        },
+        {
+         "key": "deliveryStart",
+         "value": "",
+         "description": "Delivery start time of the contract, referring to a UTC datetime. Format yyyy-MM-ddThh:mm:ssZ, for example 2024-08-15T01:00:00Z",
+         "disabled": false
+        },
+        {
+         "key": "contractId",
+         "value": "",
+         "description": "The contract id",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "298b2584-c406-4aba-bb40-e3fb631a72e9",
+     "name": "Intraday Trades By Delivery Time",
+     "request": {
+      "name": "Intraday Trades By Delivery Time",
+      "description": {
+       "content": "Returns intraday contracts with trades, where the contract delivery start is within the deliveryStartFrom-deliveryStartTo time range and the trade has at least one leg in the provided areas. \n\nAll trades have at least one leg belongs to Nord Pool. However, trades where both legs belong to other PXs are excluded from the response. \n\nData is available with a delay of approximately 20 minutes.\n            \n**Note**: The time difference between deliveryStartFrom and deliveryStartTo cannot exceed **12** hours.\nThis limitation was introduced for performance reasons to restrict the response size.\nDuring periods of high load on the system, responses may take longer than expected.\nIn such situations, it is recommended to query data in hourly intervals, for example\ndeliveryStartFrom=2025-04-01T**01:00:00**Z and deliveryStartTo=2025-04-01T**02:00:00**Z.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "Intraday",
+        "Trades",
+        "ByDeliveryStart"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "areas",
+         "value": "",
+         "description": "Comma-separated list of areas (e.g., NO1, NO2).",
+         "disabled": false
+        },
+        {
+         "key": "deliveryStartFrom",
+         "value": "",
+         "description": "Earliest delivery start time, referring to a UTC hour. Contracts with delivery start at this hour or later will be included in the response.",
+         "disabled": false
+        },
+        {
+         "key": "deliveryStartTo",
+         "value": "",
+         "description": "Latest delivery start time, referring to a UTC hour. Contracts with delivery start earlier than this hour will be included in the response. ",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "9a9279d9-b1ca-4828-ad9c-856289d8c6c8",
+     "name": "Intraday Trades By Trade Time",
+     "request": {
+      "name": "Intraday Trades By Trade Time",
+      "description": {
+       "content": "Returns intraday contracts with trades, where trades have a trade time in between tradeTimeFrom - tradeTimeTo and at least one leg in the provided areas. \n\nAll trades have at least one leg belongs to Nord Pool. However, trades where both legs belong to other PXs are excluded from the response. \n\nData is available with a delay of approximately 20 minutes.\n            \n**Note**: The time difference between tradeTimeFrom and tradeTimeTo cannot exceed **12** hours.\nThis limitation was introduced for performance reasons to restrict the response size.\nDuring periods of high load on the system, responses may take longer than expected.\nIn such situations, it is recommended to query data in hourly intervals, for example\ntradeTimeFrom=2025-04-01T**01:00:00**Z and tradeTimeTo=2025-04-01T**02:00:00**Z.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "Intraday",
+        "Trades",
+        "ByTradeTime"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "areas",
+         "value": "",
+         "description": "Comma-separated list of areas (e.g., NO1, NO2).",
+         "disabled": false
+        },
+        {
+         "key": "tradeTimeFrom",
+         "value": "",
+         "description": "Trade date and time starts, referring to a UTC datetime. Trades at or later this time will be included in the response. Format yyyy-MM-ddThh",
+         "disabled": false
+        },
+        {
+         "key": "tradeTimeTo",
+         "value": "",
+         "description": "Trade date and time ends, referring to a UTC datetime. Trades earlier than this time will be included in the response. Format yyyy-MM-ddThh:",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    }
+   ]
+  },
+  {
+   "id": "0b794e04-4edd-4169-b26e-a6550248fa1c",
+   "name": "PowerSystem",
+   "description": {
+    "content": "",
+    "type": "text/plain"
+   },
+   "item": [
+    {
+     "id": "c3ecd5da-44f0-4781-9d52-414f13cec4ee",
+     "name": "Clean Horizon Premium Storage Index - Delivered by Nord Pool",
+     "request": {
+      "name": "Clean Horizon Premium Storage Index - Delivered by Nord Pool",
+      "description": {
+       "content": "Returns a list of daily gross revenues of storage assets for a list of areas and month.\n\nDaily storage index provides information on how much money could a 1, 2, and 4-hour storage asset have earned in a given day. It contains details on each component of the revenue stack\n(day-ahead, intraday, FCR, aFRR, mFRR, etc).",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "CleanHorizonStorageIndex",
+        "Daily",
+        "ByAreas"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "areas",
+         "value": "",
+         "description": "Comma-separated list of areas (e.g., SE1, SE2).",
+         "disabled": false
+        },
+        {
+         "key": "month",
+         "value": "",
+         "description": "Month in UTC. Format yyyy-MM-dd, for example 2025-01-01.",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "a0cb6227-b9a5-4235-972f-145f6ad3378d",
+     "name": "Clean Horizon Storage Index - Delivered by Nord Pool",
+     "request": {
+      "name": "Clean Horizon Storage Index - Delivered by Nord Pool",
+      "description": {
+       "content": "Returns a list of monthly gross revenues of storage assets for a list of areas.\n\nMonthly storage index provides information on how much money could a 1, 2, and 4-hour storage asset have earned in a given month.\nValues are calculated based on premium indexes by summing up daily total revenues for the month.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "CleanHorizonStorageIndex",
+        "Monthly",
+        "ByAreas"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "areas",
+         "value": "",
+         "description": "Comma-separated list of areas (e.g., SE1, SE2).",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "4d1242ce-1dbf-446a-adeb-a2bc1c461b76",
+     "name": "Consumption Forecasts",
+     "request": {
+      "name": "Consumption Forecasts",
+      "description": {
+       "content": "Returns a list of consumption forecasts for a date and a list of areas.\n            \nConsumption forecasts tells how much electricity is expected to be consumed / used in an area and delivery period. \n            \nThis corresponds to the \"Total Load / Day-Ahead\" data type in the Entso-e Transparency Platform.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "PowerSystem",
+        "ConsumptionForecasts",
+        "ByAreas"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "areas",
+         "value": "",
+         "description": "Comma-separated list of areas (e.g., NO1, NO2).",
+         "disabled": false
+        },
+        {
+         "key": "date",
+         "value": "",
+         "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "019d6f85-25d9-4346-ad8f-8816c6b10dbd",
+     "name": "Consumption Forecasts By Location",
+     "request": {
+      "name": "Consumption Forecasts By Location",
+      "description": {
+       "content": "Returns a list of consumption forecasts for a date and a list of locations.\n            \nConsumption forecasts tells how much electricity is expected to be consumed / used in an area and delivery period. Consumption forecasts by Location aggregates delivery area values into country or region values.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "PowerSystem",
+        "ConsumptionForecasts",
+        "ByLocations"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "locations",
+         "value": "",
+         "description": "Comma-separated list of locations (e.g., NO, SE).",
+         "disabled": false
+        },
+        {
+         "key": "date",
+         "value": "",
+         "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "2a89b2fa-4561-45af-af58-4397dc4e6849",
+     "name": "Consumption",
+     "request": {
+      "name": "Consumption",
+      "description": {
+       "content": "Returns a list of consumptions for a date and a list of areas.\n            \nConsumption tells how much electricity is being consumed / used in an area and delivery period. \n            \nThis corresponds to the \"Total Load / Actual\" data type in the Entso-e Transparency Platform.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "PowerSystem",
+        "Consumptions",
+        "ByAreas"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "areas",
+         "value": "",
+         "description": "Comma-separated list of areas (e.g., NO1, NO2).",
+         "disabled": false
+        },
+        {
+         "key": "date",
+         "value": "",
+         "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "8298f93f-660e-45fe-9513-0ce546579833",
+     "name": "Consumption By Location",
+     "request": {
+      "name": "Consumption By Location",
+      "description": {
+       "content": "Returns a list of consumptions for a date and a list of locations.\n            \nConsumption tells how much electricity is being consumed / used in an area and delivery period. Consumption by location aggregates delivery area consumption value into country or region values.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "PowerSystem",
+        "Consumptions",
+        "ByLocations"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "locations",
+         "value": "",
+         "description": "Comma-separated list of locations (e.g., NO, SE).",
+         "disabled": false
+        },
+        {
+         "key": "date",
+         "value": "",
+         "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "aa5fc49f-9d83-4fb7-81b1-a2bde8da45d9",
+     "name": "Yearly Consumption",
+     "request": {
+      "name": "Yearly Consumption",
+      "description": {
+       "content": "Returns a list of consumptions for a year and one area.\n            \nConsumption tells how much electricity is being consumed / used in an area and delivery period. \n            \nThis corresponds to the \"Total Load / Actual\" data type in the Entso-e Transparency Platform.\n            \n This yearly summary is updated in a rolling manner, and is updated daily.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "PowerSystem",
+        "Consumptions",
+        "Yearly",
+        "ByArea"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "area",
+         "value": "",
+         "description": "One area. For example NO1.",
+         "disabled": false
+        },
+        {
+         "key": "year",
+         "value": "",
+         "description": "Year in CET (format: yyyy, e.g., 2024)",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "4fd7d398-151d-40e8-af36-8899bead6907",
+     "name": "Yearly Consumption by Location",
+     "request": {
+      "name": "Yearly Consumption by Location",
+      "description": {
+       "content": "Returns a list of consumptions for a year and one location.\n\nConsumption tells how much electricity is being consumed / used in an area and delivery period. Consumption by location aggregates delivery area consumption value into country or region values. \n            \n This yearly summary is updated in a rolling manner, and is updated daily.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "PowerSystem",
+        "Consumptions",
+        "Yearly",
+        "ByLocation"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "location",
+         "value": "",
+         "description": "One location. For example NO.",
+         "disabled": false
+        },
+        {
+         "key": "year",
+         "value": "",
+         "description": "Year in CET (format: yyyy, e.g., 2024)",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "c63cb8ce-5513-421b-a49b-ed812aa98a5f",
+     "name": "Exchange",
+     "request": {
+      "name": "Exchange",
+      "description": {
+       "content": "Returns a list of exchanges for a date and a list of areas.\n            \nExchange tells how much electricity has been importer or exported for an area and delivery period. This is the actual measured flow.\n            \nThis corresponds to the \"Physical Flows\" data type in the Entso-e Transparency Platform.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "PowerSystem",
+        "Exchanges",
+        "ByAreas"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "areas",
+         "value": "",
+         "description": "Comma-separated list of areas (e.g., NO1, NO2).",
+         "disabled": false
+        },
+        {
+         "key": "date",
+         "value": "",
+         "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "c761a4b8-94aa-468b-a0a8-6187c7a6de4a",
+     "name": "Yearly Exchange",
+     "request": {
+      "name": "Yearly Exchange",
+      "description": {
+       "content": "Returns an annual summary of exchanges for a year and one area.\n            \nExchange tells how much electricity has been importer or exported for an area and delivery period. This is the actual measured flow.\n            \nThis corresponds to the \"Physical Flows\" data type in the Entso-e Transparency Platform.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "PowerSystem",
+        "Exchanges",
+        "Yearly",
+        "ByArea"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "area",
+         "value": "",
+         "description": "One area. For example NO1.",
+         "disabled": false
+        },
+        {
+         "key": "year",
+         "value": "",
+         "description": "Year in CET (format: yyyy, e.g., 2024)",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "8e49e9ef-aba7-4450-b540-10449a050635",
+     "name": "Hydro Reservoir Reserves",
+     "request": {
+      "name": "Hydro Reservoir Reserves",
+      "description": {
+       "content": "Returns a list of weekly hydro reservoir values for a year and a list of areas.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "PowerSystem",
+        "HydroReservoirReserves",
+        "ByAreas"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "areas",
+         "value": "",
+         "description": "Comma-separated list of areas (e.g., NO1, NO2).",
+         "disabled": false
+        },
+        {
+         "key": "year",
+         "value": "",
+         "description": "Year in CET (format: yyyy, e.g., 2024)",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "b077af07-e72e-4e69-8ebf-06717e77c45f",
+     "name": "Production Forecasts",
+     "request": {
+      "name": "Production Forecasts",
+      "description": {
+       "content": "Returns a list of production forecasts for a date and a list of areas.\n            \nThis data type aggregates data from the \"Generation Forecasts for Wind and Solar\" and \"Generation Forecast - Day ahead\" views, from the Transparency Platform.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "PowerSystem",
+        "ProductionForecasts",
+        "ByAreas"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "areas",
+         "value": "",
+         "description": "Comma-separated list of areas (e.g., NO1, NO2).",
+         "disabled": false
+        },
+        {
+         "key": "date",
+         "value": "",
+         "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "4764987e-baba-4db8-94c7-7f403bc1446c",
+     "name": "Production Forecasts by Location",
+     "request": {
+      "name": "Production Forecasts by Location",
+      "description": {
+       "content": "Returns a list of production forecasts by locations for a date and a list of locations.\n            \nProduction Forecast by Location aggregates delivery area Production Forecast values into country or region values.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "PowerSystem",
+        "ProductionForecasts",
+        "ByLocations"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "locations",
+         "value": "",
+         "description": "Comma-separated list of locations",
+         "disabled": false
+        },
+        {
+         "key": "date",
+         "value": "",
+         "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "973fa631-ef31-4f16-b381-0e7998caafda",
+     "name": "Production",
+     "request": {
+      "name": "Production",
+      "description": {
+       "content": "Returns a list of productions for a date and a list of areas.\n            \nProduction tells how much electricity is being produced in an area and delivery period for each production type. \n            \nThis corresponds to the \"Actual Generation per Production Type\" data type in the Entso-e Transparency Platform.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "PowerSystem",
+        "Productions",
+        "ByAreas"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "areas",
+         "value": "",
+         "description": "Comma-separated list of areas (e.g., NO1, NO2).",
+         "disabled": false
+        },
+        {
+         "key": "date",
+         "value": "",
+         "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "6e410487-00eb-41f7-ba4b-0de22441b9a7",
+     "name": "Production By Location",
+     "request": {
+      "name": "Production By Location",
+      "description": {
+       "content": "Returns a list of productions for a date and a list of locations.\n            \nProduction tells how much electricity is being produced in an area and delivery period for each production type. Production by location aggregates delivery area production value into country or region values.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "PowerSystem",
+        "Productions",
+        "ByLocations"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "locations",
+         "value": "",
+         "description": "Comma-separated list of locations (e.g., NO, SE).",
+         "disabled": false
+        },
+        {
+         "key": "date",
+         "value": "",
+         "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "052c49cf-531e-47e6-a321-627d903a47f5",
+     "name": "Yearly Production",
+     "request": {
+      "name": "Yearly Production",
+      "description": {
+       "content": "Returns a list of productions for a year and one area.\n\nProduction tells how much electricity is being produced in an area and delivery period for each production type. \n            \nThis corresponds to the \"Actual Generation per Production Type\" data type in the Entso-e Transparency Platform.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "PowerSystem",
+        "Productions",
+        "Yearly",
+        "ByArea"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "area",
+         "value": "",
+         "description": "One area. For example NO1.",
+         "disabled": false
+        },
+        {
+         "key": "year",
+         "value": "",
+         "description": "Year in CET (format: yyyy, e.g., 2024)",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "35859f4e-08a2-403c-8ee7-e6e3636fba5b",
+     "name": "Yearly Production By Location",
+     "request": {
+      "name": "Yearly Production By Location",
+      "description": {
+       "content": "Returns a list of productions for a year and one location.\n            \nProduction tells how much electricity is being produced in an area and delivery period for each production type. Production by location aggregates delivery area production value into country or region values.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "PowerSystem",
+        "Productions",
+        "Yearly",
+        "ByLocation"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "location",
+         "value": "",
+         "description": "One location. For example NO.",
+         "disabled": false
+        },
+        {
+         "key": "year",
+         "value": "",
+         "description": "Year in CET (format: yyyy, e.g., 2024)",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    }
+   ]
+  },
+  {
+   "id": "1e21ce5d-bf84-44ff-a7c5-c988c4c6966c",
+   "name": "PriceCurves",
+   "description": {
+    "content": "",
+    "type": "text/plain"
+   },
+   "item": [
+    {
+     "id": "2098416b-bcfe-40da-a5ad-ba73221a93dd",
+     "name": "N2EX Price Curves",
+     "request": {
+      "name": "N2EX Price Curves",
+      "description": {
+       "content": "Returns the N2EX UK price curve data for a given date.\n            \nThese price curves only contain order information for what is happening in the UK delivery area. No price curve information is available for the coupled NO2 area, since the trading activity in NO2 is small.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "Auction",
+        "N2EX_DayAhead",
+        "PriceCurves",
+        "UK"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "date",
+         "value": "",
+         "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example, 2024-08-15",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    }
+   ]
+  },
+  {
+   "id": "0d114068-86f7-43bd-a353-99d0ca8abef5",
+   "name": "System",
+   "description": {
+    "content": "",
+    "type": "text/plain"
+   },
+   "item": [
+    {
+     "id": "a46cf0ed-7c2b-4375-8ec2-165dedd60842",
+     "name": "System Price",
+     "request": {
+      "name": "System Price",
+      "description": {
+       "content": "Returns the system price for a delivery date and currency.\n            \nSystem price is an artificial index price based on orders from the Day-ahead auction. The system price is calculating a single price for the Nordic region (Sweden, Finland, Norway, Denmark) based on orders from all power exchanges in the Nordics. Import and export flows from other regions are set to the same as the Day-ahead auction outcome. All capacity constraints are removed within the Nordic region, and a single price is gotten by matching all orders from the Nordic region.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "System",
+        "Price"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "currency",
+         "value": "",
+         "description": "Available currencies: EUR, SEK, NOK, DKK",
+         "disabled": false
+        },
+        {
+         "key": "date",
+         "value": "",
+         "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "88ea706a-c9a3-4368-b820-a3e60f99f606",
+     "name": "Yearly System Price",
+     "request": {
+      "name": "Yearly System Price",
+      "description": {
+       "content": "Returns system prices for a year and currency\n            \nSystem price is an artificial index price based on orders from the Day-ahead auction. The system price is calculating a single price for the Nordic region (Sweden, Finland, Norway, Denmark) based on orders from all power exchanges in the Nordics. Import and export flows from other regions are set to the same as the Day-ahead auction outcome. All capacity constraints are removed within the Nordic region, and a single price is gotten by matching all orders from the Nordic region.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "System",
+        "Price",
+        "Yearly"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "currency",
+         "value": "",
+         "description": "Available currencies: EUR, SEK, NOK, DKK",
+         "disabled": false
+        },
+        {
+         "key": "year",
+         "value": "",
+         "description": "Year in CET (format: yyyy, e.g., 2024)",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "438acbaf-54f8-45bc-b023-8fdab0fd5f12",
+     "name": "System Turnover",
+     "request": {
+      "name": "System Turnover",
+      "description": {
+       "content": "Returns the system turnover volume for a date.\n            \nSystem turnover refers to the total purchase volume that comes from the system price calculation across the whole Nordic region.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "System",
+        "Turnover"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "date",
+         "value": "",
+         "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    },
+    {
+     "id": "717ecac0-5b25-4c58-96e0-20138e1647b3",
+     "name": "Yearly System Turnover",
+     "request": {
+      "name": "Yearly System Turnover",
+      "description": {
+       "content": "Returns system turnover volumes for a year\n            \nSystem turnover refers to the total purchase volume that comes from the system price calculation across the whole Nordic region.",
+       "type": "text/plain"
+      },
+      "url": {
+       "path": [
+        "api",
+        "v2",
+        "System",
+        "Turnover",
+        "Yearly"
+       ],
+       "host": [
+        "{{baseUrl}}"
+       ],
+       "query": [
+        {
+         "key": "year",
+         "value": "",
+         "description": "Year in CET (format: yyyy, e.g., 2024)",
+         "disabled": false
+        }
+       ],
+       "variable": []
+      },
+      "header": [
+       {
+        "key": "Accept",
+        "value": "application/json"
+       }
+      ],
+      "method": "GET",
+      "auth": null
+     },
+     "response": []
+    }
+   ]
+  }
+ ],
+ "variable": [
+  {
+   "key": "baseUrl",
+   "value": "https://data-api.nordpoolgroup.com"
+  }
+ ],
+ "auth": {
+  "type": "bearer",
+  "bearer": [
+   {
+    "key": "token",
+    "value": "{{bearerToken}}",
+    "type": "string"
+   }
+  ]
+ }
+}

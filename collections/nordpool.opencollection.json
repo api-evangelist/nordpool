@@ -1,0 +1,698 @@
+{
+ "opencollection": "1.0.0",
+ "info": {
+  "name": "Nord Pool Market Data API",
+  "version": "v2"
+ },
+ "request": {
+  "auth": {
+   "type": "bearer",
+   "token": "{{bearerToken}}"
+  }
+ },
+ "items": [
+  {
+   "info": {
+    "name": "Auction",
+    "type": "folder"
+   },
+   "items": [
+    {
+     "info": {
+      "name": "Aggregated bidding curves",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/Auction/{market}/BidCurves/ByRegion?region={{region}}&date={{date}}"
+     },
+     "docs": "Returns aggregated bid curves for a date and region.\n \nAggregated bidding curves explains why the price forms as it does in a region for a market. If we plot aggregated supply and demand curves in the same chart, then the intersection of these two curves should happen on the realized price point.\n            \nSome regions contain multiple delivery areas. In this case, the intersection point will explain what the price would have been if no capacity constraint existed in between the sub-areas. Usually regions consisting of multiple delivery areas are aggregated if the amount of trading activity in the sub-areas is  small enough that it would reveal the trading strategy of the few traders active in the area. \n            \nThis endpoint returns aggregated bidding curve data for each delivery period for the queried CET date."
+    },
+    {
+     "info": {
+      "name": "ATC Capacities",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/Auction/Capacities/ByAreas?market={{market}}&areas={{areas}}&date={{date}}"
+     },
+     "docs": "ATC capacities constrains how much power can flow in between two areas. The matching algorithm takes these capacities into account when optimizing power flow from low price to high price areas. Note that for some regions in some markets, flow based capacity constraints are used instead or in combination with ATC capacities.\n            \nCapacities are given for each delivery period for the delivery date in question, and are separated into import and export capacities."
+    },
+    {
+     "info": {
+      "name": "Yearly ATC capacities",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/Auction/Capacities/Yearly/ByArea?market={{market}}&area={{area}}&year={{year}}"
+     },
+     "docs": "Returns a list of auction capacities for a market, year and one area."
+    },
+    {
+     "info": {
+      "name": "Flow-based Constraints",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/Auction/FlowBasedConstraints/ByDomain?market={{market}}&flowBasedDomain={{flowBasedDomain}}&date={{date}}"
+     },
+     "docs": "Returns a list of flow-based constraints per market, date and one domain\n            \nFlow-based capacity constraints represent limits on critical network elements in the power grid. Flow-based constraints are used in combination with ATC capacities to calculate flows inside of flow-based regions.\n            \nFlow-based capacity constraints are given per delivery period. Each period contains multiple constraints, and each constraint consists of:\n- **RAM (Remaining Available Margin)** - the available margin for the critical network element, which serves as an upper bound on the total consumption of this element by different bidding areas.\n - A list of **PTDFs (Power Transfer Distribution Factors**) for each Bidding Zone in the corresponding Flow-Based region. A PTDF indicates how much a bidding zone's Net-Position contributes to the load of the critical network element (limited by RAM).\n            \nTo see if a constraint is binding (or how close it is to being reached), multiply the Net-Position (NP) for each Bidding Zone by its respective PTDF. Then, sum the results of each multiplication. This must result in a value that is lower or equal to the RAM.\n            \nWhen the sum equals the RAM, the corresponding constraint (CNEC) is binding. This can be exemplified by the following formula:\n            \n`PTDF1 * NP1 + PTDF2 * NP2 + ... + PTDFn * NPn \u2264 RAM`\n            \nEuphemia ensures that these constraints will always be respected.\n            \nThe Net-Position of a Bidding Zone is defined as Total Export - Total Import for a Bidding Zone. In our data model, this is easiest gotten from the Flow model, and refers to -(totalNetPosition) for each delivery period and area."
+    },
+    {
+     "info": {
+      "name": "Auction Flows",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/Auction/Flows/ByAreas?market={{market}}&areas={{areas}}&date={{date}}"
+     },
+     "docs": "Returns a list of auction flows per area for a market, date and list of areas.\n            \nFlows are describing how much power are exchanged in between areas.\n            \nThis is the flow coming from Euphemia - note that in the Nordic region a post coupling calculation is done to adjust this flow. See Scheduled Physical Flows for Nordic Day-ahead flows after 30th of October 2024.\n            \nFlows are always described from an area point of view. Some flows will have a loss on the cable - imports in an area is always after losses, and exports are before losses."
+    },
+    {
+     "info": {
+      "name": "Yearly Auction Flows",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/Auction/Flows/Yearly/ByArea?market={{market}}&area={{area}}&year={{year}}"
+     },
+     "docs": "Returns a list of auction flows for a market, year and one area.\n            \nFlows are describing how much power are exchanged in between areas.\n            \nThis is the flow coming from Euphemia - note that in the Nordic region a post coupling calculation is done to adjust this flow. See Scheduled Physical Flows for Nordic Day-ahead flows after 30th of October 2024.\n            \nFlows are always described from an area point of view. Some flows will have a loss on the cable - imports in an area is always after losses, and exports are before losses."
+    },
+    {
+     "info": {
+      "name": "Auction Price Indices",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/Auction/PriceIndices/ByIndexNames?market={{market}}&indexNames={{indexNames}}&currency={{currency}}&date={{date}}&resolution={{resolution}}"
+     },
+     "docs": "Price indices are normalized prices for a set resolution, for one delivery area or a group of delivery areas.\n            \nIf official prices exists in a certain resolution, then official prices are used. If no centrally agreed official price exists for a resolution, then an average price is calculated.\n            \nNote that settlement is always done in the lowest trading resolution for the market and area, price indices are just an indication of what the average price would be in different resolutions."
+    },
+    {
+     "info": {
+      "name": "Yearly Auction Price Indices",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/Auction/PriceIndices/Yearly/ByIndexName?market={{market}}&indexName={{indexName}}&currency={{currency}}&year={{year}}&resolution={{resolution}}"
+     },
+     "docs": "Price indices are normalized prices for a set resolution, for one delivery area or a group of delivery areas.\n            \nIf official prices exists in a certain resolution, then official prices are used. If no centrally agreed official price exists for a resolution, then an average price is calculated.\n            \nNote that settlement is always done in the lowest trading resolution for the market and area, price indices are just an indication of what the average price would be in different resolutions."
+    },
+    {
+     "info": {
+      "name": "Auction Prices",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/Auction/Prices/ByAreas?market={{market}}&areas={{areas}}&currency={{currency}}&date={{date}}"
+     },
+     "docs": "Returns a list of auction prices for a market, currency, date and list of areas."
+    },
+    {
+     "info": {
+      "name": "Yearly Auction Prices",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/Auction/Prices/Yearly/ByArea?market={{market}}&area={{area}}&currency={{currency}}&year={{year}}"
+     },
+     "docs": "Returns a list of auction prices for a market, currency, year and one area."
+    },
+    {
+     "info": {
+      "name": "Auction Scheduled Physical Flows",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/Auction/ScheduledPhysicalFlows/ByAreas?market={{market}}&areas={{areas}}&date={{date}}"
+     },
+     "docs": "Scheduled physical flows are published for the day-ahead market after the Nordic Flow-based go-live on the 30th of October 2024.\n            \nScheduled physical flows are re-calculated flows for Nordic flow-based regions. The Nordic Flow-based implementation sometimes ends up breaching physical constraints in the power grid, and a post-coupling re-calculation is done and published to the JAO publication tool, which is the source of this data.\n            \nThe re-calculated flows should end up with every area having the same net position (+/- ~0.1MW) as the original flows coming from Euphemia, but internal flows inside the regions might be re-routed. \n            \nScheduled physical flows are the basis of what capacities are later released to intraday auctions as well as the intraday market. The need to re-calculate flows coming from Euphemia only exist in the Nordic flow-based regions. \n            \nScheduled physical flows are always described from an area point of view. Some flows will have a loss on the cable - imports in an area is always after losses, and exports are before losses."
+    },
+    {
+     "info": {
+      "name": "Yearly Scheduled Physical Flows",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/Auction/ScheduledPhysicalFlows/Yearly/ByArea?market={{market}}&area={{area}}&year={{year}}"
+     },
+     "docs": "Scheduled physical flows are published for the day-ahead market after the Nordic Flow-based go-live on the 30th of October 2024.\n            \nScheduled physical flows are re-calculated flows for Nordic flow-based regions. The Nordic Flow-based implementation sometimes ends up breaching physical constraints in the power grid, and a post-coupling re-calculation is done and published to the JAO publication tool, which is the source of this data.\n            \nThe re-calculated flows should end up with every area having the same net position (+/- ~0.1MW) as the original flows coming from Euphemia, but internal flows inside the regions might be re-routed. \n            \nScheduled physical flows are the basis of what capacities are later released to intraday auctions as well as the intraday market. The need to re-calculate flows coming from Euphemia only exist in the Nordic flow-based regions.\n            \nThis endpoint returns all scheduled physical flows for a year and area."
+    },
+    {
+     "info": {
+      "name": "Auction Volumes",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/Auction/Volumes/ByAreas?market={{market}}&areas={{areas}}&date={{date}}"
+     },
+     "docs": "Returns a list of auction volumes for a market, date and list of areas.\n            \nNote that this volume only reflect Nord Pool's part of the traded volume, not the market total volume."
+    },
+    {
+     "info": {
+      "name": "Yearly Auction Volumes",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/Auction/Volumes/Yearly/ByArea?market={{market}}&area={{area}}&year={{year}}"
+     },
+     "docs": "Returns a list of auction volumes for a market, year and one area.\n            \nNote that this volume only reflect Nord Pool's part of the traded volume, not the market total volume."
+    }
+   ]
+  },
+  {
+   "info": {
+    "name": "BalanceMarket",
+    "type": "folder"
+   },
+   "items": [
+    {
+     "info": {
+      "name": "Manual Frequency Restoration Reserves",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/BalanceMarket/ManualFrequencyRestorationReserves/ByAreas?areas={{areas}}&currency={{currency}}&date={{date}}"
+     },
+     "docs": "Returns a list of Manual Frequency Restoration Reserves (mFRR) for a date, currency and a list of areas."
+    },
+    {
+     "info": {
+      "name": "Yearly Manual Frequency Restoration Reserves",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/BalanceMarket/ManualFrequencyRestorationReserves/Yearly/ByArea?area={{area}}&currency={{currency}}&year={{year}}"
+     },
+     "docs": "Returns an annual summary of Manual Frequency Restoration Reserves (mFRR) for a year, currency and one area.\n            \n This yearly summary is updated in a rolling manner, and is updated daily."
+    }
+   ]
+  },
+  {
+   "info": {
+    "name": "ExchangeRate",
+    "type": "folder"
+   },
+   "items": [
+    {
+     "info": {
+      "name": "Exchange rates",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/ExchangeRate/Daily?date={{date}}"
+     },
+     "docs": "Returns the exchange rate used for a specific date."
+    },
+    {
+     "info": {
+      "name": "Yearly Exchange rates",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/ExchangeRate/Yearly?year={{year}}"
+     },
+     "docs": "Returns the exchange rates for a specific year."
+    }
+   ]
+  },
+  {
+   "info": {
+    "name": "Intraday",
+    "type": "folder"
+   },
+   "items": [
+    {
+     "info": {
+      "name": "Intraday Contract Statistics",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/Intraday/ContractStatistics/ByAreas?areas={{areas}}&date={{date}}"
+     },
+     "docs": "Returns intraday contract statistics for a date and a list of areas.\n            \nAll intraday trades where at least one leg (buy or/and sell) belongs to Nord Pool, Independent Bulgarian Energy Exchange (IBEX), Bursa Rom\u00e2n\u0103 de M\u0103rfuri S.A (BRM) or Elma Orkuvi\u00f0skipti (ELMA) and one leg belongs to queried area are included in the calculation of contract statistics. However, trades where both legs belong to other PXs are excluded from the statistics.\nThe calculation includes local and SIDC trades, as well as block trades and wash trades (trades where the same legal entity is on both the buy and sell sides). \n            \nIntraday contract statistics are updated every 15 minutes for open contracts spanning today, tomorrow, and day after tomorrow."
+    },
+    {
+     "info": {
+      "name": "Intraday Contract Total Statistics",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/Intraday/ContractStatistics/Total?date={{date}}"
+     },
+     "docs": "Returns total intraday contract statistics for a date.\n            \nAll intraday trades where at least one leg (buy or/and sell) belongs to Nord Pool, Independent Bulgarian Energy Exchange (IBEX) or Bursa Rom\u00e2n\u0103 de M\u0103rfuri S.A (BRM) and the currency is EUR are included in the calculation of contract statistics. However, trades where both legs belong to other PXs are excluded from the statistics. The calculation includes local and SIDC trades, as well as block trades and wash trades (trades where the same legal entity is on both the buy and sell sides).\n            \nIntraday contract statistics are updated every 15 minutes for open contracts spanning today, tomorrow, and day after tomorrow."
+    },
+    {
+     "info": {
+      "name": "Intraday Yearly Contract Statistics",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/Intraday/ContractStatistics/Yearly/ByArea?area={{area}}&year={{year}}"
+     },
+     "docs": "Returns intraday contract statistics for a year and one area.\n            \nAll intraday trades where at least one leg (buy or/and sell) belongs to Nord Pool, Independent Bulgarian Energy Exchange (IBEX), Bursa Rom\u00e2n\u0103 de M\u0103rfuri S.A (BRM) or Elma Orkuvi\u00f0skipti (ELMA) and one leg belongs to queried area are included in the calculation of contract statistics. However, trades where both legs belong to other PXs are excluded from the statistics. The calculation includes local and SIDC trades, as well as block trades and wash trades (trades where the same legal entity is on both the buy and sell sides). \n\nThis aggregate is updated once per day, and includes data up until yesterday (CET)."
+    },
+    {
+     "info": {
+      "name": "Intraday Yearly Total Contract Statistics",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/Intraday/ContractStatistics/Yearly/Total?year={{year}}"
+     },
+     "docs": "Returns all total intraday contract statistics for a year.\n            \nAll intraday trades where at least one leg (buy or/and sell) belongs to Nord Pool, Independent Bulgarian Energy Exchange (IBEX) or Bursa Rom\u00e2n\u0103 de M\u0103rfuri S.A (BRM) and the currency is EUR are included in the calculation of contract statistics. However, trades where both legs belong to other PXs are excluded from the statistics. The calculation includes local and SIDC trades, as well as block trades and wash trades (trades where the same legal entity is on both the buy and sell sides).\n\nThis aggregate is updated once per day, and includes data up until yesterday (CET)."
+    },
+    {
+     "info": {
+      "name": "Intraday Hourly Statistics",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/Intraday/HourlyStatistics/ByAreas?areas={{areas}}&date={{date}}"
+     },
+     "docs": "Returns intraday hourly statistics for a date and a list of areas.\n            \n Intraday hourly statistics provide a comprehensive overview of all trading activity for a specific delivery hour. These statistics are derived from the trade data available for the selected delivery hour.\n            \nAll intraday trades where at least one leg (buy or/and sell) belongs to Nord Pool, Independent Bulgarian Energy Exchange (IBEX), Bursa Rom\u00e2n\u0103 de M\u0103rfuri S.A (BRM) or Elma Orkuvi\u00f0skipti (ELMA) and one leg belongs to queried area are included in the calculation of hourly statistics. However, trades where both legs belong to other PXs are excluded from the statistics. The calculation includes local and SIDC trades, as well as block trades and wash trades (trades where the same legal entity is on both the buy and sell sides). \n            \nIntraday hourly statistics are updated every 15 minutes for open contracts spanning today, tomorrow, and day after tomorrow."
+    },
+    {
+     "info": {
+      "name": "Intraday Hourly Total Statistics",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/Intraday/HourlyStatistics/Total?date={{date}}"
+     },
+     "docs": "Returns total intraday hourly statistics for a date.\n            \nIntraday hourly statistics provide a comprehensive overview of all trading activity for a specific delivery hour across all areas. These statistics are derived from the trade data available for the selected delivery hour.\n            \nAll intraday trades where at least one leg (buy or/and sell) belongs to Nord Pool, Independent Bulgarian Energy Exchange (IBEX) or Bursa Rom\u00e2n\u0103 de M\u0103rfuri S.A (BRM) in trading currency EUR are included in the calculation of hourly statistics. However, trades where both legs belong to other PXs are excluded from the statistics. The calculation includes local and SIDC trades, as well as block trades and wash trades (trades where the same legal entity is on both the buy and sell sides). \n            \nIntraday hourly statistics are updated every 15 minutes for open contracts spanning today, tomorrow, and day after tomorrow."
+    },
+    {
+     "info": {
+      "name": "Intraday Yearly Hourly Statistics",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/Intraday/HourlyStatistics/Yearly/ByArea?area={{area}}&year={{year}}"
+     },
+     "docs": "Returns all intraday hourly statistics for a year and one area.\n            \nThis aggregate is updated once per day, and includes data up until yesterday (CET).\n            \nIntraday hourly statistics provide a comprehensive overview of all trading activity for a specific delivery hour. These statistics are derived from the trade data available for the selected delivery hour.\n            \nAll intraday trades where at least one leg (buy or/and sell) belongs to Nord Pool, Independent Bulgarian Energy Exchange (IBEX), Bursa Rom\u00e2n\u0103 de M\u0103rfuri S.A (BRM) or Elma Orkuvi\u00f0skipti (ELMA) and one leg belongs to queried area are included in the calculation of hourly statistics. However, trades where both legs belong to other PXs are excluded from the statistics. The calculation includes local and SIDC trades, as well as block trades and wash trades (trades where the same legal entity is on both the buy and sell sides)."
+    },
+    {
+     "info": {
+      "name": "Intraday Yearly Hourly Total Statistics",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/Intraday/HourlyStatistics/Yearly/Total?year={{year}}"
+     },
+     "docs": "Returns total intraday hourly statistics for a year.\n            \nThis aggregate is updated once per day, and includes data up until yesterday (CET).\n\n Intraday hourly statistics provide a comprehensive overview of all trading activity for a specific delivery hour across all areas. These statistics are derived from the trade data available for the selected delivery hour.\n            \nAll intraday trades where at least one leg (buy or/and sell) belongs to Nord Pool, Independent Bulgarian Energy Exchange (IBEX) or Bursa Rom\u00e2n\u0103 de M\u0103rfuri S.A (BRM) in trading currency EUR are included in the calculation of hourly statistics. However, trades where both legs belong to other PXs are excluded from the statistics. The calculation includes local and SIDC trades, as well as block trades and wash trades (trades where the same legal entity is on both the buy and sell sides)."
+    },
+    {
+     "info": {
+      "name": "Intraday Hub to Hub Capacities",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/Intraday/HubToHubCapacities/ByAreaFrom?areaFrom={{areaFrom}}&deliveryStart={{deliveryStart}}"
+     },
+     "docs": "Returns transmission capacity changes available between two areas, no matter the path through the power grid.\nIt's not a border/cable capacity but rather the sum of all available paths that power could flow.\nData is available with a delay of approximately 25 minutes.\n\n**Note**: The delivery start time must be provided in a full-hour format, such as 2025-03-01T**01:00:00**Z.\nProviding the delivery start time like 2025-03-01T**01:59:59**Z results in a bad request error,\nas hub to hub capacities are updated on an hourly basis and such inputs would not give meaningful responses."
+    },
+    {
+     "info": {
+      "name": "Intraday Order Book By Contract",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/Intraday/OrderBook/ByContractId?area={{area}}&deliveryDateUtc={{deliveryDateUtc}}&contractId={{contractId}}"
+     },
+     "docs": "Returns all intraday order book changes for the given contract and area, where the contract delivery start is within the given UTC date.\nThis data corresponds to the local view data type in the Intraday system.\n            \nOrder book data becomes available with a delay of 2\u20133 hours after the contract is closed. It contains event messages called revisions that come from XBID\nand/or NPM (Nord Pool Matcher). Each revision represents either:\n- A **delta** (\"isSnapshot\": false) that contains only the newly added or updated order information compared to previous revisions.\nFor example, if previous revision contains orders I1, I2, and I3, and new orders I4 and I5 are added, the delta revision will only contain I4 and I5.\n \n- A **snapshot** (\"isSnapshot\": true) that provides the full set of actual orders for the contract at current moment(e.g., I1 to I5).\nSnapshots may occur between delta revisions, for instance, when the connection to XBID is temporarily lost.\nIn such cases, previous revisions must be overwritten with the snapshot's data. Although rare, this scenario is possible.\n            \nRevisions are sequential but might be empty or occasionally duplicated.\n            \nEach non-empty revision consists of the buy and/or sell orders for the specified area. The order details include \norder id, price, volume, deleted flag, updated time and priority time. If an order is removed, the associated data will include \"deleted\": true and volume = 0."
+    },
+    {
+     "info": {
+      "name": "Intraday Available Order Book contracts",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/Intraday/OrderBook/ContractsIds/ByArea?area={{area}}&deliveryDateUtc={{deliveryDateUtc}}"
+     },
+     "docs": "Returns a list of contracts with available order books for a given UTC date and area.\nThe response includes details about each contract, such as its delivery period, opening and closing times, and whether it is a local contract."
+    },
+    {
+     "info": {
+      "name": "Intraday Order Revisions By Update Time",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/Intraday/OrderRevisions/ByUpdatedTime?area={{area}}&updatedTimeFrom={{updatedTimeFrom}}&updatedTimeTo={{updatedTimeTo}}"
+     },
+     "docs": "Returns intraday contracts with orders for a given area, where order revisions have an updated time in between updatedTimeFrom and updatedTimeTo.\nData is available with a delay of approximately 20 minutes.\n\n**Note**: The time difference between updatedTimeFrom and updatedTimeTo cannot exceed **4** hours.\nThis limitation was introduced for performance reasons to restrict the response size.\nDuring periods of high load on the system, responses may take longer than expected.\nIn such situations, it is recommended to query data in hourly intervals, for example\nupdatedTimeFrom=2025-04-01T**01:00:00**Z and updatedTimeTo=2025-04-01T**02:00:00**Z."
+    },
+    {
+     "info": {
+      "name": "Intraday Orders By Contract",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/Intraday/Orders/ByContractId?area={{area}}&deliveryStart={{deliveryStart}}&contractId={{contractId}}"
+     },
+     "docs": "Returns intraday orders for the given contract which starts at the given time for a given area.\nData is available with a delay of approximately 20 minutes."
+    },
+    {
+     "info": {
+      "name": "Intraday Orders By Delivery Time",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/Intraday/Orders/ByDeliveryStart?area={{area}}&deliveryStartFrom={{deliveryStartFrom}}&deliveryStartTo={{deliveryStartTo}}"
+     },
+     "docs": "Returns intraday contracts with orders for a given area, where the contract delivery start is within the deliveryStartFrom-deliveryStartTo time range.\nData is available with a delay of approximately 20 minutes.\n\n**Note**: The time difference between deliveryStartFrom and deliveryStartTo cannot exceed **4** hours.\nThis limitation was introduced for performance reasons to restrict the response size.\nDuring periods of high load on the system, responses may take longer than expected.\nIn such situations, it is recommended to query data in hourly intervals, for example\ndeliveryStartFrom=2025-04-01T**01:00:00**Z and deliveryStartTo=2025-04-01T**02:00:00**Z."
+    },
+    {
+     "info": {
+      "name": "Intraday Trades By Contract",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/Intraday/Trades/ByContractId?areas={{areas}}&deliveryStart={{deliveryStart}}&contractId={{contractId}}"
+     },
+     "docs": "Returns an intraday contract with trades for a delivery start time and contract id, where trades have at least one leg matching at least one of the provided areas. \n\nAll trades have at least one leg belongs to Nord Pool. However, trades where both legs belong to other PXs are excluded from the response. \n\nData is available with a delay of approximately 20 minutes."
+    },
+    {
+     "info": {
+      "name": "Intraday Trades By Delivery Time",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/Intraday/Trades/ByDeliveryStart?areas={{areas}}&deliveryStartFrom={{deliveryStartFrom}}&deliveryStartTo={{deliveryStartTo}}"
+     },
+     "docs": "Returns intraday contracts with trades, where the contract delivery start is within the deliveryStartFrom-deliveryStartTo time range and the trade has at least one leg in the provided areas. \n\nAll trades have at least one leg belongs to Nord Pool. However, trades where both legs belong to other PXs are excluded from the response. \n\nData is available with a delay of approximately 20 minutes.\n            \n**Note**: The time difference between deliveryStartFrom and deliveryStartTo cannot exceed **12** hours.\nThis limitation was introduced for performance reasons to restrict the response size.\nDuring periods of high load on the system, responses may take longer than expected.\nIn such situations, it is recommended to query data in hourly intervals, for example\ndeliveryStartFrom=2025-04-01T**01:00:00**Z and deliveryStartTo=2025-04-01T**02:00:00**Z."
+    },
+    {
+     "info": {
+      "name": "Intraday Trades By Trade Time",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/Intraday/Trades/ByTradeTime?areas={{areas}}&tradeTimeFrom={{tradeTimeFrom}}&tradeTimeTo={{tradeTimeTo}}"
+     },
+     "docs": "Returns intraday contracts with trades, where trades have a trade time in between tradeTimeFrom - tradeTimeTo and at least one leg in the provided areas. \n\nAll trades have at least one leg belongs to Nord Pool. However, trades where both legs belong to other PXs are excluded from the response. \n\nData is available with a delay of approximately 20 minutes.\n            \n**Note**: The time difference between tradeTimeFrom and tradeTimeTo cannot exceed **12** hours.\nThis limitation was introduced for performance reasons to restrict the response size.\nDuring periods of high load on the system, responses may take longer than expected.\nIn such situations, it is recommended to query data in hourly intervals, for example\ntradeTimeFrom=2025-04-01T**01:00:00**Z and tradeTimeTo=2025-04-01T**02:00:00**Z."
+    }
+   ]
+  },
+  {
+   "info": {
+    "name": "PowerSystem",
+    "type": "folder"
+   },
+   "items": [
+    {
+     "info": {
+      "name": "Clean Horizon Premium Storage Index - Delivered by Nord Pool",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/CleanHorizonStorageIndex/Daily/ByAreas?areas={{areas}}&month={{month}}"
+     },
+     "docs": "Returns a list of daily gross revenues of storage assets for a list of areas and month.\n\nDaily storage index provides information on how much money could a 1, 2, and 4-hour storage asset have earned in a given day. It contains details on each component of the revenue stack\n(day-ahead, intraday, FCR, aFRR, mFRR, etc)."
+    },
+    {
+     "info": {
+      "name": "Clean Horizon Storage Index - Delivered by Nord Pool",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/CleanHorizonStorageIndex/Monthly/ByAreas?areas={{areas}}"
+     },
+     "docs": "Returns a list of monthly gross revenues of storage assets for a list of areas.\n\nMonthly storage index provides information on how much money could a 1, 2, and 4-hour storage asset have earned in a given month.\nValues are calculated based on premium indexes by summing up daily total revenues for the month."
+    },
+    {
+     "info": {
+      "name": "Consumption Forecasts",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/PowerSystem/ConsumptionForecasts/ByAreas?areas={{areas}}&date={{date}}"
+     },
+     "docs": "Returns a list of consumption forecasts for a date and a list of areas.\n            \nConsumption forecasts tells how much electricity is expected to be consumed / used in an area and delivery period. \n            \nThis corresponds to the \"Total Load / Day-Ahead\" data type in the Entso-e Transparency Platform."
+    },
+    {
+     "info": {
+      "name": "Consumption Forecasts By Location",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/PowerSystem/ConsumptionForecasts/ByLocations?locations={{locations}}&date={{date}}"
+     },
+     "docs": "Returns a list of consumption forecasts for a date and a list of locations.\n            \nConsumption forecasts tells how much electricity is expected to be consumed / used in an area and delivery period. Consumption forecasts by Location aggregates delivery area values into country or region values."
+    },
+    {
+     "info": {
+      "name": "Consumption",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/PowerSystem/Consumptions/ByAreas?areas={{areas}}&date={{date}}"
+     },
+     "docs": "Returns a list of consumptions for a date and a list of areas.\n            \nConsumption tells how much electricity is being consumed / used in an area and delivery period. \n            \nThis corresponds to the \"Total Load / Actual\" data type in the Entso-e Transparency Platform."
+    },
+    {
+     "info": {
+      "name": "Consumption By Location",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/PowerSystem/Consumptions/ByLocations?locations={{locations}}&date={{date}}"
+     },
+     "docs": "Returns a list of consumptions for a date and a list of locations.\n            \nConsumption tells how much electricity is being consumed / used in an area and delivery period. Consumption by location aggregates delivery area consumption value into country or region values."
+    },
+    {
+     "info": {
+      "name": "Yearly Consumption",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/PowerSystem/Consumptions/Yearly/ByArea?area={{area}}&year={{year}}"
+     },
+     "docs": "Returns a list of consumptions for a year and one area.\n            \nConsumption tells how much electricity is being consumed / used in an area and delivery period. \n            \nThis corresponds to the \"Total Load / Actual\" data type in the Entso-e Transparency Platform.\n            \n This yearly summary is updated in a rolling manner, and is updated daily."
+    },
+    {
+     "info": {
+      "name": "Yearly Consumption by Location",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/PowerSystem/Consumptions/Yearly/ByLocation?location={{location}}&year={{year}}"
+     },
+     "docs": "Returns a list of consumptions for a year and one location.\n\nConsumption tells how much electricity is being consumed / used in an area and delivery period. Consumption by location aggregates delivery area consumption value into country or region values. \n            \n This yearly summary is updated in a rolling manner, and is updated daily."
+    },
+    {
+     "info": {
+      "name": "Exchange",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/PowerSystem/Exchanges/ByAreas?areas={{areas}}&date={{date}}"
+     },
+     "docs": "Returns a list of exchanges for a date and a list of areas.\n            \nExchange tells how much electricity has been importer or exported for an area and delivery period. This is the actual measured flow.\n            \nThis corresponds to the \"Physical Flows\" data type in the Entso-e Transparency Platform."
+    },
+    {
+     "info": {
+      "name": "Yearly Exchange",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/PowerSystem/Exchanges/Yearly/ByArea?area={{area}}&year={{year}}"
+     },
+     "docs": "Returns an annual summary of exchanges for a year and one area.\n            \nExchange tells how much electricity has been importer or exported for an area and delivery period. This is the actual measured flow.\n            \nThis corresponds to the \"Physical Flows\" data type in the Entso-e Transparency Platform."
+    },
+    {
+     "info": {
+      "name": "Hydro Reservoir Reserves",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/PowerSystem/HydroReservoirReserves/ByAreas?areas={{areas}}&year={{year}}"
+     },
+     "docs": "Returns a list of weekly hydro reservoir values for a year and a list of areas."
+    },
+    {
+     "info": {
+      "name": "Production Forecasts",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/PowerSystem/ProductionForecasts/ByAreas?areas={{areas}}&date={{date}}"
+     },
+     "docs": "Returns a list of production forecasts for a date and a list of areas.\n            \nThis data type aggregates data from the \"Generation Forecasts for Wind and Solar\" and \"Generation Forecast - Day ahead\" views, from the Transparency Platform."
+    },
+    {
+     "info": {
+      "name": "Production Forecasts by Location",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/PowerSystem/ProductionForecasts/ByLocations?locations={{locations}}&date={{date}}"
+     },
+     "docs": "Returns a list of production forecasts by locations for a date and a list of locations.\n            \nProduction Forecast by Location aggregates delivery area Production Forecast values into country or region values."
+    },
+    {
+     "info": {
+      "name": "Production",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/PowerSystem/Productions/ByAreas?areas={{areas}}&date={{date}}"
+     },
+     "docs": "Returns a list of productions for a date and a list of areas.\n            \nProduction tells how much electricity is being produced in an area and delivery period for each production type. \n            \nThis corresponds to the \"Actual Generation per Production Type\" data type in the Entso-e Transparency Platform."
+    },
+    {
+     "info": {
+      "name": "Production By Location",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/PowerSystem/Productions/ByLocations?locations={{locations}}&date={{date}}"
+     },
+     "docs": "Returns a list of productions for a date and a list of locations.\n            \nProduction tells how much electricity is being produced in an area and delivery period for each production type. Production by location aggregates delivery area production value into country or region values."
+    },
+    {
+     "info": {
+      "name": "Yearly Production",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/PowerSystem/Productions/Yearly/ByArea?area={{area}}&year={{year}}"
+     },
+     "docs": "Returns a list of productions for a year and one area.\n\nProduction tells how much electricity is being produced in an area and delivery period for each production type. \n            \nThis corresponds to the \"Actual Generation per Production Type\" data type in the Entso-e Transparency Platform."
+    },
+    {
+     "info": {
+      "name": "Yearly Production By Location",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/PowerSystem/Productions/Yearly/ByLocation?location={{location}}&year={{year}}"
+     },
+     "docs": "Returns a list of productions for a year and one location.\n            \nProduction tells how much electricity is being produced in an area and delivery period for each production type. Production by location aggregates delivery area production value into country or region values."
+    }
+   ]
+  },
+  {
+   "info": {
+    "name": "PriceCurves",
+    "type": "folder"
+   },
+   "items": [
+    {
+     "info": {
+      "name": "N2EX Price Curves",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/Auction/N2EX_DayAhead/PriceCurves/UK?date={{date}}"
+     },
+     "docs": "Returns the N2EX UK price curve data for a given date.\n            \nThese price curves only contain order information for what is happening in the UK delivery area. No price curve information is available for the coupled NO2 area, since the trading activity in NO2 is small."
+    }
+   ]
+  },
+  {
+   "info": {
+    "name": "System",
+    "type": "folder"
+   },
+   "items": [
+    {
+     "info": {
+      "name": "System Price",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/System/Price?currency={{currency}}&date={{date}}"
+     },
+     "docs": "Returns the system price for a delivery date and currency.\n            \nSystem price is an artificial index price based on orders from the Day-ahead auction. The system price is calculating a single price for the Nordic region (Sweden, Finland, Norway, Denmark) based on orders from all power exchanges in the Nordics. Import and export flows from other regions are set to the same as the Day-ahead auction outcome. All capacity constraints are removed within the Nordic region, and a single price is gotten by matching all orders from the Nordic region."
+    },
+    {
+     "info": {
+      "name": "Yearly System Price",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/System/Price/Yearly?currency={{currency}}&year={{year}}"
+     },
+     "docs": "Returns system prices for a year and currency\n            \nSystem price is an artificial index price based on orders from the Day-ahead auction. The system price is calculating a single price for the Nordic region (Sweden, Finland, Norway, Denmark) based on orders from all power exchanges in the Nordics. Import and export flows from other regions are set to the same as the Day-ahead auction outcome. All capacity constraints are removed within the Nordic region, and a single price is gotten by matching all orders from the Nordic region."
+    },
+    {
+     "info": {
+      "name": "System Turnover",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/System/Turnover?date={{date}}"
+     },
+     "docs": "Returns the system turnover volume for a date.\n            \nSystem turnover refers to the total purchase volume that comes from the system price calculation across the whole Nordic region."
+    },
+    {
+     "info": {
+      "name": "Yearly System Turnover",
+      "type": "http"
+     },
+     "http": {
+      "method": "GET",
+      "url": "https://data-api.nordpoolgroup.com/api/v2/System/Turnover/Yearly?year={{year}}"
+     },
+     "docs": "Returns system turnover volumes for a year\n            \nSystem turnover refers to the total purchase volume that comes from the system price calculation across the whole Nordic region."
+    }
+   ]
+  }
+ ]
+}

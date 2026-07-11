@@ -1,0 +1,75 @@
+specification: API Commons Rate Limits
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/RateLimits
+provider: Nord Pool
+providerId: nordpool
+created: '2026-07-11'
+modified: '2026-07-11'
+reconciled: false
+tags:
+- Day-Ahead Prices
+- Electricity
+- Energy Markets
+- Power Exchange
+- Rate Limiting
+- Quotas
+description: >-
+  Nord Pool does not publish fixed numeric rate limits for the Market Data API
+  in its public OpenAPI definition or marketing pages. Access is gated
+  commercially rather than by request-rate tiers - each Power Data Services
+  subscription includes one OAuth 2.0 API account (additional accounts EUR 350
+  per year), and the scope of data returned is bounded by the packages
+  purchased (for example, the day-ahead-price-only package limits history to
+  the last 8 days). The Intraday Trading API is governed by STOMP heartbeat
+  requirements and per-member onboarding rather than published request caps.
+  The unofficial public Data Portal API has no published limits but is served
+  behind CDN protection that blocks non-browser clients without proper
+  headers, and should be polled gently.
+notes: >-
+  Numeric per-account or per-endpoint limits are not documented publicly as of
+  the review date; developer-portal FAQ pages (developers.nordpoolgroup.com)
+  sit behind bot protection and may state operational limits to registered
+  users. Confirm any throughput expectations with Nord Pool during
+  onboarding.
+sources:
+- https://data-api.nordpoolgroup.com/index.html
+- https://www.nordpoolgroup.com/en/services/power-market-data-services/
+- https://www.nordpoolgroup.com/en/trading/api/
+responseCodes:
+  throttled: 429
+limits:
+- name: Market Data API Requests
+  scope: account
+  metric: requests
+  limit: not published
+  notes: No numeric request-rate limit appears in the published OpenAPI definition.
+- name: API Accounts per Subscription
+  scope: subscription
+  metric: accounts
+  limit: 1 included
+  notes: One OAuth API account included per customer across all subscriptions; additional accounts cost EUR 350 per year.
+- name: Data Scope
+  scope: subscription
+  metric: history
+  limit: per package
+  notes: Data coverage and history depth (for example 8 days on price-only packages, back to 1992 on full packages) are set by the purchased package, not by request quotas.
+- name: Intraday Trading API Sessions
+  scope: member
+  metric: connections
+  limit: per onboarding
+  notes: WebSocket/STOMP sessions require member credentials from idapi@nordpoolgroup.com; heartbeats must be maintained and access tokens refreshed on live connections.
+- name: Public Data Portal API
+  scope: anonymous
+  metric: requests
+  limit: not published
+  notes: Unofficial endpoint with no stated quota; aggressive polling risks being blocked. Prices publish once daily around 13:00 CET, so more than a few requests per day is rarely useful.
+policies:
+- name: Commercial Gating
+  description: Access control is primarily commercial (annual data fees and trading membership) rather than technical request-rate tiers.
+- name: Backoff Strategy
+  description: Clients should implement exponential backoff with jitter and honor any Retry-After headers on 429 or 5xx responses.
+- name: Publication Cadence
+  description: Day-ahead auction results are published once per day after the market coupling session completes; schedule fetches to the publication window instead of continuous polling.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

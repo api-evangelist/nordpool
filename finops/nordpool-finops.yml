@@ -1,0 +1,103 @@
+specification: FinOps Framework
+specificationVersion: '1.0'
+schema: https://www.finops.org/framework/
+provider: Nord Pool
+providerId: nordpool
+created: '2026-07-11'
+modified: '2026-07-11'
+reconciled: true
+tags:
+- Day-Ahead Prices
+- Electricity
+- Energy Markets
+- Power Exchange
+- FinOps
+- Cost Management
+- FOCUS
+description: >-
+  FinOps view of Nord Pool spend. Unlike usage-metered API vendors, Nord Pool
+  charges flat annual data fees per region package for Market Data API access
+  (published day-ahead packages roughly EUR 1,250 to 4,100 per year, price-only
+  packages EUR 1,200 to 3,300 per year, bidding curves EUR 430 to 1,650 per
+  year), plus EUR 350 per year per additional API account and redistribution
+  licenses from EUR 3,500 to 5,500 per year where data is passed on to third
+  parties. The Data Portal web platform is a separate seat-tiered annual
+  subscription (EUR 1,200 to 9,000). Trading APIs carry no API fee for members
+  - their cost center is trading membership, clearing, and settlement. Costs
+  are therefore driven by which regions, data scopes, and seats you subscribe
+  to, not by request volume.
+notes: >-
+  All fees per calendar year, excluding VAT, as published 2026-07-11. The main
+  optimization levers are subscribing only to needed region packages, sharing
+  the single included API account, avoiding redistribution-triggering use, and
+  using the free (unofficial, no-SLA) public Data Portal endpoint for simple
+  published day-ahead price lookups where contractual data quality is not
+  required. Special terms exist for trading members, students, researchers,
+  and academics.
+sources:
+- https://www.nordpoolgroup.com/en/services/power-market-data-services/day-ahead-market-data/
+- https://www.nordpoolgroup.com/en/services/power-market-data-services/dataportalregistration/
+- https://www.nordpoolgroup.com/en/trading/api/
+- https://focus.finops.org/focus-specification/v1-3/
+alignedWith:
+  framework: FinOps Foundation Framework
+  frameworkUrl: https://www.finops.org/framework/
+  dataSpec: FOCUS
+  dataSpecVersion: '1.3'
+  dataSpecUrl: https://focus.finops.org/focus-specification/v1-3/
+publisherName: Nord Pool
+serviceCategory: Market Data and Financial Services
+billingModel:
+  pricingCategory: Subscription
+  billingFrequency: Annual
+  billingCurrency: EUR
+  chargeCategories:
+  - Purchase
+  - Adjustment
+focusColumns:
+  ServiceName: Nord Pool Power Data Services
+  ServiceCategory: Market Data and Financial Services
+  ProviderName: Nord Pool
+  PublisherName: Nord Pool
+  InvoiceIssuerName: Nord Pool AS
+  BillingCurrency: EUR
+  ChargeCategory: Purchase
+  PricingCategory: Committed
+meters:
+- name: region_data_packages
+  description: Annual data fee per subscribed region/scope package (day-ahead, intraday, operating, regulating, bidding curves).
+  unit: subscriptions
+  aggregation: sum
+  dimensions:
+  - region
+  - dataScope
+- name: api_accounts
+  description: OAuth API accounts beyond the one included per customer, at EUR 350 per year each.
+  unit: accounts
+  aggregation: sum
+  dimensions:
+  - team
+- name: redistribution_licenses
+  description: Licenses required when Nord Pool data is redistributed to third parties, from EUR 3,500 to 5,500 per year.
+  unit: licenses
+  aggregation: sum
+  dimensions:
+  - useCase
+- name: data_portal_seats
+  description: Data Portal web subscription tier (SOLO through ENTERPRISE PRO) by seat count.
+  unit: seats
+  aggregation: max
+  dimensions:
+  - tier
+principles:
+- name: Visibility
+  description: Inventory which region packages, API accounts, and Data Portal seats are active and which teams consume each data feed.
+- name: Allocation
+  description: Map each region package and additional API account to the trading, analytics, or retail team that requested it.
+- name: Optimization
+  description: Subscribe only to regions actually traded or analyzed; use price-only packages where volumes and flows are not needed; consider the free public endpoint for non-contractual day-ahead price display.
+- name: Accountability
+  description: Review the annual renewal against actual usage of each feed before the calendar-year billing cycle; fees are committed for the year once purchased.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

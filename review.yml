@@ -1,0 +1,102 @@
+aid: nordpool
+name: Nord Pool
+review:
+  question: Does Nord Pool expose a documented public WebSocket API?
+  answer: true
+  date: '2026-07-11'
+  reviewer: API Evangelist
+  asyncapiSpecCreated: true
+  asyncapiScopeNote: |
+    An AsyncAPI 2.6 document was created at
+    asyncapi/nordpool-intraday-asyncapi.yml describing the Intraday Trading
+    API's WebSocket/STOMP surface. The transport facts (secure WebSocket on
+    port 443 carrying STOMP, parallel Market Data and Trading connections,
+    heartbeats, SSO token refresh) are confirmed from Nord Pool's public
+    GitHub repositories; exact hosts are issued per environment at
+    onboarding and channel names are representative, so the document is
+    flagged as modeled throughout.
+findings:
+  summary: |
+    Yes - with an access caveat. Nord Pool's Intraday Trading API is a
+    genuine WebSocket API: clients open secure WebSocket connections (port
+    443) and communicate via STOMP with two parallel services, a Market
+    Data web service (contracts, order books / local views, capacities,
+    tickers) and a Trading web service (order entry and private execution
+    reports). Nord Pool publishes the client libraries and working example
+    code openly on GitHub (NordPool/public-intraday-api and
+    public-intraday-api-example, Java and .NET), and documents the API on
+    its developer portal. A newer Intraday Binary PMD v2 market-data feed
+    also runs over WebSockets using Protocol Buffers
+    (NordPool/public-intraday-api-net-example). The caveat: while the
+    documentation and example code are public, live credentials and
+    environment hosts are only issued to onboarded Nord Pool trading
+    customers (via idapi@nordpoolgroup.com), so the WebSocket API is
+    publicly documented but member-gated in access. The Market Data API
+    (data-api.nordpoolgroup.com) and the unofficial Data Portal API are
+    plain HTTPS REST with no WebSocket or SSE surface.
+  transports:
+    - protocol: WebSocket (STOMP)
+      scheme: wss
+      documented: true
+      note: Intraday Trading API - STOMP over secure WebSocket on port 443, parallel Market Data and Trading services; documented on the developer portal with open-source Java/.NET examples, but credentials and hosts are issued only to trading customers.
+    - protocol: WebSocket (Protocol Buffers)
+      scheme: wss
+      documented: true
+      note: Intraday Binary PMD v2 market-data feed over WebSockets using protobuf, per the NordPool/public-intraday-api-net-example repository.
+    - protocol: REST
+      scheme: https
+      baseURL: https://data-api.nordpoolgroup.com
+      documented: true
+      note: Market Data API v2 - OAuth 2.0 (sts.nordpoolgroup.com), published OpenAPI 3.0.4 definition with 57 GET operations; data access requires a paid Power Data Services subscription.
+    - protocol: REST
+      scheme: https
+      baseURL: https://dataportal-api.nordpoolgroup.com
+      documented: false
+      note: Unofficial, unauthenticated JSON API behind the public data.nordpoolgroup.com site; verified returning live day-ahead prices on 2026-07-11 but not officially documented and no SLA.
+    - protocol: REST
+      scheme: https
+      documented: true
+      note: Auction API for day-ahead trading - JSON REST for order entry and trade capture, members only; starter kit at NordPool/AuctionApi-StarterKit.
+  endpointsConfirmedRest:
+    - GET https://data-api.nordpoolgroup.com/api/v2/Auction/Prices/ByAreas
+    - GET https://data-api.nordpoolgroup.com/api/v2/Auction/Prices/Yearly/ByArea
+    - GET https://data-api.nordpoolgroup.com/api/v2/Auction/PriceIndices/ByIndexNames
+    - GET https://data-api.nordpoolgroup.com/api/v2/Auction/Volumes/ByAreas
+    - GET https://data-api.nordpoolgroup.com/api/v2/Auction/Capacities/ByAreas
+    - GET https://data-api.nordpoolgroup.com/api/v2/Auction/Flows/ByAreas
+    - GET https://data-api.nordpoolgroup.com/api/v2/Intraday/HourlyStatistics/ByAreas
+    - GET https://data-api.nordpoolgroup.com/api/v2/Intraday/Trades/ByTradeTime
+    - GET https://data-api.nordpoolgroup.com/api/v2/PowerSystem/Productions/ByAreas
+    - GET https://data-api.nordpoolgroup.com/api/v2/PowerSystem/Consumptions/ByAreas
+    - GET https://data-api.nordpoolgroup.com/api/v2/System/Price
+    - GET https://data-api.nordpoolgroup.com/api/v2/ExchangeRate/Daily
+    - GET https://dataportal-api.nordpoolgroup.com/api/DayAheadPrices (unofficial, verified live 2026-07-11)
+    - GET https://dataportal-api.nordpoolgroup.com/api/DayAheadPriceIndices (unofficial, verified live 2026-07-11)
+sources:
+  - url: https://data-api.nordpoolgroup.com/swagger/v2/swagger.json
+    type: OpenAPI
+    note: Provider-published OpenAPI 3.0.4 definition for the Market Data API v2 (57 paths, OAuth 2.0 via sts.nordpoolgroup.com); retrieved 2026-07-11.
+  - url: https://github.com/NordPool/public-intraday-api-example
+    type: GitHubRepository
+    note: Official Java example confirming STOMP over secure WebSocket (port 443) with parallel Market Data and Trading connections, heartbeats, and token refresh.
+  - url: https://github.com/NordPool/public-intraday-api
+    type: GitHubRepository
+    note: Official data-transfer-object library for the Intraday Trading API; points to developers.nordpoolgroup.com/v1.0/docs/id-introduction for full documentation.
+  - url: https://www.nordpoolgroup.com/en/trading/api/
+    type: Documentation
+    note: Lists Nord Pool's API portfolio (Intraday, Day Ahead, REMIT, Clearing, Market Data, REMIT UMM); trading APIs free for customers only.
+  - url: https://www.nordpoolgroup.com/en/services/power-market-data-services/day-ahead-market-data/
+    type: Plans
+    note: Published annual data fees for day-ahead market data packages and aggregated bidding curves.
+actions:
+  asyncapiPath: asyncapi/nordpool-intraday-asyncapi.yml
+  apisYmlUpdated: true
+  reason: |
+    A documented public WebSocket surface exists (Intraday Trading API,
+    STOMP over wss on port 443, plus a protobuf binary market-data feed),
+    so the answer is true and an AsyncAPI 2.6 document was authored for it.
+    Because hosts are environment-specific and issued at onboarding, and
+    exact channel names are not verifiable without member credentials, the
+    AsyncAPI uses placeholder hosts and representative channels and is
+    labeled as modeled throughout - the transport itself is never
+    misrepresented.

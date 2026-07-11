@@ -1,0 +1,180 @@
+aid: nordpool
+url: https://raw.githubusercontent.com/api-evangelist/nordpool/refs/heads/main/apis.yml
+name: Nord Pool
+kind: company
+description: Nord Pool, part of the Euronext group, operates Europe's leading power
+  exchange, running day-ahead auctions and continuous intraday electricity markets
+  across the Nordics, Baltics, Central Western Europe, and the UK. Its Market Data
+  API delivers day-ahead prices, kWh-level electricity rates by bidding area, volumes,
+  capacities, flows, and power system data, while WebSocket and REST trading APIs
+  serve exchange members.
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+tags:
+- Day-Ahead Prices
+- Electricity
+- Energy Markets
+- Power Exchange
+- Intraday Trading
+- Market Data
+- Europe
+created: '2026-07-11'
+modified: '2026-07-11'
+specificationVersion: '0.19'
+apis:
+- aid: nordpool:nordpool-day-ahead-prices-api
+  name: Nord Pool Day-Ahead Prices API
+  tags:
+  - Day-Ahead Prices
+  - Electricity Prices
+  - Auctions
+  - Bidding Curves
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://www.nordpoolgroup.com/en/services/power-market-data-services/day-ahead-market-data/
+  baseURL: https://data-api.nordpoolgroup.com
+  properties:
+  - url: https://www.nordpoolgroup.com/en/services/power-market-data-services/day-ahead-market-data/
+    type: Documentation
+  - url: https://data-api.nordpoolgroup.com/index.html
+    type: APIReference
+  - url: openapi/nordpool-market-data-openapi.yml
+    type: OpenAPI
+  description: Day-ahead auction results from the Market Data API v2 - official
+    day-ahead electricity prices per bidding area in 15-minute Market Time Unit
+    resolution, price indices, buy and sell volumes, ATC capacities, flows,
+    scheduled physical flows, flow-based constraints, and aggregated bidding
+    curves, with history back to 1992. OAuth 2.0 secured; requires a paid Power
+    Data Services subscription.
+- aid: nordpool:nordpool-intraday-market-data-api
+  name: Nord Pool Intraday Market Data API
+  tags:
+  - Intraday
+  - Electricity
+  - Orders
+  - Trades
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://www.nordpoolgroup.com/en/services/power-market-data-services/intraday-market-data/
+  baseURL: https://data-api.nordpoolgroup.com
+  properties:
+  - url: https://www.nordpoolgroup.com/en/services/power-market-data-services/intraday-market-data/
+    type: Documentation
+  - url: https://data-api.nordpoolgroup.com/index.html
+    type: APIReference
+  - url: openapi/nordpool-market-data-openapi.yml
+    type: OpenAPI
+  description: Intraday continuous market data from the Market Data API v2 -
+    hourly and per-contract statistics, orders and order revisions, trades by
+    contract, delivery start, or trade time, order books, and hub-to-hub
+    capacities. OAuth 2.0 secured; requires a paid Power Data Services
+    subscription.
+- aid: nordpool:nordpool-power-system-data-api
+  name: Nord Pool Power System Data API
+  tags:
+  - Power System
+  - Production
+  - Consumption
+  - Balancing
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://www.nordpoolgroup.com/en/services/power-market-data-services/
+  baseURL: https://data-api.nordpoolgroup.com
+  properties:
+  - url: https://www.nordpoolgroup.com/en/services/power-market-data-services/
+    type: Documentation
+  - url: https://data-api.nordpoolgroup.com/index.html
+    type: APIReference
+  - url: openapi/nordpool-market-data-openapi.yml
+    type: OpenAPI
+  description: Operational power system data from the Market Data API v2 -
+    production and consumption with forecasts by area and location, exchanges
+    between areas, hydro reservoir reserves, balance market (mFRR) data, system
+    price and turnover, daily exchange rates, and the Clean Horizon storage
+    index. OAuth 2.0 secured; requires a paid Power Data Services subscription.
+- aid: nordpool:nordpool-public-data-portal-api
+  name: Nord Pool Public Data Portal API
+  tags:
+  - Day-Ahead Prices
+  - Free
+  - Electricity Prices
+  - Data Portal
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://data.nordpoolgroup.com/
+  baseURL: https://dataportal-api.nordpoolgroup.com
+  properties:
+  - url: https://data.nordpoolgroup.com/
+    type: Portal
+  - url: openapi/nordpool-data-portal-openapi.yml
+    type: OpenAPI
+  description: The free, unauthenticated JSON API behind Nord Pool's public Data
+    Portal website, returning published day-ahead prices and price indices per
+    delivery area in 15-minute resolution. Verified live on 2026-07-11, and
+    widely used by open-source integrations such as Home Assistant, but it is
+    not part of the officially documented developer offering and carries no SLA
+    - endpoints in the referenced OpenAPI are modeled from observed responses.
+- aid: nordpool:nordpool-intraday-trading-api
+  name: Nord Pool Intraday Trading API
+  tags:
+  - Intraday Trading
+  - WebSocket
+  - STOMP
+  - Order Entry
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://developers.nordpoolgroup.com/v1.0/docs/id-introduction
+  baseURL: https://www.nordpoolgroup.com/en/trading/api/
+  properties:
+  - url: https://developers.nordpoolgroup.com/v1.0/docs/id-introduction
+    type: Documentation
+  - url: https://github.com/NordPool/public-intraday-api
+    type: GitHubRepository
+  - url: https://github.com/NordPool/public-intraday-api-example
+    type: GitHubRepository
+  - url: asyncapi/nordpool-intraday-asyncapi.yml
+    type: AsyncAPI
+  description: WebSocket API for continuous intraday power trading - clients
+    speak STOMP over secure WebSocket (port 443) to parallel Market Data and
+    Trading services for streaming contracts, order books, and capacities, and
+    for order entry and private execution reports. A newer binary PMD v2 feed
+    uses Protocol Buffers over WebSockets. Free to use but only for onboarded
+    Nord Pool trading customers; channel names in the AsyncAPI are modeled from
+    public GitHub examples.
+- aid: nordpool:nordpool-auction-trading-api
+  name: Nord Pool Auction API
+  tags:
+  - Day-Ahead Trading
+  - Auctions
+  - Order Entry
+  - Trade Capture
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://www.nordpoolgroup.com/en/trading/api/
+  baseURL: https://www.nordpoolgroup.com/en/trading/api/
+  properties:
+  - url: https://support.nordpoolgroup.com/support/solutions/articles/8000088508-faq-auction-api
+    type: Documentation
+  - url: https://github.com/NordPool/AuctionApi-StarterKit
+    type: GitHubRepository
+  description: JSON REST API for day-ahead auction trading - integrated order
+    submission and trade capture across the Nordic and Baltic auctions, CWE
+    auctions, Poland, the GB Half Hourly Auction, and SEM-GB intraday auctions,
+    with test systems available. Free to use but restricted to Nord Pool
+    trading members; endpoints are not publicly documented, so no OpenAPI is
+    modeled here.
+common:
+- type: OAuthScopes
+  url: scopes/nordpool-scopes.yml
+- type: Website
+  url: https://www.nordpoolgroup.com/
+- type: Portal
+  url: https://developers.nordpoolgroup.com/
+- type: LinkedIn
+  url: https://www.linkedin.com/company/nord-pool
+- type: GitHubOrganization
+  url: https://github.com/NordPool
+- type: Documentation
+  url: https://www.nordpoolgroup.com/en/trading/api/
+- type: Plans
+  url: plans/nordpool-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/nordpool-rate-limits.yml
+- type: FinOps
+  url: finops/nordpool-finops.yml
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

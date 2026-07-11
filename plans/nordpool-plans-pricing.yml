@@ -1,0 +1,262 @@
+specification: API Commons Plans
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/Plans
+provider: Nord Pool
+providerId: nordpool
+created: '2026-07-11'
+modified: '2026-07-11'
+reconciled: true
+tags:
+- Day-Ahead Prices
+- Electricity
+- Energy Markets
+- Power Exchange
+- Market Data
+- Plans
+description: >-
+  Nord Pool has three distinct access models. (1) Power Data Services - the
+  Market Data API (data-api.nordpoolgroup.com) is sold as annual per-region
+  data-fee subscriptions, each including one API account; published day-ahead
+  packages range from about EUR 1,250 to EUR 4,100 per year depending on
+  region and scope, with a day-ahead-price-only package (8 days of history) at
+  EUR 3,300 per year for the Nordics and Baltics, additional API accounts at
+  EUR 350 per year, and redistribution licenses from EUR 3,500 to 5,500 per
+  year. Aggregated Bidding Curves packages run EUR 430 to 1,650 per year. The
+  Data Portal web platform is a separate subscription (SOLO EUR 1,200 to
+  ENTERPRISE EUR 9,000 per year). (2) Trading APIs (Intraday WebSocket/STOMP,
+  Auction REST, Clearing, REMIT) are free of charge but only available to
+  onboarded Nord Pool trading customers. (3) The unauthenticated Data Portal
+  backend API serving published day-ahead prices is free but unofficial and
+  carries no SLA.
+notes: >-
+  Fees quoted from the public Nord Pool Day-Ahead Auctions and Data Portal
+  pages on 2026-07-11; all fees are per calendar year and exclude VAT. The
+  pricing page presents fees per region/country package (Nordics and Baltics,
+  CWE, UK, individual countries) - entries below are representative packages,
+  so confirm the exact package matrix and current rates with Nord Pool data
+  sales before purchase. Special terms apply to trading members, students,
+  researchers, and academics.
+sources:
+- https://www.nordpoolgroup.com/en/services/power-market-data-services/
+- https://www.nordpoolgroup.com/en/services/power-market-data-services/day-ahead-market-data/
+- https://www.nordpoolgroup.com/en/services/power-market-data-services/dataportalregistration/
+- https://www.nordpoolgroup.com/en/trading/api/
+plans:
+- id: nordpool-day-ahead-market-data
+  name: Day-Ahead Market Data (per region, annual data fee)
+  type: subscription
+  description: >-
+    Annual Market Data API subscription for day-ahead auction data - prices,
+    buy and sell volumes, capacities, and flows - priced per region package,
+    each including one API account usable across all of a customer's
+    subscriptions.
+  entries:
+  - label: Nordics and Baltics - Day-Ahead Market
+    name: nordics_baltics_day_ahead
+    type: flat
+    metric: subscription
+    limit: -1
+    timeFrame: year
+    geo: nordics-baltics
+    unit: 1
+    price: EUR 4,100 per year (1 API account included)
+    userMultiplied: false
+  - label: Nordics and Baltics - Day-Ahead Price Only (8 days history)
+    name: nordics_baltics_price_only
+    type: flat
+    metric: subscription
+    limit: -1
+    timeFrame: year
+    geo: nordics-baltics
+    unit: 1
+    price: EUR 3,300 per year (1 API account, last 8 days of history)
+    userMultiplied: false
+  - label: Single-country packages (Day-Ahead plus Operating and Regulating data)
+    name: single_country_packages
+    type: flat
+    metric: subscription
+    limit: -1
+    timeFrame: year
+    geo: per-country
+    unit: 1
+    price: EUR 1,250 per year and up depending on country and scope
+    userMultiplied: false
+  - label: CWE - Day-Ahead plus Auction Market
+    name: cwe_day_ahead_auction
+    type: flat
+    metric: subscription
+    limit: -1
+    timeFrame: year
+    geo: cwe
+    unit: 1
+    price: EUR 1,700 per year (1 API account included)
+    userMultiplied: false
+  - label: Additional API Account
+    name: additional_api_account
+    type: flat
+    metric: account
+    limit: -1
+    timeFrame: year
+    geo: global
+    unit: 1
+    price: EUR 350 per year per account
+    userMultiplied: true
+  - label: Redistribution License
+    name: redistribution_license
+    type: flat
+    metric: license
+    limit: -1
+    timeFrame: year
+    geo: global
+    unit: 1
+    price: from EUR 3,500 to 5,500 per year depending on package
+    userMultiplied: false
+  elements:
+  - name: Market Data API (OAuth 2.0)
+  - name: FTP Delivery Option
+  - name: History Back to 1992 (full packages)
+  - name: 15-minute MTU Resolution
+- id: nordpool-aggregated-bidding-curves
+  name: Aggregated Bidding Curves (per region, annual data fee)
+  type: subscription
+  description: >-
+    Day-ahead aggregated bidding curves per bidding-zone cluster, including
+    realized block order volume (supply and demand), net import and export
+    values, and the block bid file. History available since October 2021.
+  entries:
+  - label: Nordics and Baltics Bidding Curves
+    name: abc_nordics_baltics
+    type: flat
+    metric: subscription
+    limit: -1
+    timeFrame: year
+    geo: nordics-baltics
+    unit: 1
+    price: EUR 1,650 per year
+    userMultiplied: false
+  - label: Single-cluster Bidding Curves
+    name: abc_single_cluster
+    type: flat
+    metric: subscription
+    limit: -1
+    timeFrame: year
+    geo: per-cluster
+    unit: 1
+    price: EUR 430 to 1,250 per year depending on cluster
+    userMultiplied: false
+  elements:
+  - name: Realized Block Order Volume
+  - name: Net Import and Export Values
+  - name: Block Bid File
+- id: nordpool-data-portal
+  name: Data Portal (web platform, annual)
+  type: subscription
+  description: >-
+    Web platform for viewing, analyzing, and exporting Nord Pool market data
+    (CSV and Excel reports, history back to 1992). Seat-tiered annual
+    subscriptions; this is the human-facing companion to the Market Data API.
+  entries:
+  - label: SOLO
+    name: portal_solo
+    type: flat
+    metric: subscription
+    limit: 1
+    timeFrame: year
+    geo: global
+    unit: 1
+    price: EUR 1,200 per calendar year
+    userMultiplied: false
+  - label: LITE
+    name: portal_lite
+    type: flat
+    metric: subscription
+    limit: -1
+    timeFrame: year
+    geo: global
+    unit: 1
+    price: EUR 2,200 per calendar year
+    userMultiplied: false
+  - label: PREMIUM (up to 10 users)
+    name: portal_premium
+    type: flat
+    metric: subscription
+    limit: 10
+    timeFrame: year
+    geo: global
+    unit: 1
+    price: EUR 4,500 per calendar year
+    userMultiplied: false
+  - label: ENTERPRISE (up to 25 users)
+    name: portal_enterprise
+    type: flat
+    metric: subscription
+    limit: 25
+    timeFrame: year
+    geo: global
+    unit: 1
+    price: EUR 9,000 per calendar year
+    userMultiplied: false
+  - label: ENTERPRISE PRO (unlimited users)
+    name: portal_enterprise_pro
+    type: enterprise
+    metric: subscription
+    limit: -1
+    timeFrame: year
+    geo: global
+    unit: 1
+    price: contact Nord Pool data sales
+    userMultiplied: false
+  elements:
+  - name: Auctions, Intraday, and Power System Views
+  - name: CSV and Excel Report Export
+  - name: History Back to 1992
+- id: nordpool-trading-apis
+  name: Trading APIs (customers only)
+  type: free
+  description: >-
+    The Intraday Trading API (WebSocket/STOMP), Auction API (REST), Clearing,
+    REMIT, and REMIT UMM APIs are free of charge for Nord Pool customers. All
+    others must become a trading customer to use them; usage is governed by
+    the API General Terms (valid from 16.12.2023).
+  entries:
+  - label: Trading API Access
+    name: trading_api_access
+    type: flat
+    metric: membership
+    limit: -1
+    timeFrame: year
+    geo: global
+    unit: 1
+    price: free for Nord Pool trading customers (membership required)
+    userMultiplied: false
+  elements:
+  - name: Intraday Trading API (WebSocket/STOMP)
+  - name: Auction API (REST)
+  - name: Clearing API
+  - name: REMIT and REMIT UMM APIs
+  - name: Test Systems
+- id: nordpool-public-data-portal-api
+  name: Public Data Portal API (unofficial)
+  type: free
+  description: >-
+    The unauthenticated JSON API behind data.nordpoolgroup.com returns
+    published day-ahead prices and price indices at no charge. It is not an
+    official product - no SLA, no support, and it may change or be restricted
+    at any time.
+  entries:
+  - label: Published Day-Ahead Prices
+    name: public_day_ahead_prices
+    type: usage
+    metric: requests
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: free (unofficial, no SLA)
+    userMultiplied: false
+  elements:
+  - name: Day-Ahead Prices by Area
+  - name: Day-Ahead Price Indices
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

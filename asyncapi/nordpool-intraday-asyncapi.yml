@@ -1,0 +1,181 @@
+asyncapi: 2.6.0
+info:
+  title: Nord Pool Intraday Trading API (WebSocket/STOMP)
+  version: '1.0'
+  description: >-
+    Nord Pool's Intraday Trading API is a genuine WebSocket API. Clients open
+    secure WebSocket connections (port 443) and speak STOMP over them to two
+    web services - a Market Data service (public market data streams such as
+    contracts, order books / local views, capacities, delivery areas, and
+    tickers) and a Trading service (order entry, modification, and private
+    execution/trade reports) - for continuous intraday power trading on the
+    Nord Pool platform. Authentication uses a token issued by Nord Pool's SSO
+    for API credentials provisioned by Nord Pool (idapi@nordpoolgroup.com);
+    access requires being a Nord Pool trading customer. Nord Pool also ships a
+    newer Intraday Binary PMD v2 market-data feed over WebSockets using
+    Protocol Buffers. This AsyncAPI document is MODELED - the WebSocket+STOMP
+    transport, dual Market Data / Trading connections, heartbeats, and token
+    refresh are confirmed from Nord Pool's public GitHub examples
+    (NordPool/public-intraday-api and NordPool/public-intraday-api-example)
+    and the developer portal, but exact host names are environment-specific
+    and provided during onboarding, and channel names below are
+    representative rather than verbatim. Consult
+    https://developers.nordpoolgroup.com/ for the authoritative topic list.
+  contact:
+    name: Nord Pool Intraday API Support
+    email: idapi@nordpoolgroup.com
+    url: https://developers.nordpoolgroup.com/
+  x-transport-notes: >-
+    Transport is WebSocket (wss, port 443) carrying STOMP frames - this is a
+    true bidirectional WebSocket API, unlike HTTP streaming or SSE. Clients
+    maintain STOMP heartbeats and refresh SSO access tokens over the live
+    connection. Hosts are per-environment (test and production) and are
+    issued to onboarded trading customers, so placeholder hosts are used
+    below.
+externalDocs:
+  description: Nord Pool Developer Portal - Intraday introduction
+  url: https://developers.nordpoolgroup.com/v1.0/docs/id-introduction
+defaultContentType: application/json
+servers:
+  marketData:
+    url: wss://{marketDataHost}
+    protocol: stomp
+    description: >-
+      Intraday Market Data web service. Streams public market data topics
+      (contracts, local views / order books, capacities, delivery areas,
+      configuration, ticker). Host provided at onboarding; placeholder used
+      here (modeled).
+    variables:
+      marketDataHost:
+        description: Environment-specific Market Data service host issued by Nord Pool.
+        default: intraday-marketdata.example.nordpoolgroup.com
+    security:
+      - ssoToken: []
+  trading:
+    url: wss://{tradingHost}
+    protocol: stomp
+    description: >-
+      Intraday Trading web service. Accepts order entry and modification
+      requests and streams private execution reports and trades. Host
+      provided at onboarding; placeholder used here (modeled).
+    variables:
+      tradingHost:
+        description: Environment-specific Trading service host issued by Nord Pool.
+        default: intraday-trading.example.nordpoolgroup.com
+    security:
+      - ssoToken: []
+channels:
+  streaming/contracts:
+    description: Tradable intraday contracts and their state (representative topic; modeled).
+    subscribe:
+      operationId: receiveContracts
+      summary: Receive contract definitions and updates
+      message:
+        $ref: '#/components/messages/contract'
+  streaming/localview:
+    description: >-
+      Order book / local market view for the member's delivery areas
+      (representative topic; modeled).
+    subscribe:
+      operationId: receiveLocalView
+      summary: Receive order book updates
+      message:
+        $ref: '#/components/messages/orderBookUpdate'
+  streaming/capacities:
+    description: Cross-border transmission capacities between areas (representative topic; modeled).
+    subscribe:
+      operationId: receiveCapacities
+      summary: Receive area-to-area capacity updates
+      message:
+        $ref: '#/components/messages/capacity'
+  streaming/ticker:
+    description: Public trade ticker for the intraday market (representative topic; modeled).
+    subscribe:
+      operationId: receiveTicker
+      summary: Receive public trade ticker events
+      message:
+        $ref: '#/components/messages/tickerTrade'
+  orderEntry:
+    description: >-
+      Order entry destination on the Trading service - submit, modify, and
+      cancel intraday orders (representative destination; modeled).
+    publish:
+      operationId: sendOrder
+      summary: Send an order entry request
+      message:
+        $ref: '#/components/messages/orderEntryRequest'
+  orderExecutionReport:
+    description: >-
+      Private execution reports for the member's own orders (representative
+      destination; modeled).
+    subscribe:
+      operationId: receiveExecutionReport
+      summary: Receive private order execution reports
+      message:
+        $ref: '#/components/messages/executionReport'
+  privateTrade:
+    description: Private trade confirmations for the member (representative destination; modeled).
+    subscribe:
+      operationId: receivePrivateTrade
+      summary: Receive private trade confirmations
+      message:
+        $ref: '#/components/messages/privateTrade'
+components:
+  securitySchemes:
+    ssoToken:
+      type: userPassword
+      description: >-
+        API credentials issued by Nord Pool (idapi@nordpoolgroup.com) are
+        exchanged with the Nord Pool SSO for an access token, which is
+        presented when opening the STOMP connection and refreshed while the
+        WebSocket session is live.
+  messages:
+    contract:
+      name: contract
+      title: Intraday contract
+      summary: A tradable intraday contract definition or state change.
+      payload:
+        type: object
+        additionalProperties: true
+    orderBookUpdate:
+      name: orderBookUpdate
+      title: Order book update
+      summary: Aggregated order book / local view rows for subscribed areas.
+      payload:
+        type: object
+        additionalProperties: true
+    capacity:
+      name: capacity
+      title: Transmission capacity
+      summary: Available transmission capacity between two delivery areas.
+      payload:
+        type: object
+        additionalProperties: true
+    tickerTrade:
+      name: tickerTrade
+      title: Ticker trade
+      summary: Public information about an executed intraday trade.
+      payload:
+        type: object
+        additionalProperties: true
+    orderEntryRequest:
+      name: orderEntryRequest
+      title: Order entry request
+      summary: Order submission, modification, or cancellation sent by the member.
+      payload:
+        type: object
+        additionalProperties: true
+    executionReport:
+      name: executionReport
+      title: Execution report
+      summary: Private report on the lifecycle of the member's order.
+      payload:
+        type: object
+        additionalProperties: true
+    privateTrade:
+      name: privateTrade
+      title: Private trade
+      summary: Private confirmation of the member's executed trade.
+      payload:
+        type: object
+        additionalProperties: true
