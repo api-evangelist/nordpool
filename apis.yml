@@ -157,6 +157,12 @@ apis:
     trading members; endpoints are not publicly documented, so no OpenAPI is
     modeled here.
 common:
+- type: VulnerabilityDisclosure
+  url: security/nordpool-vulnerability-disclosure.yml
+- type: DomainSecurity
+  url: security/nordpool-domain-security.yml
+- type: Authentication
+  url: authentication/nordpool-authentication.yml
 - type: OAuthScopes
   url: scopes/nordpool-scopes.yml
 - type: Website
