@@ -157,6 +157,8 @@ apis:
     trading members; endpoints are not publicly documented, so no OpenAPI is
     modeled here.
 common:
+- type: AgenticAccess
+  url: agentic-access/nordpool-agentic-access.yml
 - type: VulnerabilityDisclosure
   url: security/nordpool-vulnerability-disclosure.yml
 - type: DomainSecurity
