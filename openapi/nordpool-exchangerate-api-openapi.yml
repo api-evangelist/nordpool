@@ -1,0 +1,251 @@
+openapi: 3.0.3
+info:
+  title: Nord Pool Data Portal API (Public) Auction ExchangeRate API
+  version: '1.0'
+  description: The unauthenticated JSON API behind the Nord Pool Data Portal (data.nordpoolgroup.com), where Nord Pool publishes day-ahead electricity prices for the Nordic, Baltic, CWE, and UK bidding areas. These endpoints return the same day-ahead auction results shown on the public website, in 15-minute Market Time Unit resolution, and are widely used by open-source integrations such as Home Assistant. IMPORTANT - this API is not part of Nord Pool's officially documented, subscription-backed developer offering. It is not covered by an SLA or the API General Terms, and Nord Pool may change or restrict it at any time. The two operations below were observed live and verified returning data on 2026-07-11; request and response shapes are modeled from those observed responses rather than from official reference documentation. For supported programmatic access, use the Nord Pool Market Data API (data-api.nordpoolgroup.com) with a Power Data Services subscription.
+  contact:
+    name: Nord Pool
+    url: https://data.nordpoolgroup.com/
+servers:
+- url: https://dataportal-api.nordpoolgroup.com
+  description: Nord Pool Data Portal backend (public, unauthenticated)
+tags:
+- name: ExchangeRate
+paths:
+  /api/v2/ExchangeRate/Daily:
+    get:
+      tags:
+      - ExchangeRate
+      summary: Exchange rates
+      description: "Returns the exchange rate used for a specific date.\n            \n### Nordic Day-ahead market and local currencies\nFor the Nordic Day-ahead market, local currency trading is allowed. At the auction day, a preliminary exchange rate is retrieved for local currencies to EUR (for example, SEK -> EUR) from a bank. This preliminary exchange rate is used to calculate order prices in EUR based on user provided input. If the user places an order with price 100 SEK and the SEK -> EUR **preliminary** exchange rate is 0.1, then the order value in EUR is 10. All orders are matched in EUR.\n            \n After the market coupling session is complete, on the first available banking day (on normal week days, this is the same day. On weekends, this usually means next Monday) Nord Pool performs a currency exchange hedging process. Here we get a **final** exchange rate based on how much local currencies are exchanged.\n            \nThe final local currency prices are then re-calculated using the final exchange rate, this time from EUR -> local currency. To continue the sample above, if our final EUR -> SEK exchange rate is  9.98, then the settled price will be 99.80 SEK rather than the original 100 SEK. If the final exchange rate would be 10.02, then the settled price would be 100.20 SEK.\n            \n### Other exchange rates (PLN, RON, GBP)\n\nOther currencies does not follow the same hedging flow as in the Nordics. Usually exchange rate is agreed upon before auctions happen and thus no price adjustments are needed.\n            \n### Response field descriptions\n**rates**: a list currency exchange rates for the day\n- **fromCurrency**: the currency exchanged from\n- **toCurrency**: the currency exchanged to\n- **rate**: the exchange rate used to transform fromCurrency -> toCurrency\n- **status**: Preliminary or Final. Preliminary rates can change, Final rates will not be changed. For usage, see the description above\n- **modified**: the last update time"
+      parameters:
+      - name: date
+        in: query
+        description: Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15
+        required: true
+        schema:
+          type: string
+          format: date
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ApiExchangeRate'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiExchangeRate'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ApiExchangeRate'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+  /api/v2/ExchangeRate/Yearly:
+    get:
+      tags:
+      - ExchangeRate
+      summary: Yearly Exchange rates
+      description: "Returns the exchange rates for a specific year.\n            \n### Nordic Day-ahead market and local currencies\nFor the Nordic Day-ahead market, local currency trading is allowed. At the auction day, a preliminary exchange rate is retrieved for local currencies to EUR (for example, SEK -> EUR) from a bank. This preliminary exchange rate is used to calculate order prices in EUR based on user provided input. If the user places an order with price 100 SEK and the SEK -> EUR **preliminary** exchange rate is 0.1, then the order value in EUR is 10. All orders are matched in EUR.\n            \n After the market coupling session is complete, on the first available banking day (on normal week days, this is the same day. On weekends, this usually means next Monday) Nord Pool performs a currency exchange hedging process. Here we get a **final** exchange rate based on how much local currencies are exchanged.\n            \nThe final local currency prices are then re-calculated using the final exchange rate, this time from EUR -> local currency. To continue the sample above, if our final EUR -> SEK exchange rate is  9.98, then the settled price will be 99.80 SEK rather than the original 100 SEK. If the final exchange rate would be 10.02, then the settled price would be 100.20 SEK.\n            \n### Other exchange rates (PLN, RON, GBP)\n\nOther currencies does not follow the same hedging flow as in the Nordics. Usually exchange rate is agreed upon before auctions happen and thus no price adjustments are needed.\n            \n### Response field descriptions\n**dailyExchangeRates**: a list of exchange rates per delivery date\n            \nEach daily exchange rate contains\n\n**dateCET**: the delivery date in CET time the rate is used for\n            \n**rates**: a list currency exchange rates for the day\n- **fromCurrency**: the currency exchanged from\n- **toCurrency**: the currency exchanged to\n- **rate**: the exchange rate used to transform fromCurrency -> toCurrency\n- **status**: Preliminary or Final. Preliminary rates can change, Final rates will not be changed. For usage, see the description above\n- **modified**: the last update time"
+      parameters:
+      - name: year
+        in: query
+        description: Delivery year, referring to CET year. Format yyyy, for example 2024
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ApiYearlyExchangeRate'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiYearlyExchangeRate'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ApiYearlyExchangeRate'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+components:
+  schemas:
+    ExchangeRateDataLake:
+      type: object
+      properties:
+        rates:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExchangeRates'
+          nullable: true
+        dateCET:
+          type: string
+          format: date
+        updatedAt:
+          type: string
+          format: date-time
+      additionalProperties: false
+    ApiAvailableStatus:
+      enum:
+      - Missing
+      - Available
+      type: string
+    ValidationProblemDetails:
+      type: object
+      properties:
+        type:
+          type: string
+          nullable: true
+        title:
+          type: string
+          nullable: true
+        status:
+          type: integer
+          format: int32
+          nullable: true
+        detail:
+          type: string
+          nullable: true
+        instance:
+          type: string
+          nullable: true
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+          nullable: true
+      additionalProperties: {}
+    ExchangeRateStatus:
+      enum:
+      - Preliminary
+      - Final
+      type: string
+    ApiYearlyExchangeRate:
+      type: object
+      properties:
+        year:
+          type: integer
+          format: int32
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        dailyExchangeRates:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExchangeRateDataLake'
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+      additionalProperties: false
+    ApiExchangeRate:
+      required:
+      - rates
+      type: object
+      properties:
+        dateCET:
+          type: string
+          format: date
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        updatedAt:
+          type: string
+          format: date-time
+        rates:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExchangeRates'
+          nullable: true
+      additionalProperties: false
+    ExchangeRates:
+      type: object
+      properties:
+        fromCurrency:
+          type: string
+          nullable: true
+        toCurrency:
+          type: string
+          nullable: true
+        rate:
+          type: number
+          format: double
+        status:
+          $ref: '#/components/schemas/ExchangeRateStatus'
+        modified:
+          type: string
+          format: date-time
+      additionalProperties: false
+externalDocs:
+  description: Nord Pool Data Portal (public day-ahead prices site)
+  url: https://data.nordpoolgroup.com/

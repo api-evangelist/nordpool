@@ -1,0 +1,478 @@
+openapi: 3.0.3
+info:
+  title: Nord Pool Data Portal API (Public) Auction BalanceMarket API
+  version: '1.0'
+  description: The unauthenticated JSON API behind the Nord Pool Data Portal (data.nordpoolgroup.com), where Nord Pool publishes day-ahead electricity prices for the Nordic, Baltic, CWE, and UK bidding areas. These endpoints return the same day-ahead auction results shown on the public website, in 15-minute Market Time Unit resolution, and are widely used by open-source integrations such as Home Assistant. IMPORTANT - this API is not part of Nord Pool's officially documented, subscription-backed developer offering. It is not covered by an SLA or the API General Terms, and Nord Pool may change or restrict it at any time. The two operations below were observed live and verified returning data on 2026-07-11; request and response shapes are modeled from those observed responses rather than from official reference documentation. For supported programmatic access, use the Nord Pool Market Data API (data-api.nordpoolgroup.com) with a Power Data Services subscription.
+  contact:
+    name: Nord Pool
+    url: https://data.nordpoolgroup.com/
+servers:
+- url: https://dataportal-api.nordpoolgroup.com
+  description: Nord Pool Data Portal backend (public, unauthenticated)
+tags:
+- name: BalanceMarket
+paths:
+  /api/v2/BalanceMarket/ManualFrequencyRestorationReserves/ByAreas:
+    get:
+      tags:
+      - BalanceMarket
+      summary: Manual Frequency Restoration Reserves
+      description: "Returns a list of Manual Frequency Restoration Reserves (mFRR) for a date, currency and a list of areas. \n\n### Response field descriptions\n- **status**: Missing if no data exists. Available if data is present\n- **exchangeRate**: exchange rate used to calculate values from EUR. If the currency is EUR, then the exchange rate is 1\n            \n**manualFrequencyRestorationReserves**: a list of delivery periods for the day, containing\n - **deliveryStart**: start of delivery period\n - **deliveryEnd**: end of delivery period\n - **acceptedUpBidVolume**: the total volume of orders available for up activation, given in MW\n - **activatedUpVolume**: the volume of activated up regulation, given in MW\n - **acceptedDownBidVolume**: the total volume of orders available for down activation, given in MW\n - **activatedDownBidVolume**: the volume of activated down regulation, given in MW\n - **downPrice**: the price for down regulation. Given in currency/MWh \n - **upPrice**: the price for up regulation. Given in currency/MWh\n - **imbalancePrice**: the overall imbalance price. Usually equal to either upPrice or downPrice depending on what activations are done.\n            \nNote that non-EUR prices are just estimates - we do not guarantee (or expect) that TSOs are using the same exchange rates as we do.\n            \nData source: **Entso-e Transparency platform. Update frequency and data availability depends on data being reported to Entso-e.**"
+      externalDocs:
+        description: Data portal link
+        url: https://data.nordpoolgroup.com/power-system/manual-frequency-restoration-reserve?deliveryDate=latest&deliveryAreas=NO1&viewMode=All
+      parameters:
+      - name: areas
+        in: query
+        description: 'Comma-separated list of areas (e.g., NO1, NO2).
+
+          Supported: NO1,NO2,NO3,NO4,NO5,SE1,SE2,SE3,SE4,FI,DK1,DK2'
+        required: true
+        schema:
+          minItems: 1
+          type: string
+          items:
+            type: string
+      - name: currency
+        in: query
+        description: 'Currency of returned prices. Restricted to 1 currency per query. Supported: EUR, SEK, NOK, DKK'
+        required: true
+        schema:
+          maxLength: 3
+          minLength: 3
+          type: string
+      - name: date
+        in: query
+        description: Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15
+        required: true
+        schema:
+          type: string
+          format: date
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiMfrr'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiMfrr'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiMfrr'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+  /api/v2/BalanceMarket/ManualFrequencyRestorationReserves/Yearly/ByArea:
+    get:
+      tags:
+      - BalanceMarket
+      summary: Yearly Manual Frequency Restoration Reserves
+      description: " Returns an annual summary of Manual Frequency Restoration Reserves (mFRR) for a year, currency and one area.\n            \n This yearly summary is updated in a rolling manner, and is updated daily.\n            \n### Response field descriptions\n            \n**yearlySummary**:\n- **acceptedUpBidVolume**: total volume of accepted orders for up regulation for the year, in MWh\n- **activatedUpBidVolume**: total volume of activated up regulation bids for the year, in MWh\n- **acceptedDownBidVolume**: total volume of accepted orders for down regulation for the year, in MWh\n- **activatedDownBidVolume**: total volume of activated down regulation bids for the year, in MWh\n- **downPrice**: average down price for the year, in currency / MWh\n- **upPrice**: average up price for the year, in currency / MWh\n- **imbalancePrice**: average imbalance price for the year, in currency / MWh\n\n**monthlySummaries**: \n- **acceptedUpBidVolume**: total volume of accepted orders for up regulation for the month, in MWh\n- **activatedUpBidVolume**: total volume of activated up regulation bids for the month, in MWh\n- **acceptedDownBidVolume**: total volume of accepted orders for down regulation for the month, in MWh\n- **activatedDownBidVolume**: total volume of activated down regulation bids for the month, in MWh\n- **downPrice**: average down price for the month, in currency / MWh\n- **upPrice**: average up price for the month, in currency / MWh\n- **imbalancePrice**: average imbalance price for the month, in currency / MWh\n- **deliveryDateStartCET**: the earliest date taken into account in this monthly summary\n- **deliveryDateEndCET**: the latest date taken into account in this monthly summary \n\n**dailySummaries**: a list of average values for the day\n- **acceptedUpBidVolume**: total volume of accepted orders for up regulation for the day, in MWh\n- **activatedUpBidVolume**: total volume of activated up regulation bids for the day, in MWh\n- **acceptedDownBidVolume**: total volume of accepted orders for down regulation for the day, in MWh\n- **activatedDownBidVolume**: total volume of activated down regulation bids for the day, in MWh\n- **downPrice**: average down price for the day, in currency / MWh\n- **upPrice**: average up price for the day, in currency / MWh\n- **imbalancePrice**: average imbalance price for the day, in currency / MWh\n- **deliveryDateCET**: the CET delivery date for this summary \n\n**content**: a list of delivery periods, containing\n - **deliveryStart**: start of delivery period\n - **deliveryEnd**: end of delivery period\n - **acceptedUpBidVolume**: the total volume of orders available for up activation, given in MW\n - **activatedUpVolume**: the volume of activated up regulation, given in MW\n - **acceptedDownBidVolume**: the total volume of orders available for down activation, given in MW\n - **activatedDownBidVolume**: the volume of activated down regulation, given in MW\n - **downPrice**: the price for down regulation. Given in currency/MWh \n - **upPrice**: the price for up regulation. Given in currency/MWh\n - **imbalancePrice**: the overall imbalance price. Usually equal to either upPrice or downPrice depending on what activations are done.\n            \nNote that non-EUR prices are just estimates - we do not guarantee (or expect) that TSOs are using the same exchange rates as we do.\n            \nData source: **Entso-e Transparency platform. Update frequency and data availability depends on data being reported to Entso-e.**"
+      parameters:
+      - name: area
+        in: query
+        description: 'One area. For example NO1.
+
+          Supported: NO1,NO2,NO3,NO4,NO5,SE1,SE2,SE3,SE4,FI,DK1,DK2'
+        required: true
+        schema:
+          minLength: 1
+          type: string
+      - name: currency
+        in: query
+        description: 'Currency of returned prices. Restricted to 1 currency per query. Supported: EUR, SEK, NOK, DKK'
+        required: true
+        schema:
+          maxLength: 3
+          minLength: 3
+          type: string
+      - name: year
+        in: query
+        description: 'Year in CET (format: yyyy, e.g., 2024)'
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ApiYearlyMfrr'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiYearlyMfrr'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ApiYearlyMfrr'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+components:
+  schemas:
+    ApiYearlyMfrr:
+      required:
+      - currency
+      - deliveryArea
+      type: object
+      properties:
+        year:
+          type: integer
+          format: int32
+        deliveryArea:
+          type: string
+          nullable: true
+        currency:
+          type: string
+          nullable: true
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        updatedAt:
+          type: string
+          format: date-time
+        unit:
+          type: string
+          nullable: true
+          readOnly: true
+        totalVolumeUnit:
+          type: string
+          nullable: true
+          readOnly: true
+        dailySummaries:
+          type: array
+          items:
+            $ref: '#/components/schemas/MfrrDailySummary'
+          nullable: true
+        monthlySummaries:
+          type: array
+          items:
+            $ref: '#/components/schemas/MfrrMonthlySummary'
+          nullable: true
+        yearlySummary:
+          $ref: '#/components/schemas/MfrrEntry'
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/YearlyMfrrEntry'
+          nullable: true
+      additionalProperties: false
+    ApiAvailableStatus:
+      enum:
+      - Missing
+      - Available
+      type: string
+    MfrrDailySummary:
+      type: object
+      properties:
+        acceptedUpBidVolume:
+          type: number
+          format: double
+          nullable: true
+        acceptedDownBidVolume:
+          type: number
+          format: double
+          nullable: true
+        activatedUpVolume:
+          type: number
+          format: double
+          nullable: true
+        activatedDownVolume:
+          type: number
+          format: double
+          nullable: true
+        downPrice:
+          type: number
+          format: double
+          nullable: true
+        upPrice:
+          type: number
+          format: double
+          nullable: true
+        imbalancePrice:
+          type: number
+          format: double
+          nullable: true
+        deliveryDateCET:
+          type: string
+          format: date
+      additionalProperties: false
+    ValidationProblemDetails:
+      type: object
+      properties:
+        type:
+          type: string
+          nullable: true
+        title:
+          type: string
+          nullable: true
+        status:
+          type: integer
+          format: int32
+          nullable: true
+        detail:
+          type: string
+          nullable: true
+        instance:
+          type: string
+          nullable: true
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+          nullable: true
+      additionalProperties: {}
+    MfrrEntry:
+      type: object
+      properties:
+        acceptedUpBidVolume:
+          type: number
+          format: double
+          nullable: true
+        acceptedDownBidVolume:
+          type: number
+          format: double
+          nullable: true
+        activatedUpVolume:
+          type: number
+          format: double
+          nullable: true
+        activatedDownVolume:
+          type: number
+          format: double
+          nullable: true
+        downPrice:
+          type: number
+          format: double
+          nullable: true
+        upPrice:
+          type: number
+          format: double
+          nullable: true
+        imbalancePrice:
+          type: number
+          format: double
+          nullable: true
+      additionalProperties: false
+    ApiMfrr:
+      required:
+      - currency
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        updatedAt:
+          type: string
+          format: date-time
+        deliveryArea:
+          type: string
+          nullable: true
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        currency:
+          type: string
+          nullable: true
+        exchangeRate:
+          type: number
+          format: double
+          nullable: true
+        manualFrequencyRestorationReserves:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiMfrrEntry'
+          nullable: true
+      additionalProperties: false
+    YearlyMfrrEntry:
+      type: object
+      properties:
+        acceptedUpBidVolume:
+          type: number
+          format: double
+          nullable: true
+        acceptedDownBidVolume:
+          type: number
+          format: double
+          nullable: true
+        activatedUpVolume:
+          type: number
+          format: double
+          nullable: true
+        activatedDownVolume:
+          type: number
+          format: double
+          nullable: true
+        downPrice:
+          type: number
+          format: double
+          nullable: true
+        upPrice:
+          type: number
+          format: double
+          nullable: true
+        imbalancePrice:
+          type: number
+          format: double
+          nullable: true
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+      additionalProperties: false
+    MfrrMonthlySummary:
+      type: object
+      properties:
+        acceptedUpBidVolume:
+          type: number
+          format: double
+          nullable: true
+        acceptedDownBidVolume:
+          type: number
+          format: double
+          nullable: true
+        activatedUpVolume:
+          type: number
+          format: double
+          nullable: true
+        activatedDownVolume:
+          type: number
+          format: double
+          nullable: true
+        downPrice:
+          type: number
+          format: double
+          nullable: true
+        upPrice:
+          type: number
+          format: double
+          nullable: true
+        imbalancePrice:
+          type: number
+          format: double
+          nullable: true
+        deliveryDateStartCET:
+          type: string
+          format: date
+        deliveryDateEndCET:
+          type: string
+          format: date
+      additionalProperties: false
+    ApiMfrrEntry:
+      type: object
+      properties:
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        acceptedUpBidVolume:
+          type: number
+          format: double
+          nullable: true
+        acceptedDownBidVolume:
+          type: number
+          format: double
+          nullable: true
+        activatedUpVolume:
+          type: number
+          format: double
+          nullable: true
+        activatedDownVolume:
+          type: number
+          format: double
+          nullable: true
+        downPrice:
+          type: number
+          format: double
+          nullable: true
+        upPrice:
+          type: number
+          format: double
+          nullable: true
+        imbalancePrice:
+          type: number
+          format: double
+          nullable: true
+      additionalProperties: false
+externalDocs:
+  description: Nord Pool Data Portal (public day-ahead prices site)
+  url: https://data.nordpoolgroup.com/

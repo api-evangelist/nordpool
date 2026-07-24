@@ -1,0 +1,2865 @@
+openapi: 3.0.3
+info:
+  title: Nord Pool Data Portal API (Public) Auction PowerSystem API
+  version: '1.0'
+  description: The unauthenticated JSON API behind the Nord Pool Data Portal (data.nordpoolgroup.com), where Nord Pool publishes day-ahead electricity prices for the Nordic, Baltic, CWE, and UK bidding areas. These endpoints return the same day-ahead auction results shown on the public website, in 15-minute Market Time Unit resolution, and are widely used by open-source integrations such as Home Assistant. IMPORTANT - this API is not part of Nord Pool's officially documented, subscription-backed developer offering. It is not covered by an SLA or the API General Terms, and Nord Pool may change or restrict it at any time. The two operations below were observed live and verified returning data on 2026-07-11; request and response shapes are modeled from those observed responses rather than from official reference documentation. For supported programmatic access, use the Nord Pool Market Data API (data-api.nordpoolgroup.com) with a Power Data Services subscription.
+  contact:
+    name: Nord Pool
+    url: https://data.nordpoolgroup.com/
+servers:
+- url: https://dataportal-api.nordpoolgroup.com
+  description: Nord Pool Data Portal backend (public, unauthenticated)
+tags:
+- name: PowerSystem
+paths:
+  /api/v2/CleanHorizonStorageIndex/Daily/ByAreas:
+    get:
+      tags:
+      - PowerSystem
+      summary: Clean Horizon Premium Storage Index - Delivered by Nord Pool
+      description: "Returns a list of daily gross revenues of storage assets for a list of areas and month.\n\nDaily storage index provides information on how much money could a 1, 2, and 4-hour storage asset have earned in a given day. It contains details on each component of the revenue stack\n(day-ahead, intraday, FCR, aFRR, mFRR, etc).\n\n### Response field descriptions\n- **area**: biding zone the index is calculated for\n- **status**: Missing if no data found for the area. Available if data is present\n- **unit**: currency unit of the index values, always **EUR/MW/Day**\n- **updatedAt**: date and time when the index values were last updated\n- **indexValues**: list of daily index values for a 1, 2, and 4-hour storage asset\n  - **utcDay**: day for which the index values are calculated\n  - **index1h**: \n    - **markets**: a dictionary of market (revenue streams), where each key corresponds to a market and each value to 1-hour storage index value for that market, in EUR/MW/Day\n    - **totalGrossRevenues**: sum of gross revenues of a 1-hour storage asset for the day\n  - **index2h**: \n    - **markets**: a dictionary of market (revenue streams), where each key corresponds to a market and each value to 2-hour storage index value for that market, in EUR/MW/Day\n    - **totalGrossRevenues**: sum of gross revenues of a 2-hour storage asset for the day\n  - **index4h**: \n    - **markets**: a dictionary of market (revenue streams), where each key corresponds to a market and each value to 4-hour storage index value for that market, in EUR/MW/Day\n    - **totalGrossRevenues**: sum of gross revenues of a 4-hour storage asset for the day\n            \nMore details about storage index can be found in the [Clean Horizon Storage Index](https://www.cleanhorizon.com/battery-index/)."
+      parameters:
+      - name: areas
+        in: query
+        description: 'Comma-separated list of areas (e.g., SE1, SE2).
+
+          Supported: BE, CNOR, CSUD, DE, DK1, DK2, EE, ES, FI, FR, ITCALA, LT, LV, NORD, PL, PT, SARD, SE1, SE2,
+
+          SE3, SE4, SICI, SUD, TEL'
+        required: true
+        schema:
+          minItems: 1
+          type: string
+          items:
+            type: string
+      - name: month
+        in: query
+        description: 'Month in UTC. Format yyyy-MM-dd, for example 2025-01-01.
+
+          Must be the first day of the month. If another day is provided, it will be transformed to the first day of that month.'
+        required: true
+        schema:
+          type: string
+          format: date
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiPremiumStorageIndex'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiPremiumStorageIndex'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiPremiumStorageIndex'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+  /api/v2/CleanHorizonStorageIndex/Monthly/ByAreas:
+    get:
+      tags:
+      - PowerSystem
+      summary: Clean Horizon Storage Index - Delivered by Nord Pool
+      description: "Returns a list of monthly gross revenues of storage assets for a list of areas.\n\nMonthly storage index provides information on how much money could a 1, 2, and 4-hour storage asset have earned in a given month.\nValues are calculated based on premium indexes by summing up daily total revenues for the month.  \n\n### Response field descriptions\n- **area**: biding zone the index is calculated for\n- **status**: Missing if no data found for the area. Available if data is present\n- **unit**: currency unit of the index values, always **EUR/MW/Month**\n- **updatedAt**: date and time when the index values were last updated\n- **markets**: list of markets (revenue streams) the index is considered for\n- **indexValues**: list of monthly index values for a 1, 2, and 4-hour storage asset\n  - **utcMonth**: month for which the index values are calculated\n  - **index1h**: 1 hour storage index value in EUR/MW/Month\n  - **index2h**: 2 hour storage index value in EUR/MW/Month\n  - **index4h**: 4 hour storage index value in EUR/MW/Month\n            \nMore details about storage index can be found in the [Clean Horizon Storage Index](https://www.cleanhorizon.com/battery-index/)."
+      parameters:
+      - name: areas
+        in: query
+        description: 'Comma-separated list of areas (e.g., SE1, SE2).
+
+          Supported: BE, CNOR, CSUD, DE, DK1, DK2, EE, ES, FI, FR, ITCALA, LT, LV, NORD, PL, PT, SARD, SE1, SE2,
+
+          SE3, SE4, SICI, SUD, TEL'
+        required: true
+        schema:
+          minItems: 1
+          type: string
+          items:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiFreeStorageIndex'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiFreeStorageIndex'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiFreeStorageIndex'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+  /api/v2/PowerSystem/ConsumptionForecasts/ByAreas:
+    get:
+      tags:
+      - PowerSystem
+      summary: Consumption Forecasts
+      description: "Returns a list of consumption forecasts for a date and a list of areas.\n            \nConsumption forecasts tells how much electricity is expected to be consumed / used in an area and delivery period. \n            \nThis corresponds to the \"Total Load / Day-Ahead\" data type in the Entso-e Transparency Platform.\n            \n### Response field descriptions\n- **status**: Missing if no data found for the date and area. Available if data is present\n- **consumptionForecasts**: a list of delivery periods\n  - **deliveryStart**: start of delivery period\n  - **deliveryEnd**: end of delivery period\n  - **volume**: the volume expected to be consumed in the delivery period, in MW \n\nData source: **Entso-e Transparency platform. Update frequency and data availability depends on data being reported to Entso-e.**\n            \n[Sample response with valid data for areas NO2,NO3 and date 2025-05-05](https://proddataservicespublic.blob.core.windows.net/public-api-response-samples/PowerSystem/get_api_v2_PowerSystem_ConsumptionForecasts_ByAreas.json)"
+      externalDocs:
+        description: Data portal link
+        url: https://data.nordpoolgroup.com/power-system/consumption-forecast?deliveryDate=latest&deliveryAreas=FI&locations=
+      parameters:
+      - name: areas
+        in: query
+        description: 'Comma-separated list of areas (e.g., NO1, NO2).
+
+          Supported: 50HZ, AMP, AT, BE, DE-LU, LU, DK1, DK2, EE, FI, FR, LT, LV, NL, NO1, NO2, NO3, NO4, NO5, PL, SE1, SE2,
+
+          SE3, SE4, TBW, TTG, TEL, BG'
+        required: true
+        schema:
+          minItems: 1
+          type: string
+          items:
+            type: string
+      - name: date
+        in: query
+        description: Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15
+        required: true
+        schema:
+          type: string
+          format: date
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiConsumptionForecast'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiConsumptionForecast'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiConsumptionForecast'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+  /api/v2/PowerSystem/ConsumptionForecasts/ByLocations:
+    get:
+      tags:
+      - PowerSystem
+      summary: Consumption Forecasts By Location
+      description: "Returns a list of consumption forecasts for a date and a list of locations.\n            \nConsumption forecasts tells how much electricity is expected to be consumed / used in an area and delivery period. Consumption forecasts by Location aggregates delivery area values into country or region values. \n            \n### Response field descriptions\n- **status**: Missing if no data found for the date and area. Available if data is present\n- **locationType**: Country or Region\n- **deliveryAreas**: delivery areas used for this locational aggregation\n- **consumptionForecasts**: a list of delivery periods\n  - **deliveryStart**: start of delivery period\n  - **deliveryEnd**: end of delivery period\n  - **volume**: the volume expected to be consumed in the delivery period, in MW \n\nData source: **Entso-e Transparency platform. Update frequency and data availability depends on data being reported to Entso-e.**\n            \n[Sample response with valid data for location NO and date 2025-05-05](https://proddataservicespublic.blob.core.windows.net/public-api-response-samples/PowerSystem/get_api_v2_PowerSystem_ConsumptionForecasts_ByLocations.json)"
+      externalDocs:
+        description: Data portal link
+        url: https://data.nordpoolgroup.com/power-system/consumption-forecast?deliveryDate=latest&deliveryAreas=&locations=NO
+      parameters:
+      - name: locations
+        in: query
+        description: 'Comma-separated list of locations (e.g., NO, SE).
+
+          Supported: AT, BE, DE, LU, DK, EE, FI, FR, LT, LV, NL, NO, PL, SE, RO, BG, BALTIC, CWE, DE-LU, NORDIC'
+        required: true
+        schema:
+          minItems: 1
+          type: string
+          items:
+            type: string
+      - name: date
+        in: query
+        description: Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15
+        required: true
+        schema:
+          type: string
+          format: date
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiConsumptionForecastByLocation'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiConsumptionForecastByLocation'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiConsumptionForecastByLocation'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+  /api/v2/PowerSystem/Consumptions/ByAreas:
+    get:
+      tags:
+      - PowerSystem
+      summary: Consumption
+      description: "Returns a list of consumptions for a date and a list of areas.\n            \nConsumption tells how much electricity is being consumed / used in an area and delivery period. \n            \nThis corresponds to the \"Total Load / Actual\" data type in the Entso-e Transparency Platform.\n            \n### Response field descriptions\n- **status**: Missing if no data found for the date and area. Available if data is present\n- **consumptions**: a list of delivery periods\n  - **deliveryStart**: start of delivery period\n  - **deliveryEnd**: end of delivery period\n  - **volume**: the volume consumed in the delivery period, in MW\n\nData source: **Entso-e Transparency platform. Update frequency and data availability depends on data being reported to Entso-e.**\n            \n[Sample response with valid data for areas NO2,NO3 and date 2025-05-05](https://proddataservicespublic.blob.core.windows.net/public-api-response-samples/PowerSystem/get_api_v2_PowerSystem_Consumptions_ByAreas.json)"
+      externalDocs:
+        description: Data portal link
+        url: https://data.nordpoolgroup.com/power-system/consumption?deliveryDate=latest&deliveryAreas=NO1&aggregation=DeliveryPeriod&locations=
+      parameters:
+      - name: areas
+        in: query
+        description: 'Comma-separated list of areas (e.g., NO1, NO2).
+
+          Supported: 50HZ, AMP, AT, BE, DE-LU, LU, DK1, DK2, EE, FI, FR, LT, LV, NL, NO1, NO2, NO3, NO4, NO5, PL, SE1, SE2,
+
+          SE3, SE4, TBW, TTG, TEL, BG'
+        required: true
+        schema:
+          minItems: 1
+          type: string
+          items:
+            type: string
+      - name: date
+        in: query
+        description: Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15
+        required: true
+        schema:
+          type: string
+          format: date
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiConsumption'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiConsumption'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiConsumption'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+  /api/v2/PowerSystem/Consumptions/ByLocations:
+    get:
+      tags:
+      - PowerSystem
+      summary: Consumption By Location
+      description: " Returns a list of consumptions for a date and a list of locations.\n            \nConsumption tells how much electricity is being consumed / used in an area and delivery period. Consumption by location aggregates delivery area consumption value into country or region values. \n            \n### Response field descriptions\n- **status**: Missing if no data found for the date and area. Available if data is present\n- **locationType**: Country or Region\n- **deliveryAreas**: delivery areas used for this locational aggregation\n- **consumptions**: a list of delivery periods\n  - **deliveryStart**: start of delivery period\n  - **deliveryEnd**: end of delivery period\n  - **volume**: the volume consumed in the delivery period, in MW \n\nData source: **Entso-e Transparency platform. Update frequency and data availability depends on data being reported to Entso-e.**\n            \n[Sample response with valid data for location NO and date 2025-05-05](https://proddataservicespublic.blob.core.windows.net/public-api-response-samples/PowerSystem/get_api_v2_PowerSystem_Consumptions_ByLocations.json)"
+      externalDocs:
+        description: Data portal link
+        url: https://data.nordpoolgroup.com/power-system/consumption?deliveryDate=latest&deliveryAreas=&aggregation=DeliveryPeriod&locations=SE
+      parameters:
+      - name: locations
+        in: query
+        description: 'Comma-separated list of locations (e.g., NO, SE).
+
+          Supported: AT, BE, DE, LU, DK, EE, FI, FR, LT, LV, NL, NO, PL, SE, RO, BG, BALTIC, CWE, DE-LU, NORDIC'
+        required: true
+        schema:
+          minItems: 1
+          type: string
+          items:
+            type: string
+      - name: date
+        in: query
+        description: Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15
+        required: true
+        schema:
+          type: string
+          format: date
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiConsumptionByLocation'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiConsumptionByLocation'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiConsumptionByLocation'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+  /api/v2/PowerSystem/Consumptions/Yearly/ByArea:
+    get:
+      tags:
+      - PowerSystem
+      summary: Yearly Consumption
+      description: " Returns a list of consumptions for a year and one area.\n            \nConsumption tells how much electricity is being consumed / used in an area and delivery period. \n            \nThis corresponds to the \"Total Load / Actual\" data type in the Entso-e Transparency Platform.\n            \n This yearly summary is updated in a rolling manner, and is updated daily.\n\n### Response field descriptions\n- **yearlySummary**: total MWh consumption for the year\n- **monthlySummaries**: a list of monthly consumption values\n  - **deliveryDateStartCET**: the earliest date taken into account in this monthly summary\n  - **deliveryDateEndCET**: the latest date taken into account in this monthly summary \n  - **totalVolume**: total consumption volume in MWh for the month\n- **dailySummaries**: a list of daily consumption values\n  - **deliveryDateCET**: the CET delivery date for this summary\n  - **totalVolume**: total consumption volume in MWh for the day\n- **consumptions**: a list of delivery periods\n  - **deliveryStart**: start of delivery period\n  - **deliveryEnd**: end of delivery period\n  - **volume**: the volume consumed in the delivery period, in MW \n\nData source: **Entso-e Transparency platform. Update frequency and data availability depends on data being reported to Entso-e.**\n            \n[Sample response with valid data for area NO2 and year 2021](https://proddataservicespublic.blob.core.windows.net/public-api-response-samples/PowerSystem/get_api_v2_PowerSystem_Consumptions_Yearly_ByArea.json)"
+      parameters:
+      - name: area
+        in: query
+        description: 'One area. For example NO1.
+
+          Supported: 50HZ, AMP, AT, BE, DE-LU, LU, DK1, DK2, EE, FI, FR, LT, LV, NL, NO1, NO2, NO3, NO4, NO5, PL, SE1, SE2,
+
+          SE3, SE4, TBW, TTG, TEL, BG'
+        required: true
+        schema:
+          minLength: 1
+          type: string
+      - name: year
+        in: query
+        description: 'Year in CET (format: yyyy, e.g., 2024)'
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ApiYearlyConsumptionByArea'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiYearlyConsumptionByArea'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ApiYearlyConsumptionByArea'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+  /api/v2/PowerSystem/Consumptions/Yearly/ByLocation:
+    get:
+      tags:
+      - PowerSystem
+      summary: Yearly Consumption by Location
+      description: " Returns a list of consumptions for a year and one location.\n\nConsumption tells how much electricity is being consumed / used in an area and delivery period. Consumption by location aggregates delivery area consumption value into country or region values. \n            \n This yearly summary is updated in a rolling manner, and is updated daily.\n            \n### Response field descriptions\n- **status**: Missing if no data found for the date and area. Available if data is present\n- **locationType**: Country or Region\n- **deliveryAreas**: delivery areas used for this locational aggregation\n- **yearlySummary**: total MWh consumption for the year\n- **monthlySummaries**: a list of monthly consumption values\n  - **deliveryDateStartCET**: the earliest date taken into account in this monthly summary\n  - **deliveryDateEndCET**: the latest date taken into account in this monthly summary \n  - **totalVolume**: total consumption volume in MWh for the month\n- **dailySummaries**: a list of daily consumption values\n  - **deliveryDateCET**: the CET delivery date for this summary\n  - **totalVolume**: total consumption volume in MWh for the day\n- **consumptions**: a list of delivery periods\n  - **deliveryStart**: start of delivery period\n  - **deliveryEnd**: end of delivery period\n  - **volume**: the volume consumed in the delivery period, in MW \n\nData source: **Entso-e Transparency platform. Update frequency and data availability depends on data being reported to Entso-e.**\n            \n[Sample response with valid data for location NO and year 2021](https://proddataservicespublic.blob.core.windows.net/public-api-response-samples/PowerSystem/get_api_v2_PowerSystem_Consumptions_Yearly_ByLocation.json)"
+      parameters:
+      - name: location
+        in: query
+        description: 'One location. For example NO.
+
+          Supported: AT, BE, DE, LU, DK, EE, FI, FR, LT, LV, NL, NO, PL, SE, RO, BG, BALTIC, CWE, DE-LU, NORDIC'
+        required: true
+        schema:
+          minLength: 1
+          type: string
+      - name: year
+        in: query
+        description: 'Year in CET (format: yyyy, e.g., 2024)'
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ApiYearlyConsumptionByLocation'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiYearlyConsumptionByLocation'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ApiYearlyConsumptionByLocation'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+  /api/v2/PowerSystem/Exchanges/ByAreas:
+    get:
+      tags:
+      - PowerSystem
+      summary: Exchange
+      description: "Returns a list of exchanges for a date and a list of areas.\n            \nExchange tells how much electricity has been importer or exported for an area and delivery period. This is the actual measured flow.\n            \nThis corresponds to the \"Physical Flows\" data type in the Entso-e Transparency Platform.\n            \n### Response field descriptions\n- **dailyTotalImport**: total MWh imported volume\n- **dailyTotalExport**: total MWh exported volume\n- **dailyTotalNetPosition**: total net position in MWh (total import - total export).\n- **exchanges**: a list of delivery periods, containing all exchanges for that period\n  - **byConnection**: a list of all connections that has a flow for the period. Each connection is identified by an area and optionally by a connection name. The Connection name is only present if multiple connections exists on the same border. **import** gives the import volume in MW, **export** the export volume in MW and **netPosition** describes import-export\n  - **totalImport**: sum of all connection import volumes given in MW\n  - **totalExport**: sum of all connection export volumes given in MW\n  - **totalNetPosition**: total import - total export\n\nData source: **Entso-e Transparency platform. Update frequency and data availability depends on data being reported to Entso-e.**\n            \n[Sample response with valid data for areas NO2,NO3 and date 2025-05-05](https://proddataservicespublic.blob.core.windows.net/public-api-response-samples/PowerSystem/get_api_v2_PowerSystem_Exchanges_ByAreas.json)"
+      externalDocs:
+        description: Data portal link
+        url: https://data.nordpoolgroup.com/power-system/exchange?deliveryDate=latest&deliveryArea=DK1&displayImportExport=true
+      parameters:
+      - name: areas
+        in: query
+        description: 'Comma-separated list of areas (e.g., NO1, NO2).
+
+          Supported: 50HZ, AMP, AT, BE, DE-LU, DK1, DK2, EE, FI, FR, LT, LV, NL, NO1, NO2, NO3, NO4, NO5, PL, SE1, SE2, SE3,
+
+          SE4, TBW, TTG, TEL, BG'
+        required: true
+        schema:
+          minItems: 1
+          type: string
+          items:
+            type: string
+      - name: date
+        in: query
+        description: Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15
+        required: true
+        schema:
+          type: string
+          format: date
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiExchange'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiExchange'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiExchange'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+  /api/v2/PowerSystem/Exchanges/Yearly/ByArea:
+    get:
+      tags:
+      - PowerSystem
+      summary: Yearly Exchange
+      description: "Returns an annual summary of exchanges for a year and one area.\n            \nExchange tells how much electricity has been importer or exported for an area and delivery period. This is the actual measured flow.\n            \nThis corresponds to the \"Physical Flows\" data type in the Entso-e Transparency Platform.\n            \n### Response field descriptions\n- **dailyTotalImport**: total MWh imported volume\n- **dailyTotalExport**: total MWh exported volume\n- **dailyTotalNetPosition**: total net position in MWh (total import - total export).\n- **dailySummaries**: contains a list of daily summaries for all exchanges for that day\n  - **totalImport**: total import volume for the day, in MWh\n  - **totalExport**: total export volume for the day, in MWh\n  - **totalNetPosition**: total net position for the day (total import - total export), in MWh\n  - **byConnections**: list of all connections used for the day, with total imports and exports given in MWh\n  - **deliveryDateCET**: the CET delivery date for this summary\n- **monthlySummaries**: contains a list of monthly summaries for all exchanges for that month\n  - **totalImport**: total import volume for the day, in MWh\n  - **totalExport**: total export volume for the day, in MWh\n  - **totalNetPosition**: total net position for the day (total import - total export), in MWh\n  - **byConnections**: list of all connections used for the day, with total imports and exports given in MWh\n  - **deliveryDateStartCET**: the earliest date taken into account in this monthly summary\n  - **deliveryDateEndCET**: the latest date taken into account in this monthly summary\n- **yearlySummary**: total exchange for the year\n  - **totalImport**: total import volume for the year, in MWh\n  - **totalExport**: total export volume for the year, in MWh\n  - **totalNetPosition**: total net position for the year (total import - total export), in MWh\n  - **byConnections**: list of all connections used for the year, with total imports and exports given in MWh\n- **exchanges**: a list of delivery periods, containing all exchanges for that period\n  - **byConnection**: a list of all connections that has a flow for the period. Each connection is identified by an area and optionally by a connection name. The Connection name is only present if multiple connections exists on the same border. **import** gives the import volume in MW, **export** the export volume in MW and **netPosition** describes import-export\n  - **totalImport**: sum of all connection import volumes given in MW\n  - **totalExport**: sum of all connection export volumes given in MW\n  - **totalNetPosition**: total import - total export\n            \nData source: **Entso-e Transparency platform. Update frequency and data availability depends on data being reported to Entso-e.**\n            \n[Sample response with valid data for area NO2 and year 2021](https://proddataservicespublic.blob.core.windows.net/public-api-response-samples/PowerSystem/get_api_v2_PowerSystem_Exchanges_Yearly_ByArea.json)"
+      parameters:
+      - name: area
+        in: query
+        description: 'One area. For example NO1.
+
+          Supported: 50HZ, AMP, AT, BE, DE-LU, DK1, DK2, EE, FI, FR, LT, LV, NL, NO1, NO2, NO3, NO4, NO5, PL, SE1, SE2, SE3,
+
+          SE4, TBW, TTG, TEL, BG'
+        required: true
+        schema:
+          minLength: 1
+          type: string
+      - name: year
+        in: query
+        description: 'Year in CET (format: yyyy, e.g., 2024)'
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ApiYearlyExchange'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiYearlyExchange'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ApiYearlyExchange'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+  /api/v2/PowerSystem/HydroReservoirReserves/ByAreas:
+    get:
+      tags:
+      - PowerSystem
+      summary: Hydro Reservoir Reserves
+      description: "Returns a list of weekly hydro reservoir values for a year and a list of areas.\n            \n### Response field descriptions\n- **hydroReservoirReserves**: a list of weekly reservoir values \n  - **isoWeek**: the ISO week for the year\n  - **weekStartDate**: CET start date for the week\n  - **weekEndDate**: CET end date for the week\n  - **maxCapacityInGigawattHour**: maximum storage capacity for the area (or region)\n  - **currentCapacityInGigawattHours**: current weekly capacity\n  - **utilizationPercentage**: utilization given in percentage. Equal to ((currentCapacity) / (max Capacity)) * 100 \n            \n[Sample response with valid data for area NO2 and year 2021](https://proddataservicespublic.blob.core.windows.net/public-api-response-samples/PowerSystem/get_api_v2_PowerSystem_HydroReservoirReserves_ByAreas.json)"
+      externalDocs:
+        description: Data portal link
+        url: https://data.nordpoolgroup.com/power-system/reservoir?isoYear=2025&deliveryArea=NO2
+      parameters:
+      - name: areas
+        in: query
+        description: 'Comma-separated list of areas (e.g., NO1, NO2).
+
+          Supported: NO, NO1, NO2, NO3, NO4, NO5, SE, SE1, SE2, SE3, SE4, FI, TEL'
+        required: true
+        schema:
+          minItems: 1
+          type: string
+          items:
+            type: string
+      - name: year
+        in: query
+        description: 'Year in CET (format: yyyy, e.g., 2024)'
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiHydro'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiHydro'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiHydro'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+  /api/v2/PowerSystem/ProductionForecasts/ByAreas:
+    get:
+      tags:
+      - PowerSystem
+      summary: Production Forecasts
+      description: "Returns a list of production forecasts for a date and a list of areas.\n            \nThis data type aggregates data from the \"Generation Forecasts for Wind and Solar\" and \"Generation Forecast - Day ahead\" views, from the Transparency Platform. \n            \n### Response field descriptions\n- **status**: Missing if no data found for the date and area. Available if data is present\n- **productionForecasts**: a list of delivery periods\n  - **forecastByType**: a dictionary of production types.\n    - **dayAheadPrognosis**: a forecast value for how much production will happen for this period, done the day before at ~18:00 CET\n    - **intradayPrognosis**: a forecast value for how much production will happen in this period, done during the delivery day at 08:00 CET\n    - **currentPrognosis**: a continuously updated forecast for how much production will happen in this period\n  - **totalDayAheadPrognosis**: an estimate of the total scheduled generation in this delivery period. Note that this is not equal to the sum of all production forecast types, only some types have individual forecasts. \n            \nNote that the provided forecast types vary in between areas and TSOs. \n\nData source: **Entso-e Transparency platform. Update frequency and data availability depends on data being reported to Entso-e.**\n            \n[Sample response with valid data for areas NO2,NO3 and date 2025-05-05](https://proddataservicespublic.blob.core.windows.net/public-api-response-samples/PowerSystem/get_api_v2_PowerSystem_ProductionForecasts_ByAreas.json)"
+      parameters:
+      - name: areas
+        in: query
+        description: 'Comma-separated list of areas (e.g., NO1, NO2).
+
+          Supported: 50HZ, AMP, AT, BE, DE-LU, LU, DK1, DK2, EE, FI, FR, LT, LV, NL, NO1, NO2, NO3, NO4, NO5, PL, SE1, SE2,
+
+          SE3, SE4, TBW, TTG, TEL, BG'
+        required: true
+        schema:
+          minItems: 1
+          type: string
+          items:
+            type: string
+      - name: date
+        in: query
+        description: Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15
+        required: true
+        schema:
+          type: string
+          format: date
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiProductionForecast'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiProductionForecast'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiProductionForecast'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+  /api/v2/PowerSystem/ProductionForecasts/ByLocations:
+    get:
+      tags:
+      - PowerSystem
+      summary: Production Forecasts by Location
+      description: "Returns a list of production forecasts by locations for a date and a list of locations.\n            \nProduction Forecast by Location aggregates delivery area Production Forecast values into country or region values. \n            \n### Response field descriptions\n- **status**: Missing if no data found for the date and area. Available if data is present\n- **locationType**: Country or Region\n- **deliveryAreas**: delivery areas used for this locational aggregation\n- **productionForecasts**: a list of delivery periods\n  - **forecastByType**: a dictionary of production types.\n    - **dayAheadPrognosis**: a forecast value for how much production will happen for this period, done the day before at ~18:00 CET\n    - **intradayPrognosis**: a forecast value for how much production will happen in this period, done during the delivery day at 08:00 CET\n    - **currentPrognosis**: a continuously updated forecast for how much production will happen in this period\n  - **totalDayAheadPrognosis**: an estimate of the total scheduled generation in this delivery period. Note that this is not equal to the sum of all production forecast types, only some types have individual forecasts. \n            \nNote that the provided forecast types vary in between areas and TSOs. \n\nData source: **Entso-e Transparency platform. Update frequency and data availability depends on data being reported to Entso-e.**\n            \n[Sample response with valid data for location NO and date 2025-05-05](https://proddataservicespublic.blob.core.windows.net/public-api-response-samples/PowerSystem/get_api_v2_PowerSystem_ProductionForecasts_ByLocations.json)"
+      parameters:
+      - name: locations
+        in: query
+        description: 'Comma-separated list of locations
+
+          Supported: AT, BE, DE, LU, DK, EE, FI, FR, LT, LV, NL, NO, PL, SE, RO, BG, BALTIC, CWE, DE-LU, NORDIC'
+        required: true
+        schema:
+          minItems: 1
+          type: string
+          items:
+            type: string
+      - name: date
+        in: query
+        description: Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15
+        required: true
+        schema:
+          type: string
+          format: date
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiProductionForecastByLocation'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiProductionForecastByLocation'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiProductionForecastByLocation'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+  /api/v2/PowerSystem/Productions/ByAreas:
+    get:
+      tags:
+      - PowerSystem
+      summary: Production
+      description: "Returns a list of productions for a date and a list of areas.\n            \nProduction tells how much electricity is being produced in an area and delivery period for each production type. \n            \nThis corresponds to the \"Actual Generation per Production Type\" data type in the Entso-e Transparency Platform.\n\n### Response field descriptions\n- **status**: Missing if no data found for the date and area. Available if data is present\n- **productions**: a list of delivery periods\n  - **deliveryStart**: start of delivery period\n  - **deliveryEnd**: end of delivery period\n  - **byType**: a dictionary of production types, where each key corresponds to a production type and each value to production volume for that type, in MW.\n  - **total**: a sum of all production values for this delivery period, in MW\n\nData source: **Entso-e Transparency platform. Update frequency and data availability depends on data being reported to Entso-e.**\n            \n[Sample response with valid data for areas NO2,NO3 and date 2025-05-05](https://proddataservicespublic.blob.core.windows.net/public-api-response-samples/PowerSystem/get_api_v2_PowerSystem_Productions_ByAreas.json)"
+      externalDocs:
+        description: Data portal link
+        url: https://data.nordpoolgroup.com/power-system/production?deliveryDate=latest&deliveryArea=NO2&location=&aggregation=DeliveryPeriod
+      parameters:
+      - name: areas
+        in: query
+        description: 'Comma-separated list of areas (e.g., NO1, NO2).
+
+          Supported: 50HZ, AMP, AT, BE, DE-LU, LU, DK1, DK2, EE, FI, FR, LT, LV, NL, NO1, NO2, NO3, NO4, NO5, PL, SE1, SE2,
+
+          SE3, SE4, TBW, TTG, TEL, BG'
+        required: true
+        schema:
+          minItems: 1
+          type: string
+          items:
+            type: string
+      - name: date
+        in: query
+        description: Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15
+        required: true
+        schema:
+          type: string
+          format: date
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiProduction'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiProduction'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiProduction'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+  /api/v2/PowerSystem/Productions/ByLocations:
+    get:
+      tags:
+      - PowerSystem
+      summary: Production By Location
+      description: "Returns a list of productions for a date and a list of locations.\n            \nProduction tells how much electricity is being produced in an area and delivery period for each production type. Production by location aggregates delivery area production value into country or region values. \n            \n### Response field descriptions\n- **status**: Missing if no data found for the date and area. Available if data is present\n- **locationType**: Country or Region\n- **deliveryAreas**: delivery areas used for this locational aggregation\n- **productions**: a list of delivery periods\n  - **deliveryStart**: start of delivery period\n  - **deliveryEnd**: end of delivery period\n  - **byType**: a dictionary of production types, where each key corresponds to a production type and each value to production volume for that type, in MW.\n  - **total**: a sum of all production values for this delivery period, in MW\n            \nData source: **Entso-e Transparency platform. Update frequency and data availability depends on data being reported to Entso-e.**\n            \n[Sample response with valid data for location NO and date 2025-05-05](https://proddataservicespublic.blob.core.windows.net/public-api-response-samples/PowerSystem/get_api_v2_PowerSystem_Productions_ByLocations.json)"
+      externalDocs:
+        description: Data portal link
+        url: https://data.nordpoolgroup.com/power-system/production?deliveryDate=latest&deliveryArea=&location=NO&aggregation=DeliveryPeriod
+      parameters:
+      - name: locations
+        in: query
+        description: 'Comma-separated list of locations (e.g., NO, SE).
+
+          Supported: AT, BE, DE, LU, DK, EE, FI, FR, LT, LV, NL, NO, PL, SE, RO, BG, BALTIC, CWE, DE-LU, NORDIC'
+        required: true
+        schema:
+          minItems: 1
+          type: string
+          items:
+            type: string
+      - name: date
+        in: query
+        description: Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15
+        required: true
+        schema:
+          type: string
+          format: date
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiProductionByLocation'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiProductionByLocation'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiProductionByLocation'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+  /api/v2/PowerSystem/Productions/Yearly/ByArea:
+    get:
+      tags:
+      - PowerSystem
+      summary: Yearly Production
+      description: "Returns a list of productions for a year and one area.\n\nProduction tells how much electricity is being produced in an area and delivery period for each production type. \n            \nThis corresponds to the \"Actual Generation per Production Type\" data type in the Entso-e Transparency Platform.\n\n### Response field descriptions\n- **status**: Missing if no data found for the date and area. Available if data is present\n- **yearlySummary**: yearly total aggregated production\n  - **byType**: a dictionary of production types, where each key corresponds to a production type and each value to production volume for that type, in MWh.\n  - **total**: the total production volume, in MWh\n- **monthlySummaries**: a list of aggregated production values per month\n  - **byType**: a dictionary of production types, where each key corresponds to a production type and each value to production volume for that type, in MWh.\n  - **total**: the total production volume, in MWh\n- **dailySummaries**: a list of aggregated production values per day\n  - **byType**: a dictionary of production types, where each key corresponds to a production type and each value to production volume for that type, in MWh.\n  - **total**: the total production volume, in MWh\n- **productions**: a list of delivery periods\n  - **deliveryStart**: start of delivery period\n  - **deliveryEnd**: end of delivery period\n  - **byType**: a dictionary of production types, where each key corresponds to a production type and each value to production volume for that type, in MW.\n  - **total**: a sum of all production values for this delivery period, in MW\n\nData source: **Entso-e Transparency platform. Update frequency and data availability depends on data being reported to Entso-e.**\n            \n[Sample response with valid data for area NO2 and year 2021](https://proddataservicespublic.blob.core.windows.net/public-api-response-samples/PowerSystem/get_api_v2_PowerSystem_Productions_Yearly_ByArea.json)"
+      parameters:
+      - name: area
+        in: query
+        description: 'One area. For example NO1.
+
+          Supported: 50HZ, AMP, AT, BE, DE-LU, LU, DK1, DK2, EE, FI, FR, LT, LV, NL, NO1, NO2, NO3, NO4, NO5, PL, SE1, SE2,
+
+          SE3, SE4, TBW, TTG, TEL, BG'
+        required: true
+        schema:
+          minLength: 1
+          type: string
+      - name: year
+        in: query
+        description: 'Year in CET (format: yyyy, e.g., 2024)'
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ApiYearlyProductionByArea'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiYearlyProductionByArea'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ApiYearlyProductionByArea'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+  /api/v2/PowerSystem/Productions/Yearly/ByLocation:
+    get:
+      tags:
+      - PowerSystem
+      summary: Yearly Production By Location
+      description: "Returns a list of productions for a year and one location.\n            \nProduction tells how much electricity is being produced in an area and delivery period for each production type. Production by location aggregates delivery area production value into country or region values. \n            \n### Response field descriptions\n- **status**: Missing if no data found for the date and area. Available if data is present\n- **locationType**: Country or Region\n- **deliveryAreas**: delivery areas used for this locational aggregation\n- **yearlySummary**: yearly total aggregated production\n  - **byType**: a dictionary of production types, where each key corresponds to a production type and each value to production volume for that type, in MWh.\n  - **total**: the total production volume, in MWh\n- **monthlySummaries**: a list of aggregated production values per month\n  - **byType**: a dictionary of production types, where each key corresponds to a production type and each value to production volume for that type, in MWh.\n  - **total**: the total production volume, in MWh\n- **dailySummaries**: a list of aggregated production values per day\n  - **byType**: a dictionary of production types, where each key corresponds to a production type and each value to production volume for that type, in MWh.\n  - **total**: the total production volume, in MWh\n- **productions**: a list of delivery periods\n  - **deliveryStart**: start of delivery period\n  - **deliveryEnd**: end of delivery period\n  - **byType**: a dictionary of production types, where each key corresponds to a production type and each value to production volume for that type, in MW.\n  - **total**: a sum of all production values for this delivery period, in MW\n            \n[Sample response with valid data for location NO and year 2021](https://proddataservicespublic.blob.core.windows.net/public-api-response-samples/PowerSystem/get_api_v2_PowerSystem_Productions_Yearly_ByLocation.json)"
+      parameters:
+      - name: location
+        in: query
+        description: 'One location. For example NO.
+
+          Supported: AT, BE, DE, LU, DK, EE, FI, FR, LT, LV, NL, NO, PL, SE, RO, BG, BALTIC, CWE, DE-LU, NORDIC'
+        required: true
+        schema:
+          minLength: 1
+          type: string
+      - name: year
+        in: query
+        description: 'Year in CET (format: yyyy, e.g., 2024)'
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ApiYearlyProductionByLocation'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiYearlyProductionByLocation'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ApiYearlyProductionByLocation'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+components:
+  schemas:
+    FreeStorageIndexValue:
+      type: object
+      properties:
+        utcMonth:
+          type: string
+          format: date
+        index1h:
+          type: number
+          format: double
+        index2h:
+          type: number
+          format: double
+        index4h:
+          type: number
+          format: double
+      additionalProperties: false
+    PremiumStorageIndexValue:
+      type: object
+      properties:
+        utcDay:
+          type: string
+          format: date
+        index1h:
+          $ref: '#/components/schemas/PremiumStorageIndexMarkets'
+        index2h:
+          $ref: '#/components/schemas/PremiumStorageIndexMarkets'
+        index4h:
+          $ref: '#/components/schemas/PremiumStorageIndexMarkets'
+      additionalProperties: false
+    ApiProductionForecast:
+      required:
+      - deliveryArea
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        updatedAt:
+          type: string
+          format: date-time
+        deliveryArea:
+          type: string
+          nullable: true
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        unit:
+          type: string
+          nullable: true
+          readOnly: true
+        productionForecasts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiProductionForecastEntry'
+          nullable: true
+      additionalProperties: false
+    ApiFlowSummary:
+      type: object
+      properties:
+        byConnections:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiByConnectionSummary'
+          nullable: true
+        totalImport:
+          type: number
+          format: double
+          nullable: true
+        totalExport:
+          type: number
+          format: double
+          nullable: true
+        totalNetPosition:
+          type: number
+          format: double
+          nullable: true
+      additionalProperties: false
+    ApiConsumption:
+      required:
+      - deliveryArea
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        updatedAt:
+          type: string
+          format: date-time
+        deliveryArea:
+          type: string
+          nullable: true
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        unit:
+          type: string
+          nullable: true
+          readOnly: true
+        consumptions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsumptionEntry'
+          nullable: true
+      additionalProperties: false
+    ApiAvailableStatus:
+      enum:
+      - Missing
+      - Available
+      type: string
+    ApiProductionForecastByLocation:
+      required:
+      - location
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        updatedAt:
+          type: string
+          format: date-time
+        unit:
+          type: string
+          nullable: true
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        location:
+          type: string
+          nullable: true
+        locationType:
+          $ref: '#/components/schemas/LocationType'
+        deliveryAreas:
+          type: array
+          items:
+            type: string
+          nullable: true
+        productionForecasts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiProductionForecastEntry'
+          nullable: true
+      additionalProperties: false
+    ApiProductionDailySummary:
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        byType:
+          type: object
+          properties:
+            mixed:
+              type: number
+              format: double
+            generation:
+              type: number
+              format: double
+            load:
+              type: number
+              format: double
+            biomass:
+              type: number
+              format: double
+            fossilBrownCoal:
+              type: number
+              format: double
+            fossilCoalDerivedGas:
+              type: number
+              format: double
+            fossilGas:
+              type: number
+              format: double
+            fossilHardCoal:
+              type: number
+              format: double
+            fossilOil:
+              type: number
+              format: double
+            fossilOilShale:
+              type: number
+              format: double
+            fossilPeat:
+              type: number
+              format: double
+            geothermal:
+              type: number
+              format: double
+            hydroPumpedStorage:
+              type: number
+              format: double
+            hydroRunOfRiverAndPoundage:
+              type: number
+              format: double
+            hydroWaterReservoir:
+              type: number
+              format: double
+            marine:
+              type: number
+              format: double
+            nuclear:
+              type: number
+              format: double
+            otherRenewable:
+              type: number
+              format: double
+            solar:
+              type: number
+              format: double
+            waste:
+              type: number
+              format: double
+            windOffshore:
+              type: number
+              format: double
+            windOnshore:
+              type: number
+              format: double
+            other:
+              type: number
+              format: double
+            acLink:
+              type: number
+              format: double
+            dcLink:
+              type: number
+              format: double
+            substation:
+              type: number
+              format: double
+            transformer:
+              type: number
+              format: double
+            energyStorage:
+              type: number
+              format: double
+            undefined:
+              type: number
+              format: double
+          additionalProperties: false
+        total:
+          type: number
+          format: double
+          nullable: true
+      additionalProperties: false
+    ApiYearlyConsumptionByArea:
+      type: object
+      properties:
+        year:
+          type: integer
+          format: int32
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        updatedAt:
+          type: string
+          format: date-time
+        unit:
+          type: string
+          nullable: true
+          readOnly: true
+        totalVolumeUnit:
+          type: string
+          nullable: true
+          readOnly: true
+        dailySummaries:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsumptionDailySummary'
+          nullable: true
+        monthlySummaries:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsumptionMonthlySummary'
+          nullable: true
+        yearlySummary:
+          type: number
+          format: double
+          nullable: true
+        consumptions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsumptionEntry'
+          nullable: true
+        deliveryArea:
+          type: string
+          nullable: true
+      additionalProperties: false
+    ApiConsumptionForecastByLocation:
+      required:
+      - location
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        updatedAt:
+          type: string
+          format: date-time
+        unit:
+          type: string
+          nullable: true
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        location:
+          type: string
+          nullable: true
+        locationType:
+          $ref: '#/components/schemas/LocationType'
+        deliveryAreas:
+          type: array
+          items:
+            type: string
+          nullable: true
+        consumptionForecasts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsumptionEntry'
+          nullable: true
+      additionalProperties: false
+    ApiYearlyProductionByLocation:
+      required:
+      - location
+      type: object
+      properties:
+        year:
+          type: integer
+          format: int32
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        updatedAt:
+          type: string
+          format: date-time
+        unit:
+          type: string
+          nullable: true
+          readOnly: true
+        totalVolumeUnit:
+          type: string
+          nullable: true
+          readOnly: true
+        dailySummaries:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiProductionDailySummary'
+          nullable: true
+        monthlySummaries:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiProductionMonthlySummary'
+          nullable: true
+        yearlySummary:
+          $ref: '#/components/schemas/ApiProductionYearlySummary'
+        productions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiProductionEntry'
+          nullable: true
+        location:
+          type: string
+          nullable: true
+        locationType:
+          $ref: '#/components/schemas/LocationType'
+        deliveryAreas:
+          type: array
+          items:
+            type: string
+          nullable: true
+      additionalProperties: false
+    ApiProductionMonthlySummary:
+      type: object
+      properties:
+        deliveryDateStartCET:
+          type: string
+          format: date
+        deliveryDateEndCET:
+          type: string
+          format: date
+        byType:
+          type: object
+          properties:
+            mixed:
+              type: number
+              format: double
+            generation:
+              type: number
+              format: double
+            load:
+              type: number
+              format: double
+            biomass:
+              type: number
+              format: double
+            fossilBrownCoal:
+              type: number
+              format: double
+            fossilCoalDerivedGas:
+              type: number
+              format: double
+            fossilGas:
+              type: number
+              format: double
+            fossilHardCoal:
+              type: number
+              format: double
+            fossilOil:
+              type: number
+              format: double
+            fossilOilShale:
+              type: number
+              format: double
+            fossilPeat:
+              type: number
+              format: double
+            geothermal:
+              type: number
+              format: double
+            hydroPumpedStorage:
+              type: number
+              format: double
+            hydroRunOfRiverAndPoundage:
+              type: number
+              format: double
+            hydroWaterReservoir:
+              type: number
+              format: double
+            marine:
+              type: number
+              format: double
+            nuclear:
+              type: number
+              format: double
+            otherRenewable:
+              type: number
+              format: double
+            solar:
+              type: number
+              format: double
+            waste:
+              type: number
+              format: double
+            windOffshore:
+              type: number
+              format: double
+            windOnshore:
+              type: number
+              format: double
+            other:
+              type: number
+              format: double
+            acLink:
+              type: number
+              format: double
+            dcLink:
+              type: number
+              format: double
+            substation:
+              type: number
+              format: double
+            transformer:
+              type: number
+              format: double
+            energyStorage:
+              type: number
+              format: double
+            undefined:
+              type: number
+              format: double
+          additionalProperties: false
+        total:
+          type: number
+          format: double
+          nullable: true
+      additionalProperties: false
+    ApiExchange:
+      required:
+      - deliveryArea
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        updatedAt:
+          type: string
+          format: date-time
+        deliveryArea:
+          type: string
+          nullable: true
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        unit:
+          type: string
+          nullable: true
+          readOnly: true
+        dailyTotalUnit:
+          type: string
+          nullable: true
+          readOnly: true
+        dailyTotalImport:
+          type: number
+          format: double
+          nullable: true
+        dailyTotalExport:
+          type: number
+          format: double
+          nullable: true
+        dailyTotalNetPosition:
+          type: number
+          format: double
+          nullable: true
+          readOnly: true
+        exchanges:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiTransfer'
+          nullable: true
+      additionalProperties: false
+    ConsumptionMonthlySummary:
+      type: object
+      properties:
+        deliveryDateStartCET:
+          type: string
+          format: date
+        deliveryDateEndCET:
+          type: string
+          format: date
+        totalVolume:
+          type: number
+          format: double
+          nullable: true
+      additionalProperties: false
+    ApiProductionByLocation:
+      required:
+      - location
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        updatedAt:
+          type: string
+          format: date-time
+        unit:
+          type: string
+          nullable: true
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        location:
+          type: string
+          nullable: true
+        locationType:
+          $ref: '#/components/schemas/LocationType'
+        deliveryAreas:
+          type: array
+          items:
+            type: string
+          nullable: true
+        productions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiProductionEntry'
+          nullable: true
+      additionalProperties: false
+    StorageIndexRevenueMarket:
+      enum:
+      - DayAhead
+      - FCR
+      - FcrN
+      - FcrDUp
+      - FcrUp
+      - FcrDDown
+      - FcrDown
+      - FFR
+      - aFRRCapacityReservation
+      - aFRRCapacityReservationUp
+      - aFRRCapacityReservationDown
+      - aFRREnergyActivation
+      - mFRRCapacityReservation
+      - mFRRCapacityReservationUp
+      - mFRRCapacityReservationDown
+      - mFRREnergyActivation
+      - Intraday
+      - MSDReservation
+      - MSDActivation
+      - MBReservation
+      - MBActivation
+      type: string
+    ApiFreeStorageIndex:
+      type: object
+      properties:
+        area:
+          type: string
+          nullable: true
+        unit:
+          type: string
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+        markets:
+          type: array
+          items:
+            $ref: '#/components/schemas/StorageIndexRevenueMarket'
+          nullable: true
+        indexValues:
+          type: array
+          items:
+            $ref: '#/components/schemas/FreeStorageIndexValue'
+          nullable: true
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+      additionalProperties: false
+    ValidationProblemDetails:
+      type: object
+      properties:
+        type:
+          type: string
+          nullable: true
+        title:
+          type: string
+          nullable: true
+        status:
+          type: integer
+          format: int32
+          nullable: true
+        detail:
+          type: string
+          nullable: true
+        instance:
+          type: string
+          nullable: true
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+          nullable: true
+      additionalProperties: {}
+    ApiPhysicalFlowDailySummary:
+      type: object
+      properties:
+        byConnections:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiByConnectionSummary'
+          nullable: true
+        totalImport:
+          type: number
+          format: double
+          nullable: true
+        totalExport:
+          type: number
+          format: double
+          nullable: true
+        totalNetPosition:
+          type: number
+          format: double
+          nullable: true
+        deliveryDateCET:
+          type: string
+          format: date
+      additionalProperties: false
+    ApiTransfer:
+      type: object
+      properties:
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        byConnections:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiByConnection'
+          nullable: true
+        totalImport:
+          type: number
+          format: double
+          nullable: true
+          readOnly: true
+        totalExport:
+          type: number
+          format: double
+          nullable: true
+          readOnly: true
+        totalNetPosition:
+          type: number
+          format: double
+          nullable: true
+          readOnly: true
+      additionalProperties: false
+    ApiProductionYearlySummary:
+      type: object
+      properties:
+        byType:
+          type: object
+          properties:
+            mixed:
+              type: number
+              format: double
+            generation:
+              type: number
+              format: double
+            load:
+              type: number
+              format: double
+            biomass:
+              type: number
+              format: double
+            fossilBrownCoal:
+              type: number
+              format: double
+            fossilCoalDerivedGas:
+              type: number
+              format: double
+            fossilGas:
+              type: number
+              format: double
+            fossilHardCoal:
+              type: number
+              format: double
+            fossilOil:
+              type: number
+              format: double
+            fossilOilShale:
+              type: number
+              format: double
+            fossilPeat:
+              type: number
+              format: double
+            geothermal:
+              type: number
+              format: double
+            hydroPumpedStorage:
+              type: number
+              format: double
+            hydroRunOfRiverAndPoundage:
+              type: number
+              format: double
+            hydroWaterReservoir:
+              type: number
+              format: double
+            marine:
+              type: number
+              format: double
+            nuclear:
+              type: number
+              format: double
+            otherRenewable:
+              type: number
+              format: double
+            solar:
+              type: number
+              format: double
+            waste:
+              type: number
+              format: double
+            windOffshore:
+              type: number
+              format: double
+            windOnshore:
+              type: number
+              format: double
+            other:
+              type: number
+              format: double
+            acLink:
+              type: number
+              format: double
+            dcLink:
+              type: number
+              format: double
+            substation:
+              type: number
+              format: double
+            transformer:
+              type: number
+              format: double
+            energyStorage:
+              type: number
+              format: double
+            undefined:
+              type: number
+              format: double
+          additionalProperties: false
+        total:
+          type: number
+          format: double
+          nullable: true
+      additionalProperties: false
+    ApiHydro:
+      required:
+      - deliveryArea
+      type: object
+      properties:
+        year:
+          type: integer
+          format: int32
+        deliveryArea:
+          type: string
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        unit:
+          type: string
+          nullable: true
+          readOnly: true
+        hydroReservoirReserves:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiReservoirWeek'
+          nullable: true
+      additionalProperties: false
+    ApiByConnection:
+      required:
+      - area
+      type: object
+      properties:
+        area:
+          type: string
+          nullable: true
+        connection:
+          type: string
+          nullable: true
+        import:
+          type: number
+          format: double
+          nullable: true
+        export:
+          type: number
+          format: double
+          nullable: true
+        netPosition:
+          type: number
+          format: double
+          nullable: true
+          readOnly: true
+      additionalProperties: false
+    ApiProductionEntry:
+      type: object
+      properties:
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        byType:
+          type: object
+          properties:
+            mixed:
+              type: number
+              format: double
+            generation:
+              type: number
+              format: double
+            load:
+              type: number
+              format: double
+            biomass:
+              type: number
+              format: double
+            fossilBrownCoal:
+              type: number
+              format: double
+            fossilCoalDerivedGas:
+              type: number
+              format: double
+            fossilGas:
+              type: number
+              format: double
+            fossilHardCoal:
+              type: number
+              format: double
+            fossilOil:
+              type: number
+              format: double
+            fossilOilShale:
+              type: number
+              format: double
+            fossilPeat:
+              type: number
+              format: double
+            geothermal:
+              type: number
+              format: double
+            hydroPumpedStorage:
+              type: number
+              format: double
+            hydroRunOfRiverAndPoundage:
+              type: number
+              format: double
+            hydroWaterReservoir:
+              type: number
+              format: double
+            marine:
+              type: number
+              format: double
+            nuclear:
+              type: number
+              format: double
+            otherRenewable:
+              type: number
+              format: double
+            solar:
+              type: number
+              format: double
+            waste:
+              type: number
+              format: double
+            windOffshore:
+              type: number
+              format: double
+            windOnshore:
+              type: number
+              format: double
+            other:
+              type: number
+              format: double
+            acLink:
+              type: number
+              format: double
+            dcLink:
+              type: number
+              format: double
+            substation:
+              type: number
+              format: double
+            transformer:
+              type: number
+              format: double
+            energyStorage:
+              type: number
+              format: double
+            undefined:
+              type: number
+              format: double
+          additionalProperties: false
+        total:
+          type: number
+          format: double
+          nullable: true
+          readOnly: true
+      additionalProperties: false
+    ApiTransferSummary:
+      type: object
+      properties:
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        byConnections:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiByConnectionSummary'
+          nullable: true
+        totalImport:
+          type: number
+          format: double
+          nullable: true
+        totalExport:
+          type: number
+          format: double
+          nullable: true
+        totalNetPosition:
+          type: number
+          format: double
+          nullable: true
+      additionalProperties: false
+    ApiPremiumStorageIndex:
+      type: object
+      properties:
+        area:
+          type: string
+          nullable: true
+        utcMonth:
+          type: string
+          format: date
+        unit:
+          type: string
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+        indexValues:
+          type: array
+          items:
+            $ref: '#/components/schemas/PremiumStorageIndexValue'
+          nullable: true
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+      additionalProperties: false
+    ApiReservoirWeek:
+      type: object
+      properties:
+        isoWeek:
+          type: integer
+          format: int32
+        weekStartDate:
+          type: string
+          format: date
+        weekEndDate:
+          type: string
+          format: date
+        maxCapacityInGigawattHours:
+          type: number
+          format: double
+        currentCapacityInGigawattHours:
+          type: number
+          format: double
+        utilizationPercentage:
+          type: number
+          format: double
+      additionalProperties: false
+    ConsumptionEntry:
+      type: object
+      properties:
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        volume:
+          type: number
+          format: double
+          nullable: true
+      additionalProperties: false
+    ApiProduction:
+      required:
+      - deliveryArea
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        updatedAt:
+          type: string
+          format: date-time
+        deliveryArea:
+          type: string
+          nullable: true
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        unit:
+          type: string
+          nullable: true
+          readOnly: true
+        productions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiProductionEntry'
+          nullable: true
+      additionalProperties: false
+    PremiumStorageIndexMarkets:
+      type: object
+      properties:
+        markets:
+          type: object
+          properties:
+            DayAhead:
+              type: number
+              format: double
+            FCR:
+              type: number
+              format: double
+            FcrN:
+              type: number
+              format: double
+            FcrDUp:
+              type: number
+              format: double
+            FcrUp:
+              type: number
+              format: double
+            FcrDDown:
+              type: number
+              format: double
+            FcrDown:
+              type: number
+              format: double
+            FFR:
+              type: number
+              format: double
+            aFRRCapacityReservation:
+              type: number
+              format: double
+            aFRRCapacityReservationUp:
+              type: number
+              format: double
+            aFRRCapacityReservationDown:
+              type: number
+              format: double
+            aFRREnergyActivation:
+              type: number
+              format: double
+            mFRRCapacityReservation:
+              type: number
+              format: double
+            mFRRCapacityReservationUp:
+              type: number
+              format: double
+            mFRRCapacityReservationDown:
+              type: number
+              format: double
+            mFRREnergyActivation:
+              type: number
+              format: double
+            Intraday:
+              type: number
+              format: double
+            MSDReservation:
+              type: number
+              format: double
+            MSDActivation:
+              type: number
+              format: double
+            MBReservation:
+              type: number
+              format: double
+            MBActivation:
+              type: number
+              format: double
+          additionalProperties: false
+        totalGrossRevenues:
+          type: number
+          format: double
+      additionalProperties: false
+    Prognosis:
+      type: object
+      properties:
+        dayAheadPrognosis:
+          type: number
+          format: double
+          nullable: true
+        intradayPrognosis:
+          type: number
+          format: double
+          nullable: true
+        currentPrognosis:
+          type: number
+          format: double
+          nullable: true
+      additionalProperties: false
+    ApiYearlyExchange:
+      required:
+      - deliveryArea
+      - yearlySummary
+      type: object
+      properties:
+        year:
+          type: integer
+          format: int32
+        deliveryArea:
+          type: string
+          nullable: true
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        updatedAt:
+          type: string
+          format: date-time
+        unit:
+          type: string
+          nullable: true
+          readOnly: true
+        totalVolumeUnit:
+          type: string
+          nullable: true
+          readOnly: true
+        dailySummaries:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiPhysicalFlowDailySummary'
+          nullable: true
+        monthlySummaries:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiPhysicalFlowMonthlySummary'
+          nullable: true
+        yearlySummary:
+          $ref: '#/components/schemas/ApiFlowSummary'
+        exchanges:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiTransferSummary'
+          nullable: true
+      additionalProperties: false
+    ApiYearlyProductionByArea:
+      required:
+      - deliveryArea
+      type: object
+      properties:
+        year:
+          type: integer
+          format: int32
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        updatedAt:
+          type: string
+          format: date-time
+        unit:
+          type: string
+          nullable: true
+          readOnly: true
+        totalVolumeUnit:
+          type: string
+          nullable: true
+          readOnly: true
+        dailySummaries:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiProductionDailySummary'
+          nullable: true
+        monthlySummaries:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiProductionMonthlySummary'
+          nullable: true
+        yearlySummary:
+          $ref: '#/components/schemas/ApiProductionYearlySummary'
+        productions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiProductionEntry'
+          nullable: true
+        deliveryArea:
+          type: string
+          nullable: true
+      additionalProperties: false
+    ApiConsumptionForecast:
+      required:
+      - deliveryArea
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        updatedAt:
+          type: string
+          format: date-time
+        deliveryArea:
+          type: string
+          nullable: true
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        unit:
+          type: string
+          nullable: true
+          readOnly: true
+        consumptionForecasts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsumptionEntry'
+          nullable: true
+      additionalProperties: false
+    ApiByConnectionSummary:
+      required:
+      - area
+      type: object
+      properties:
+        area:
+          type: string
+          nullable: true
+        connection:
+          type: string
+          nullable: true
+        import:
+          type: number
+          format: double
+          nullable: true
+        export:
+          type: number
+          format: double
+          nullable: true
+        netPosition:
+          type: number
+          format: double
+          nullable: true
+      additionalProperties: false
+    ApiConsumptionByLocation:
+      required:
+      - location
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        updatedAt:
+          type: string
+          format: date-time
+        unit:
+          type: string
+          nullable: true
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        location:
+          type: string
+          nullable: true
+        locationType:
+          $ref: '#/components/schemas/LocationType'
+        deliveryAreas:
+          type: array
+          items:
+            type: string
+          nullable: true
+        consumptions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsumptionEntry'
+          nullable: true
+      additionalProperties: false
+    ApiYearlyConsumptionByLocation:
+      required:
+      - location
+      type: object
+      properties:
+        year:
+          type: integer
+          format: int32
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        updatedAt:
+          type: string
+          format: date-time
+        unit:
+          type: string
+          nullable: true
+          readOnly: true
+        totalVolumeUnit:
+          type: string
+          nullable: true
+          readOnly: true
+        dailySummaries:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsumptionDailySummary'
+          nullable: true
+        monthlySummaries:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsumptionMonthlySummary'
+          nullable: true
+        yearlySummary:
+          type: number
+          format: double
+          nullable: true
+        consumptions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsumptionEntry'
+          nullable: true
+        location:
+          type: string
+          nullable: true
+        locationType:
+          $ref: '#/components/schemas/LocationType'
+        deliveryAreas:
+          type: array
+          items:
+            type: string
+          nullable: true
+      additionalProperties: false
+    ApiPhysicalFlowMonthlySummary:
+      type: object
+      properties:
+        byConnections:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiByConnectionSummary'
+          nullable: true
+        totalImport:
+          type: number
+          format: double
+          nullable: true
+        totalExport:
+          type: number
+          format: double
+          nullable: true
+        totalNetPosition:
+          type: number
+          format: double
+          nullable: true
+        deliveryDateStartCET:
+          type: string
+          format: date
+        deliveryDateEndCET:
+          type: string
+          format: date
+      additionalProperties: false
+    LocationType:
+      enum:
+      - Country
+      - Region
+      type: string
+    ApiProductionForecastEntry:
+      type: object
+      properties:
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        forecastByType:
+          type: object
+          properties:
+            mixed:
+              $ref: '#/components/schemas/Prognosis'
+            generation:
+              $ref: '#/components/schemas/Prognosis'
+            load:
+              $ref: '#/components/schemas/Prognosis'
+            biomass:
+              $ref: '#/components/schemas/Prognosis'
+            fossilBrownCoal:
+              $ref: '#/components/schemas/Prognosis'
+            fossilCoalDerivedGas:
+              $ref: '#/components/schemas/Prognosis'
+            fossilGas:
+              $ref: '#/components/schemas/Prognosis'
+            fossilHardCoal:
+              $ref: '#/components/schemas/Prognosis'
+            fossilOil:
+              $ref: '#/components/schemas/Prognosis'
+            fossilOilShale:
+              $ref: '#/components/schemas/Prognosis'
+            fossilPeat:
+              $ref: '#/components/schemas/Prognosis'
+            geothermal:
+              $ref: '#/components/schemas/Prognosis'
+            hydroPumpedStorage:
+              $ref: '#/components/schemas/Prognosis'
+            hydroRunOfRiverAndPoundage:
+              $ref: '#/components/schemas/Prognosis'
+            hydroWaterReservoir:
+              $ref: '#/components/schemas/Prognosis'
+            marine:
+              $ref: '#/components/schemas/Prognosis'
+            nuclear:
+              $ref: '#/components/schemas/Prognosis'
+            otherRenewable:
+              $ref: '#/components/schemas/Prognosis'
+            solar:
+              $ref: '#/components/schemas/Prognosis'
+            waste:
+              $ref: '#/components/schemas/Prognosis'
+            windOffshore:
+              $ref: '#/components/schemas/Prognosis'
+            windOnshore:
+              $ref: '#/components/schemas/Prognosis'
+            other:
+              $ref: '#/components/schemas/Prognosis'
+            acLink:
+              $ref: '#/components/schemas/Prognosis'
+            dcLink:
+              $ref: '#/components/schemas/Prognosis'
+            substation:
+              $ref: '#/components/schemas/Prognosis'
+            transformer:
+              $ref: '#/components/schemas/Prognosis'
+            energyStorage:
+              $ref: '#/components/schemas/Prognosis'
+            undefined:
+              $ref: '#/components/schemas/Prognosis'
+          additionalProperties: false
+        totalDayAheadPrognosis:
+          type: number
+          format: double
+          nullable: true
+      additionalProperties: false
+    ConsumptionDailySummary:
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        totalVolume:
+          type: number
+          format: double
+          nullable: true
+      additionalProperties: false
+externalDocs:
+  description: Nord Pool Data Portal (public day-ahead prices site)
+  url: https://data.nordpoolgroup.com/

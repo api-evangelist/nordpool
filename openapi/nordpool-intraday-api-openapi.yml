@@ -1,0 +1,2148 @@
+openapi: 3.0.3
+info:
+  title: Nord Pool Data Portal API (Public) Auction Intraday API
+  version: '1.0'
+  description: The unauthenticated JSON API behind the Nord Pool Data Portal (data.nordpoolgroup.com), where Nord Pool publishes day-ahead electricity prices for the Nordic, Baltic, CWE, and UK bidding areas. These endpoints return the same day-ahead auction results shown on the public website, in 15-minute Market Time Unit resolution, and are widely used by open-source integrations such as Home Assistant. IMPORTANT - this API is not part of Nord Pool's officially documented, subscription-backed developer offering. It is not covered by an SLA or the API General Terms, and Nord Pool may change or restrict it at any time. The two operations below were observed live and verified returning data on 2026-07-11; request and response shapes are modeled from those observed responses rather than from official reference documentation. For supported programmatic access, use the Nord Pool Market Data API (data-api.nordpoolgroup.com) with a Power Data Services subscription.
+  contact:
+    name: Nord Pool
+    url: https://data.nordpoolgroup.com/
+servers:
+- url: https://dataportal-api.nordpoolgroup.com
+  description: Nord Pool Data Portal backend (public, unauthenticated)
+tags:
+- name: Intraday
+paths:
+  /api/v2/Intraday/ContractStatistics/ByAreas:
+    get:
+      tags:
+      - Intraday
+      summary: Intraday Contract Statistics
+      description: " Returns intraday contract statistics for a date and a list of areas.\n            \nAll intraday trades where at least one leg (buy or/and sell) belongs to Nord Pool, Independent Bulgarian Energy Exchange (IBEX), Bursa Română de Mărfuri S.A (BRM) or Elma Orkuviðskipti (ELMA) and one leg belongs to queried area are included in the calculation of contract statistics. However, trades where both legs belong to other PXs are excluded from the statistics.\nThe calculation includes local and SIDC trades, as well as block trades and wash trades (trades where the same legal entity is on both the buy and sell sides). \n            \nIntraday contract statistics are updated every 15 minutes for open contracts spanning today, tomorrow, and day after tomorrow.\n            \n### Response field descriptions\n- **status**: Missing if no data found for the date and area. Available if data is present\n- **priceUnit**: defines the unit for all prices. Given as either EUR/MWh, GBP/MWh or ISK/MWh\n- **contracts**: a list of contracts for this delivery day\n  - **deliveryStart**: delivery start time for the contract\n  - **deliveryEnd**: delivery end time for the contract\n  - **isLocalContract**: false if the contract is provided by XBID / SIDC, true if this contract is provided outside XBID / SIDC\n  - **contractId**: the id of the contract\n  - **contractName**: the name of the contract\n  - **contractOpenTime**: the time the contract opens for trading\n  - **contractCloseTime**: the time the contract closes for trading\n  - **highPrice**: the highest trade price observed in the contract and area\n  - **lowPrice**: the lowest trade price observed in the contract and area\n  - **openPrice**: the price of the first trade in the contract and area\n  - **openTradeTime**: the timestamp of the first trade in the area\n  - **closePrice**: the price of the last observed trade in the contract and area. Note that if the contract is still open, this might change\n  - **closeTradeTime**: the timestamp of the last observed trade in the area\n  - **averagePrice**: the volume weighted average price for all trades observed in the contract and area\n  - **volume**: the transaction volume of the contract and area given in MW\n  - **buyVolume**: total buy volume in the area across all transactions given in MW\n  - **sellVolume**: total sell volume in the area across all transactions given in MW\n  - **averagePriceLast3H**: volume weighted average price for all trades happening within 3 hours of contract closing\n  - **averagePriceLast1H**: volume weighted average price for all trades happening within 1 hour of contact closing \n\nFor a detailed breakdown on calculation rules, see <a href=\"https://developers.nordpoolgroup.com/reference/how-to-calculate-intraday-contract-statistics\"> this page</a>.\n            \n[Sample response with valid data for areas NO1,AMP and date 2025-05-05](https://proddataservicespublic.blob.core.windows.net/public-api-response-samples/Intraday/get_api_v2_Intraday_ContractStatistics_ByAreas.json)"
+      externalDocs:
+        description: Data portal link
+        url: https://data.nordpoolgroup.com/intraday/intraday-market-statistics?deliveryDate=latest&deliveryArea=50Hz
+      parameters:
+      - name: areas
+        in: query
+        description: 'Comma-separated list of areas (e.g., NO1, NO2).
+
+          Supported: KT(legacy),NO1,NO2,NO3,NO4,NO5,SE1,SE2,SE3,SE4,FI,DK1,DK2,EE,LT,LV,AT,BE,FR,GER,50Hz,AMP,TTG,TBW,NL,PL,TEL,BG,UK,IS'
+        required: true
+        schema:
+          minItems: 1
+          type: string
+          items:
+            type: string
+      - name: date
+        in: query
+        description: Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15
+        required: true
+        schema:
+          type: string
+          format: date
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiDeliveryAreaMarketStatistic'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiDeliveryAreaMarketStatistic'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiDeliveryAreaMarketStatistic'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+  /api/v2/Intraday/ContractStatistics/Total:
+    get:
+      tags:
+      - Intraday
+      summary: Intraday Contract Total Statistics
+      description: "Returns total intraday contract statistics for a date.\n            \nAll intraday trades where at least one leg (buy or/and sell) belongs to Nord Pool, Independent Bulgarian Energy Exchange (IBEX) or Bursa Română de Mărfuri S.A (BRM) and the currency is EUR are included in the calculation of contract statistics. However, trades where both legs belong to other PXs are excluded from the statistics. The calculation includes local and SIDC trades, as well as block trades and wash trades (trades where the same legal entity is on both the buy and sell sides).\n            \nIntraday contract statistics are updated every 15 minutes for open contracts spanning today, tomorrow, and day after tomorrow.\n            \n### Response field descriptions\n- **status**: Missing if no data found for the date. Available if data is present\n- **priceUnit**: defines the unit for all prices. For contract total statistics, this is always EUR/MWh\n- **contracts**: a list of contracts for this delivery day\n  - **deliveryStart**: delivery start time for the contract\n  - **deliveryEnd**: delivery end time for the contract\n  - **isLocalContract**: false if the contract is provided by XBID / SIDC, true if this contract is provided outside XBID / SIDC\n  - **contractId**: the id of the contract\n  - **contractName**: the name of the contract\n  - **contractOpenTime**: the time the contract opens for trading\n  - **contractCloseTime**: the time the contract closes for trading\n  - **highPrice**: the highest trade price observed in the contract\n  - **lowPrice**: the lowest trade price observed in the contract\n  - **openPrice**: the price of the first trade in the contract\n  - **openTradeTime**: the timestamp of the first trade for in the contract\n  - **closePrice**: the price of the last observed trade in the contract. Note that if the contract is still open, this might change\n  - **closeTradeTime**: the timestamp of the last observed trade in the contract\n  - **averagePrice**: the volume weighted average price for all trades observed in the contract\n  - **volume**: the transaction volume of the contract given in MW\n  - **buyVolume**: total buy volume in the contract across all transactions given in MW\n  - **sellVolume**: total sell volume in the contract across all transactions given in MW\n  - **averagePriceLast3H**: volume weighted average price for all trades happening within 3 hours of contract closing\n  - **averagePriceLast1H**: volume weighted average price for all trades happening within 1 hour of contact closing \n\nFor a detailed breakdown on calculation rules, see <a href=\"https://developers.nordpoolgroup.com/reference/how-to-calculate-intraday-contract-statistics\"> this page</a>\n            \n[Sample response with valid data for date 2025-05-05](https://proddataservicespublic.blob.core.windows.net/public-api-response-samples/Intraday/get_api_v2_Intraday_ContractStatistics_Total.json)"
+      externalDocs:
+        description: Data portal link
+        url: https://data.nordpoolgroup.com/intraday/intraday-market-statistics?deliveryDate=latest&deliveryArea=Total
+      parameters:
+      - name: date
+        in: query
+        description: Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15
+        required: true
+        schema:
+          type: string
+          format: date
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ApiTotalMarketStatistic'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiTotalMarketStatistic'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ApiTotalMarketStatistic'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+  /api/v2/Intraday/ContractStatistics/Yearly/ByArea:
+    get:
+      tags:
+      - Intraday
+      summary: Intraday Yearly Contract Statistics
+      description: "Returns intraday contract statistics for a year and one area.\n            \nAll intraday trades where at least one leg (buy or/and sell) belongs to Nord Pool, Independent Bulgarian Energy Exchange (IBEX), Bursa Română de Mărfuri S.A (BRM) or Elma Orkuviðskipti (ELMA) and one leg belongs to queried area are included in the calculation of contract statistics. However, trades where both legs belong to other PXs are excluded from the statistics. The calculation includes local and SIDC trades, as well as block trades and wash trades (trades where the same legal entity is on both the buy and sell sides). \n\nThis aggregate is updated once per day, and includes data up until yesterday (CET).\n            \n### Response field descriptions\n- **status**: Missing if no data found for the year and area. Available if data is present\n- **priceUnit**: defines the unit for all prices. Given as either EUR/MWh, GBP/MWh or ISK/MWh\n- **contracts**: a list of contracts for this delivery year\n  - **deliveryStart**: delivery start time for the contract\n  - **deliveryEnd**: delivery end time for the contract\n  - **isLocalContract**: false if the contract is provided by XBID / SIDC, true if this contract is provided outside XBID / SIDC\n  - **contractId**: the id of the contract\n  - **contractName**: the name of the contract\n  - **contractOpenTime**: the time the contract opens for trading\n  - **contractCloseTime**: the time the contract closes for trading\n  - **highPrice**: the highest trade price observed in the contract and area\n  - **lowPrice**: the lowest trade price observed in the contract and area\n  - **openPrice**: the price of the first trade in the contract and area\n  - **openTradeTime**: the timestamp of the first trade in the area\n  - **closePrice**: the price of the last observed trade in the contract and area. Note that if the contract is still open, this might change\n  - **closeTradeTime**: the timestamp of the last observed trade in the area\n  - **averagePrice**: the volume weighted average price for all trades observed in the contract and area\n  - **volume**: the transaction volume of the contract and area given in MW\n  - **buyVolume**: total buy volume in the area across all transactions given in MW\n  - **sellVolume**: total sell volume in the area across all transactions given in MW\n  - **averagePriceLast3H**: volume weighted average price for all trades happening within 3 hours of contract closing\n  - **averagePriceLast1H**: volume weighted average price for all trades happening within 1 hour of contact closing \n\nFor a detailed breakdown on calculation rules, see <a href=\"https://developers.nordpoolgroup.com/reference/how-to-calculate-intraday-contract-statistics\"> this page</a>.\n   \n[Sample response with valid data for area NO1 and year 2021](https://proddataservicespublic.blob.core.windows.net/public-api-response-samples/Intraday/get_api_v2_Intraday_ContractStatistics_Yearly_ByArea.json)"
+      parameters:
+      - name: area
+        in: query
+        description: 'One area. For example NO1.
+
+          Supported: KT(legacy),NO1,NO2,NO3,NO4,NO5,SE1,SE2,SE3,SE4,FI,DK1,DK2,EE,LT,LV,AT,BE,FR,GER,50Hz,AMP,TTG,TBW,NL,PL,TEL,BG,UK,IS'
+        required: true
+        schema:
+          minLength: 1
+          type: string
+      - name: year
+        in: query
+        description: 'Year in CET (format: yyyy, e.g., 2024)'
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ApiDeliveryAreaMarketYearlyStatistic'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiDeliveryAreaMarketYearlyStatistic'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ApiDeliveryAreaMarketYearlyStatistic'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+  /api/v2/Intraday/ContractStatistics/Yearly/Total:
+    get:
+      tags:
+      - Intraday
+      summary: Intraday Yearly Total Contract Statistics
+      description: " Returns all total intraday contract statistics for a year.\n            \nAll intraday trades where at least one leg (buy or/and sell) belongs to Nord Pool, Independent Bulgarian Energy Exchange (IBEX) or Bursa Română de Mărfuri S.A (BRM) and the currency is EUR are included in the calculation of contract statistics. However, trades where both legs belong to other PXs are excluded from the statistics. The calculation includes local and SIDC trades, as well as block trades and wash trades (trades where the same legal entity is on both the buy and sell sides).\n\nThis aggregate is updated once per day, and includes data up until yesterday (CET).\n \n### Response field descriptions\n- **status**: Missing if no data found for the year. Available if data is present\n- **priceUnit**: defines the unit for all prices. For contract total statistics, this is always EUR/MWh\n- **contracts**: a list of contracts for this delivery year\n  - **deliveryStart**: delivery start time for the contract\n  - **deliveryEnd**: delivery end time for the contract\n  - **isLocalContract**: false if the contract is provided by XBID / SIDC, true if this contract is provided outside XBID / SIDC\n  - **contractId**: the id of the contract\n  - **contractName**: the name of the contract\n  - **contractOpenTime**: the time the contract opens for trading\n  - **contractCloseTime**: the time the contract closes for trading\n  - **highPrice**: the highest trade price observed in the contract\n  - **lowPrice**: the lowest trade price observed in the contract\n  - **openPrice**: the price of the first trade in the contract\n  - **openTradeTime**: the timestamp of the first trade for in the contract\n  - **closePrice**: the price of the last observed trade in the contract. Note that if the contract is still open, this might change\n  - **closeTradeTime**: the timestamp of the last observed trade in the contract\n  - **averagePrice**: the volume weighted average price for all trades observed in the contract\n  - **volume**: the transaction volume of the contract given in MW\n  - **buyVolume**: total buy volume in the contract across all transactions given in MW\n  - **sellVolume**: total sell volume in the contract across all transactions given in MW\n  - **averagePriceLast3H**: volume weighted average price for all trades happening within 3 hours of contract closing\n  - **averagePriceLast1H**: volume weighted average price for all trades happening within 1 hour of contact closing\n            \n  For a detailed breakdown on calculation rules, see <a href=\"https://developers.nordpoolgroup.com/reference/how-to-calculate-intraday-contract-statistics\"> this page</a>.\n            \n[Sample response with valid data for year 2021](https://proddataservicespublic.blob.core.windows.net/public-api-response-samples/Intraday/get_api_v2_Intraday_ContractStatistics_Yearly_Total.json)"
+      parameters:
+      - name: year
+        in: query
+        description: 'Year in CET (format: yyyy, e.g., 2024)'
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ApiTotalMarketYearlyStatistic'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiTotalMarketYearlyStatistic'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ApiTotalMarketYearlyStatistic'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+  /api/v2/Intraday/HourlyStatistics/ByAreas:
+    get:
+      tags:
+      - Intraday
+      summary: Intraday Hourly Statistics
+      description: " Returns intraday hourly statistics for a date and a list of areas.\n            \n Intraday hourly statistics provide a comprehensive overview of all trading activity for a specific delivery hour. These statistics are derived from the trade data available for the selected delivery hour.\n            \nAll intraday trades where at least one leg (buy or/and sell) belongs to Nord Pool, Independent Bulgarian Energy Exchange (IBEX), Bursa Română de Mărfuri S.A (BRM) or Elma Orkuviðskipti (ELMA) and one leg belongs to queried area are included in the calculation of hourly statistics. However, trades where both legs belong to other PXs are excluded from the statistics. The calculation includes local and SIDC trades, as well as block trades and wash trades (trades where the same legal entity is on both the buy and sell sides). \n            \nIntraday hourly statistics are updated every 15 minutes for open contracts spanning today, tomorrow, and day after tomorrow.\n            \n### Response field descriptions\n- **status**: Missing if no data found for the date and area. Available if data is present\n- **priceUnit**: defines the unit for all prices. Given as either EUR/MWh, GBP/MWh or ISK/MWh\n- **hourlyStatistics**: a list of delivery hours for this delivery day\n  - **deliveryStart**: delivery start time \n  - **deliveryEnd**: delivery end time \n  - **highPrice**: the highest trade price observed in the delivery hour and area\n  - **lowPrice**: the lowest trade price observed in the delivery hour and area\n  - **openPrice**: the price of the first trade in the delivery hour and area\n  - **openTradeTime**: the timestamp of the first trade in the area\n  - **closePrice**: the price of the last observed trade in the delivery hour and area. Note that if the trading is still ongoing, this might change\n  - **closeTradeTime**: the timestamp of the last observed trade in the area\n  - **averagePrice**: the volume weighted average price for all trades observed in the delivery hour and area\n  - **volume**: the transaction volume of the delivery hour and area given in MWh\n  - **buyVolume**: total buy volume in the area across all transactions given in MWh\n  - **sellVolume**: total sell volume in the area across all transactions given in MWh\n  - **averagePriceLast3H**: volume weighted average price for all trades happening within 3 hours before delivery start\n  - **averagePriceLast1H**: volume weighted average price for all trades happening within 1 hour before delivery start\n            \nFor a detailed breakdown on calculation rules, see <a href=\"https://developers.nordpoolgroup.com/reference/how-to-calculate-intraday-hourly-statistics\"> this page</a>.\n            \n[Sample response with valid data for areas NO1,AMP and date 2025-05-05](https://proddataservicespublic.blob.core.windows.net/public-api-response-samples/Intraday/get_api_v2_Intraday_HourlyStatistics_ByAreas.json)"
+      externalDocs:
+        description: Data portal link
+        url: https://data.nordpoolgroup.com/intraday/intraday-hourly-statistics?deliveryDate=latest&deliveryArea=DK1
+      parameters:
+      - name: areas
+        in: query
+        description: 'Comma-separated list of areas (e.g., NO1, NO2).
+
+          Supported: KT(legacy),NO1,NO2,NO3,NO4,NO5,SE1,SE2,SE3,SE4,FI,DK1,DK2,EE,LT,LV,AT,BE,FR,GER,50Hz,AMP,TTG,TBW,NL,PL,TEL,BG,UK,IS'
+        required: true
+        schema:
+          minItems: 1
+          type: string
+          items:
+            type: string
+      - name: date
+        in: query
+        description: Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15
+        required: true
+        schema:
+          type: string
+          format: date
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiDeliveryAreaMarketHourlyStatistic'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiDeliveryAreaMarketHourlyStatistic'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiDeliveryAreaMarketHourlyStatistic'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+  /api/v2/Intraday/HourlyStatistics/Total:
+    get:
+      tags:
+      - Intraday
+      summary: Intraday Hourly Total Statistics
+      description: "Returns total intraday hourly statistics for a date.\n            \nIntraday hourly statistics provide a comprehensive overview of all trading activity for a specific delivery hour across all areas. These statistics are derived from the trade data available for the selected delivery hour.\n            \nAll intraday trades where at least one leg (buy or/and sell) belongs to Nord Pool, Independent Bulgarian Energy Exchange (IBEX) or Bursa Română de Mărfuri S.A (BRM) in trading currency EUR are included in the calculation of hourly statistics. However, trades where both legs belong to other PXs are excluded from the statistics. The calculation includes local and SIDC trades, as well as block trades and wash trades (trades where the same legal entity is on both the buy and sell sides). \n            \nIntraday hourly statistics are updated every 15 minutes for open contracts spanning today, tomorrow, and day after tomorrow.\n            \n### Response field descriptions\n- **status**: Missing if no data found for the date and area. Available if data is present\n- **priceUnit**: defines the unit for all prices. For contract total statistics, this is always EUR/MWh\n- **hourlyStatistics**: a list of delivery hours for this delivery day\n  - **deliveryStart**: delivery start time \n  - **deliveryEnd**: delivery end time \n  - **highPrice**: the highest trade price observed in the delivery hour\n  - **lowPrice**: the lowest trade price observed in the delivery hour\n  - **openPrice**: the price of the first trade in the delivery hour\n  - **openTradeTime**: the timestamp of the first trade in the delivery hour\n  - **closePrice**: the price of the last observed trade in the delivery hour. Note that if the trading is still ongoing, this might change\n  - **closeTradeTime**: the timestamp of the last observed trade in the delivery hour\n  - **averagePrice**: the volume weighted average price for all trades observed in the delivery hour\n  - **volume**: the transaction volume of the delivery hour given in MWh\n  - **buyVolume**: total buy volume in the delivery hour across all transactions given in MWh\n  - **sellVolume**: total sell volume in the delivery hour across all transactions given in MWh\n  - **averagePriceLast3H**: volume weighted average price for all trades happening within 3 hours before delivery start\n  - **averagePriceLast1H**: volume weighted average price for all trades happening within 1 hour before delivery start\n            \nFor a detailed breakdown on calculation rules, see <a href=\"https://developers.nordpoolgroup.com/reference/how-to-calculate-intraday-hourly-statistics\"> this page</a>.\n   \n[Sample response with valid data for date 2025-05-05](https://proddataservicespublic.blob.core.windows.net/public-api-response-samples/Intraday/get_api_v2_Intraday_HourlyStatistics_Total.json)"
+      externalDocs:
+        description: Data portal link
+        url: https://data.nordpoolgroup.com/intraday/intraday-hourly-statistics?deliveryDate=latest&deliveryArea=Total
+      parameters:
+      - name: date
+        in: query
+        description: Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15
+        required: true
+        schema:
+          type: string
+          format: date
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ApiTotalMarketHourlyStatistic'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiTotalMarketHourlyStatistic'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ApiTotalMarketHourlyStatistic'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+  /api/v2/Intraday/HourlyStatistics/Yearly/ByArea:
+    get:
+      tags:
+      - Intraday
+      summary: Intraday Yearly Hourly Statistics
+      description: "Returns all intraday hourly statistics for a year and one area.\n            \nThis aggregate is updated once per day, and includes data up until yesterday (CET).\n            \nIntraday hourly statistics provide a comprehensive overview of all trading activity for a specific delivery hour. These statistics are derived from the trade data available for the selected delivery hour.\n            \nAll intraday trades where at least one leg (buy or/and sell) belongs to Nord Pool, Independent Bulgarian Energy Exchange (IBEX), Bursa Română de Mărfuri S.A (BRM) or Elma Orkuviðskipti (ELMA) and one leg belongs to queried area are included in the calculation of hourly statistics. However, trades where both legs belong to other PXs are excluded from the statistics. The calculation includes local and SIDC trades, as well as block trades and wash trades (trades where the same legal entity is on both the buy and sell sides). \n            \n### Response field descriptions\n- **status**: Missing if no data found for the year and area. Available if data is present\n- **priceUnit**: defines the unit for all prices. Given as either EUR/MWh, GBP/MWh or ISK/MWh\n- **hourlyStatistics**: a list of delivery hours for this delivery year\n  - **deliveryStart**: delivery start time \n  - **deliveryEnd**: delivery end time \n  - **highPrice**: the highest trade price observed in the delivery hour and area\n  - **lowPrice**: the lowest trade price observed in the delivery hour and area\n  - **openPrice**: the price of the first trade in the delivery hour and area\n  - **openTradeTime**: the timestamp of the first trade in the area\n  - **closePrice**: the price of the last observed trade in the delivery hour and area. Note that if the trading is still ongoing, this might change\n  - **closeTradeTime**: the timestamp of the last observed trade in the area\n  - **averagePrice**: the volume weighted average price for all trades observed in the delivery hour and area\n  - **volume**: the transaction volume of the delivery hour and area given in MWh\n  - **buyVolume**: total buy volume in the area across all transactions given in MWh\n  - **sellVolume**: total sell volume in the area across all transactions given in MWh\n  - **averagePriceLast3H**: volume weighted average price for all trades happening within 3 hours before delivery start\n  - **averagePriceLast1H**: volume weighted average price for all trades happening within 1 hour before delivery start\n            \nFor a detailed breakdown on calculation rules, see <a href=\"https://developers.nordpoolgroup.com/reference/how-to-calculate-intraday-hourly-statistics\"> this page</a>.\n   \n[Sample response with valid data for area NO1 and year 2021](https://proddataservicespublic.blob.core.windows.net/public-api-response-samples/Intraday/get_api_v2_Intraday_HourlyStatistics_Yearly_ByArea.json)"
+      parameters:
+      - name: area
+        in: query
+        description: 'One area. For example NO1.
+
+          Supported: KT(legacy),NO1,NO2,NO3,NO4,NO5,SE1,SE2,SE3,SE4,FI,DK1,DK2,EE,LT,LV,AT,BE,FR,GER,50Hz,AMP,TTG,TBW,NL,PL,TEL,BG,UK,IS'
+        required: true
+        schema:
+          minLength: 1
+          type: string
+      - name: year
+        in: query
+        description: 'Year in CET (format: yyyy, e.g., 2024)'
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ApiDeliveryAreaYearlyHourlyStatistic'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiDeliveryAreaYearlyHourlyStatistic'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ApiDeliveryAreaYearlyHourlyStatistic'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+  /api/v2/Intraday/HourlyStatistics/Yearly/Total:
+    get:
+      tags:
+      - Intraday
+      summary: Intraday Yearly Hourly Total Statistics
+      description: " Returns total intraday hourly statistics for a year.\n            \nThis aggregate is updated once per day, and includes data up until yesterday (CET).\n\n Intraday hourly statistics provide a comprehensive overview of all trading activity for a specific delivery hour across all areas. These statistics are derived from the trade data available for the selected delivery hour.\n            \nAll intraday trades where at least one leg (buy or/and sell) belongs to Nord Pool, Independent Bulgarian Energy Exchange (IBEX) or Bursa Română de Mărfuri S.A (BRM) in trading currency EUR are included in the calculation of hourly statistics. However, trades where both legs belong to other PXs are excluded from the statistics. The calculation includes local and SIDC trades, as well as block trades and wash trades (trades where the same legal entity is on both the buy and sell sides). \n            \n            \n### Response field descriptions\n- **status**: Missing if no data found for the year. Available if data is present\n- **priceUnit**: defines the unit for all prices. For contract total statistics, this is always EUR/MWh\n- **hourlyStatistics**: a list of delivery hours for this year\n  - **deliveryStart**: delivery start time \n  - **deliveryEnd**: delivery end time \n  - **highPrice**: the highest trade price observed in the delivery hour\n  - **lowPrice**: the lowest trade price observed in the delivery hour\n  - **openPrice**: the price of the first trade in the delivery hour\n  - **openTradeTime**: the timestamp of the first trade in the delivery hour\n  - **closePrice**: the price of the last observed trade in the delivery hour. Note that if the trading is still ongoing, this might change\n  - **closeTradeTime**: the timestamp of the last observed trade in the delivery hour\n  - **averagePrice**: the volume weighted average price for all trades observed in the delivery hour\n  - **volume**: the transaction volume of the delivery hour given in MWh\n  - **buyVolume**: total buy volume in the delivery hour across all transactions given in MWh\n  - **sellVolume**: total sell volume in the delivery hour across all transactions given in MWh\n  - **averagePriceLast3H**: volume weighted average price for all trades happening within 3 hours before delivery start\n  - **averagePriceLast1H**: volume weighted average price for all trades happening within 1 hour before delivery start\n            \nFor a detailed breakdown on calculation rules, see <a href=\"https://developers.nordpoolgroup.com/reference/how-to-calculate-intraday-hourly-statistics\"> this page</a>.\n            \n[Sample response with valid data for year 2021](https://proddataservicespublic.blob.core.windows.net/public-api-response-samples/Intraday/get_api_v2_Intraday_HourlyStatistics_Yearly_Total.json)"
+      parameters:
+      - name: year
+        in: query
+        description: 'Year in CET (format: yyyy, e.g., 2024)'
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ApiTotalMarketYearlyHourlyStatistic'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiTotalMarketYearlyHourlyStatistic'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ApiTotalMarketYearlyHourlyStatistic'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+  /api/v2/Intraday/HubToHubCapacities/ByAreaFrom:
+    get:
+      tags:
+      - Intraday
+      summary: Intraday Hub to Hub Capacities
+      description: "Returns transmission capacity changes available between two areas, no matter the path through the power grid.\nIt's not a border/cable capacity but rather the sum of all available paths that power could flow.\nData is available with a delay of approximately 25 minutes.\n\n**Note**: The delivery start time must be provided in a full-hour format, such as 2025-03-01T**01:00:00**Z.\nProviding the delivery start time like 2025-03-01T**01:59:59**Z results in a bad request error,\nas hub to hub capacities are updated on an hourly basis and such inputs would not give meaningful responses.\n \n### Response field descriptions\n\n- **areaFrom**: the outgoing delivery area\n- **areaTo**: the incoming delivery area\n- **deliveryStart**: the timestamp of delivery start\n- **deliveryEnd**: the timestamp of delivery end\n- **capacities**: a list of capacity changes \n\n  Each capacity contains:\n  - **outCapacity**: the available capacity out from the \"from\" area (areaFrom -> areaTo capacity) in MW \n\n  - **inCapacity**: the available capacity in to the \"from\" area (areaTo -> areaFrom capacity) in MW\n  - **publicationTime**: the timestamp when data has been received from the capacity system\n            \n[Sample response with valid data for area from NO1, area to TTG and delivery start 2025-05-05T01:00:00Z](https://proddataservicespublic.blob.core.windows.net/public-api-response-samples/Intraday/get_api_v2_Intraday_HubToHubCapacities_ByAreaFrom.json)"
+      parameters:
+      - name: areaFrom
+        in: query
+        description: 'Delivery area (e.g., NO1).
+
+          Supported: NO1,NO2,NO3,NO4,NO5,SE1,SE2,SE3,SE4,FI,DK1,DK2,EE,LT,LV,AT,BE,FR,50Hz,AMP,TTG,TBW,NL,PL,TEL,BG,UK'
+        required: true
+        schema:
+          minLength: 1
+          type: string
+      - name: areaTo
+        in: query
+        description: 'Delivery area (e.g., NO1).
+
+          Supported: NO1,NO2,NO3,NO4,NO5,SE1,SE2,SE3,SE4,FI,DK1,DK2,EE,LT,LV,AT,BE,FR,50Hz,AMP,TTG,TBW,NL,PL,TEL,BG,UK'
+        schema:
+          type: string
+      - name: deliveryStart
+        in: query
+        description: "Delivery start time of a contract, referring to a full hour in UTC. \nFormat yyyy-MM-ddThh:00:00Z, for example 2024-08-15T01:00:00Z."
+        required: true
+        schema:
+          type: string
+          format: date-time
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ApiHub2HubCapacity'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiHub2HubCapacity'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ApiHub2HubCapacity'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+  /api/v2/Intraday/OrderBook/ByContractId:
+    get:
+      tags:
+      - Intraday
+      summary: Intraday Order Book By Contract
+      description: "Returns all intraday order book changes for the given contract and area, where the contract delivery start is within the given UTC date.\nThis data corresponds to the local view data type in the Intraday system.\n            \nOrder book data becomes available with a delay of 2–3 hours after the contract is closed. It contains event messages called revisions that come from XBID\nand/or NPM (Nord Pool Matcher). Each revision represents either:\n- A **delta** (\"isSnapshot\": false) that contains only the newly added or updated order information compared to previous revisions.\nFor example, if previous revision contains orders I1, I2, and I3, and new orders I4 and I5 are added, the delta revision will only contain I4 and I5.\n \n- A **snapshot** (\"isSnapshot\": true) that provides the full set of actual orders for the contract at current moment(e.g., I1 to I5).\nSnapshots may occur between delta revisions, for instance, when the connection to XBID is temporarily lost.\nIn such cases, previous revisions must be overwritten with the snapshot's data. Although rare, this scenario is possible.\n            \nRevisions are sequential but might be empty or occasionally duplicated.\n            \nEach non-empty revision consists of the buy and/or sell orders for the specified area. The order details include \norder id, price, volume, deleted flag, updated time and priority time. If an order is removed, the associated data will include \"deleted\": true and volume = 0.\n            \n### Execution priority\nThe priority timestamp determines the execution priority for orders with the same price.\nExecution of orders is based on the price-time-priority principle:\n- **Price** \n\n  Orders are always executed at the best price. The best buy order is always executed against the best sell order\nfirst (the best price for buy orders is the highest price, for sell orders its the lowest price). \n- **Time** \n\n  When an order is entered into the order book, it is assigned a timestamp. This timestamp is used to prioritize\norders with the same price. Orders with earlier timestamps are executed with a higher priority than orders with a later timestamp.\n\n### Response field descriptions\n            \n- **contractId**: identifier of the contract to which these orders belong\n- **deliveryArea**: delivery area that this order belongs to. Note: in XBID, the delivery area does not reflect the order's origin\n- **status**: \"Missing\" if data does not exist and \"Available\" if data exists\n- **revision**: version of the order book revision per contract\n- **isSnapshot**: if false: the revision contains only delta information with changes from previous revisions. If true: the revision contains\n a complete snapshot of the orders at the current state. Previous data must be overwritten.\n- **orderId**: order identifier, where the first character represents the market: I for Nord Pool Intraday or X for XBID.\nThe remaining part is a rolling unique number for the order (unique per market)\n- **price**: unit price\n- **priceUnit**: defines the unit for all prices. Given as either EUR/MWh, GBP/MWh or ISK/MWh\n- **volume**: visible quantity on the current delivery area\n- **deleted**: if false: update information with the contents received. If true: delete entity indicated in the revision\n- **priorityTime**: timestamp is used to prioritize orders with the same price\n- **updatedTime**: timestamp at which this order was updated, either due to an action by the user (e.g. modification)\nor by the system (e.g. validity expired, contract expired)\n            \n[Sample response with valid data for area NO1, delivery date UTC 2025-05-05 and contract id NX_519789](https://proddataservicespublic.blob.core.windows.net/public-api-response-samples/Intraday/get_api_v2_Intraday_OrderBook_ByContractId.json)"
+      parameters:
+      - name: area
+        in: query
+        description: 'Delivery area (e.g., NO1).
+
+          Supported: NO1,NO2,NO3,NO4,NO5,SE1,SE2,SE3,SE4,FI,DK1,DK2,EE,LT,LV,AT,BE,FR,50Hz,AMP,TTG,TBW,NL,PL,TEL,BG,UK,IS'
+        required: true
+        schema:
+          minLength: 1
+          type: string
+      - name: deliveryDateUtc
+        in: query
+        description: Delivery date of the contract, referring to UTC date. Format yyyy-MM-dd, for example 2025-03-20
+        required: true
+        schema:
+          type: string
+          format: date
+      - name: contractId
+        in: query
+        description: The contract id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ApiOrderbook'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiOrderbook'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ApiOrderbook'
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+  /api/v2/Intraday/OrderBook/ContractsIds/ByArea:
+    get:
+      tags:
+      - Intraday
+      summary: Intraday Available Order Book contracts
+      description: "Returns a list of contracts with available order books for a given UTC date and area.\nThe response includes details about each contract, such as its delivery period, opening and closing times, and whether it is a local contract.\n            \n### Response field descriptions\n\n- **contractId**: the identifier of the contract\n- **contractName**: a descriptive name for the contract (e.g., QH-20250331-09).\n- **deliveryStart**: the timestamp when the contract delivery starts\n- **deliveryEnd**: the timestamp when the contract delivery ends\n- **isLocalContract**: defines if the contract is local or part of XBID/SIDC. If true, then no cross border trading. If false, then cross border trading is possible\n- **contractOpenTime**: the timestamp when a contract was opened the first time for the selected area\n- **contractCloseTime**: the timestamp when a contract was closed the last time for the selected area\n            \n[Sample response with valid data for area NO1 and delivery date UTC 2025-05-05](https://proddataservicespublic.blob.core.windows.net/public-api-response-samples/Intraday/get_api_v2_Intraday_OrderBook_ContractsIds_ByArea.json)"
+      parameters:
+      - name: area
+        in: query
+        description: 'Delivery area (e.g., NO1).
+
+          Supported: NO1,NO2,NO3,NO4,NO5,SE1,SE2,SE3,SE4,FI,DK1,DK2,EE,LT,LV,AT,BE,FR,50Hz,AMP,TTG,TBW,NL,PL,TEL,BG,UK,IS'
+        required: true
+        schema:
+          minLength: 1
+          type: string
+      - name: deliveryDateUtc
+        in: query
+        description: Delivery date, referring to UTC date. Format yyyy-MM-dd, for example 2025-03-20
+        required: true
+        schema:
+          type: string
+          format: date
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ApiOrderBookAreaContracts'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiOrderBookAreaContracts'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ApiOrderBookAreaContracts'
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+  /api/v2/Intraday/OrderRevisions/ByUpdatedTime:
+    get:
+      tags:
+      - Intraday
+      summary: Intraday Order Revisions By Update Time
+      description: "Returns intraday contracts with orders for a given area, where order revisions have an updated time in between updatedTimeFrom and updatedTimeTo.\nData is available with a delay of approximately 20 minutes.\n\n**Note**: The time difference between updatedTimeFrom and updatedTimeTo cannot exceed **4** hours.\nThis limitation was introduced for performance reasons to restrict the response size.\nDuring periods of high load on the system, responses may take longer than expected.\nIn such situations, it is recommended to query data in hourly intervals, for example\nupdatedTimeFrom=2025-04-01T**01:00:00**Z and updatedTimeTo=2025-04-01T**02:00:00**Z.\n \n### Response field descriptions\n\n**contracts**: a list of contracts to which these orders belong\nEach contract contains:\n- **contractId**: identifier of the contract\n- **contractName**: a descriptive name for the contract (e.g., QH-20250331-09).\n- **deliveryStart**: the timestamp when the contract delivery starts\n- **deliveryEnd**: the timestamp when the contract delivery ends\n- **orders**: a list of orders whose revisions have an updated time between updated time from and updated time to \n\n  Each order includes:\n  - **orderId**: identifier of the order\n  - **originalOrderId**: original order identifier in the modification chain\n  - **previousOrderId**: identifier of the previous order in the modification chain.\n    When an order is modified and its priority changes, or partially matched, a new order id is assigned\n  - **orderType**:\n    - **Limit** - an order that can be matched either in part or its entirety.\n    If a limit order is not fully matched it will remain active in the market until the product the order is placed on goes into expiry.\n    - **Iceberg** -  a type of limit order, usually with a large volume, with the purpose of hiding the full size\n    of the order by dividing it into smaller clips. The first clip is shown to the market and the next clips will\n    be visible when the previous ones have been fully matched. New clips receive a new time stamp.\n    - **UserDefinedBlock** - a block order consisting of one or several (up to 24) consecutive hourly products.\n    User-defined block orders are all-or-nothing orders where only the entire volume may be executed.\n  - **side**: Buy or Sell\n  - **createdTime**: the timestamp of order creation. Iceberg orders get updated \"created time\" when a new slice is added,\n    but retain the order id. For other order types, they get a new order id and a new \"created time\".\n  - **revisions**: a list of order revisions with an updated time in between updated time from and updated time to \n\n    Each revision contains:\n    - **revisionNumber**: revision number for order modification request. Should be incremented with a subsequent order modification request.\n      The initial value to issue an order modification is set to 1 (USER_ADDED status).\n      Please note that order modification with a priority change leads to a new order created (revisionNumber = 1). \n\n    - **updatedTime**: the order entry time (revision=1) or time an order modification (revision>1)\n    - **price**: price in EUR/MWh, GBP/MWh or ISK/MWh\n    - **volume**: quantity in MW\n    - **state**:\n      - **Active** - an order can be matched either in part or in entirety. If the order is not fully\n      matched it will remain \"active\" in the market.\n      - **Inactive** - if the order is fully matched or closed (the product the order is placed on goes into expiry)\n      then the status will be \"inactive\". The inactive order will never be reopened.\n      - **Hibernated** - if the order is deactivated by the user then the order will be placed as \"hibernate\" and can be reopened\n      - **Pending** - pending status is acknowledgment that order received by exchange\n    - **action**:\n      - **UserAdded** - order added by a user\n      - **UserHibernated** - order deactivated by a user\n      - **UserModified** - order modified by a user\n      - **UserDeleted** - order deleted by a user\n      - **SystemHibernated** - order deactivated by the system\n      - **SystemModified** - order modified by the system\n      - **SystemDeleted** - order deleted by the system\n      - **PartialExecution** - order is partially executed\n      - **FullExecution** - order is fully executed\n      - **IcebergSliceAdded** - a new slice of an Iceberg order was added to the service\n    - **expirationTime**: if timeInForce is set to GTD (Good Till Date), the expireTime will determine when the order expires.\n      Accepted value is multiple of 5 minutes, i.e. not 2018-06-21T07:32:52.673Z but either 2018-06-21T07:30:00.000Z or 2018-06-21T07:35:00.000Z.\n    - **timeInForce**:\n      - **FillOrKill** - the order is immediately fully executed or deleted\n      - **ImmediateOrCancel** - the order is executed immediately to its maximum extent. \n      In a case of a partial execution, the remaining volume is removed from the order book.\n      - **GoodForSession** - the order rests in the order book until it is either executed,\n        removed by the user or the current trading session (trading phase) of the underlying contract ends\n      - **GoodTillDate** - the order rests in the order book until the date specified in the expireTime field\n    - **icebergClipSize**: the quantity in MW for when to trigger a new slice (for iceberg orders only, described above)\n    - **clipPriceChange**: the price change after each clip is consumed (for iceberg orders only, described above)\n    - **remainingVolume**: the remaining volume in MW for the whole iceberg order\n            \n[Sample response with valid data for area NO1, updated time from 2025-05-05T00:30:00Z and updated time to 2025-05-05T01:54:00Z](https://proddataservicespublic.blob.core.windows.net/public-api-response-samples/Intraday/get_api_v2_Intraday_OrderRevisions_ByUpdatedTime.json)"
+      parameters:
+      - name: area
+        in: query
+        description: 'Delivery area (e.g., NO1).
+
+          Supported: KT(legacy),NO1,NO2,NO3,NO4,NO5,SE1,SE2,SE3,SE4,FI,DK1,DK2,EE,LT,LV,AT,BE,FR,50Hz,AMP,TTG,TBW,NL,PL,TEL,BG,UK,IS'
+        required: true
+        schema:
+          minLength: 1
+          type: string
+      - name: updatedTimeFrom
+        in: query
+        description: Order update date and time starts, referring to a UTC datetime. Format yyyy-MM-ddTHH:mm:ssZ, for example 2024-08-15T01:00:00Z
+        required: true
+        schema:
+          type: string
+          format: date-time
+      - name: updatedTimeTo
+        in: query
+        description: Order update date and time ends, referring to a UTC datetime. Format yyyy-MM-ddTHH:mm:ssZ, for example 2024-08-15T01:00:00Z
+        required: true
+        schema:
+          type: string
+          format: date-time
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ApiIntradayOrdersContainer'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiIntradayOrdersContainer'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ApiIntradayOrdersContainer'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+  /api/v2/Intraday/Orders/ByContractId:
+    get:
+      tags:
+      - Intraday
+      summary: Intraday Orders By Contract
+      description: "Returns intraday orders for the given contract which starts at the given time for a given area.\nData is available with a delay of approximately 20 minutes.\n \n### Response field descriptions\n\n- **contractId**: identifier of the contract\n- **contractName**: a descriptive name for the contract (e.g., QH-20250331-09).\n- **deliveryStart**: the timestamp when the contract delivery starts\n- **deliveryEnd**: the timestamp when the contract delivery ends\n- **orders**: a list of orders associated with the contract \n\n  Each order includes:\n  - **orderId**: identifier of the order\n  - **originalOrderId**: original order identifier in the modification chain\n  - **previousOrderId**: identifier of the previous order in the modification chain.\n    When an order is modified and its priority changes, or partially matched, a new order id is assigned\n  - **orderType**:\n    - **Limit** - an order that can be matched either in part or its entirety.\n    If a limit order is not fully matched it will remain active in the market until the product the order is placed on goes into expiry.\n    - **Iceberg** -  a type of limit order, usually with a large volume, with the purpose of hiding the full size\n    of the order by dividing it into smaller clips. The first clip is shown to the market and the next clips will\n    be visible when the previous ones have been fully matched. New clips receive a new time stamp.\n    - **UserDefinedBlock** - a block order consisting of one or several (up to 24) consecutive hourly products.\n    User-defined block orders are all-or-nothing orders where only the entire volume may be executed.\n  - **side**: Buy or Sell\n  - **createdTime**: the timestamp of order creation. Iceberg orders get updated \"created time\" when a new slice is added,\n    but retain the order id. For other order types, they get a new order id and a new \"created time\".\n  - **revisions**: a list of order revisions \n\n    Each revision contains:\n    - **revisionNumber**: revision number for order modification request. Should be incremented with a subsequent order modification request.\n      The initial value to issue an order modification is set to 1 (USER_ADDED status).\n      Please note that order modification with a priority change leads to a new order created (revisionNumber = 1). \n\n    - **updatedTime**: the order entry time (revision=1) or time an order modification (revision>1)\n    - **price**: price in EUR/MWh, GBP/MWh or ISK/MWh\n    - **volume**: quantity in MW\n    - **state**:\n      - **Active** - an order can be matched either in part or in entirety. If the order is not fully\n      matched it will remain \"active\" in the market.\n      - **Inactive** - if the order is fully matched or closed (the product the order is placed on goes into expiry)\n      then the status will be \"inactive\". The inactive order will never be reopened.\n      - **Hibernated** - if the order is deactivated by the user then the order will be placed as \"hibernate\" and can be reopened\n      - **Pending** - pending status is acknowledgment that order received by exchange\n    - **action**:\n      - **UserAdded** - order added by a user\n      - **UserHibernated** - order deactivated by a user\n      - **UserModified** - order modified by a user\n      - **UserDeleted** - order deleted by a user\n      - **SystemHibernated** - order deactivated by the system\n      - **SystemModified** - order modified by the system\n      - **SystemDeleted** - order deleted by the system\n      - **PartialExecution** - order is partially executed\n      - **FullExecution** - order is fully executed\n      - **IcebergSliceAdded** - a new slice of an Iceberg order was added to the service\n    - **expirationTime**: if timeInForce is set to GTD (Good Till Date), the expireTime will determine when the order expires.\n      Accepted value is multiple of 5 minutes, i.e. not 2018-06-21T07:32:52.673Z but either 2018-06-21T07:30:00.000Z or 2018-06-21T07:35:00.000Z.\n    - **timeInForce**:\n      - **FillOrKill** - the order is immediately fully executed or deleted\n      - **ImmediateOrCancel** - the order is executed immediately to its maximum extent. \n      In a case of a partial execution, the remaining volume is removed from the order book.\n      - **GoodForSession** - the order rests in the order book until it is either executed,\n        removed by the user or the current trading session (trading phase) of the underlying contract ends\n      - **GoodTillDate** - the order rests in the order book until the date specified in the expireTime field\n    - **icebergClipSize**: the quantity in MW for when to trigger a new slice (for iceberg orders only, described above)\n    - **clipPriceChange**: the price change after each clip is consumed (for iceberg orders only, described above)\n    - **remainingVolume**: the remaining volume in MW for the whole iceberg order\n            \n[Sample response with valid data for area NO1, delivery start 2025-05-05T01:00:00Z and contract id NX_519789](https://proddataservicespublic.blob.core.windows.net/public-api-response-samples/Intraday/get_api_v2_Intraday_Orders_ByContractId.json)"
+      parameters:
+      - name: area
+        in: query
+        description: 'Delivery area (e.g., NO1).
+
+          Supported: KT(legacy),NO1,NO2,NO3,NO4,NO5,SE1,SE2,SE3,SE4,FI,DK1,DK2,EE,LT,LV,AT,BE,FR,50Hz,AMP,TTG,TBW,NL,PL,TEL,BG,UK,IS'
+        required: true
+        schema:
+          minLength: 1
+          type: string
+      - name: deliveryStart
+        in: query
+        description: Delivery start time of the contract, referring to a UTC datetime. Format yyyy-MM-ddThh:mm:ssZ, for example 2024-08-15T01:00:00Z
+        required: true
+        schema:
+          type: string
+          format: date-time
+      - name: contractId
+        in: query
+        description: The contract id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/TopLevelPublicIntradayOrderContract'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TopLevelPublicIntradayOrderContract'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/TopLevelPublicIntradayOrderContract'
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+  /api/v2/Intraday/Orders/ByDeliveryStart:
+    get:
+      tags:
+      - Intraday
+      summary: Intraday Orders By Delivery Time
+      description: "Returns intraday contracts with orders for a given area, where the contract delivery start is within the deliveryStartFrom-deliveryStartTo time range.\nData is available with a delay of approximately 20 minutes.\n\n**Note**: The time difference between deliveryStartFrom and deliveryStartTo cannot exceed **4** hours.\nThis limitation was introduced for performance reasons to restrict the response size.\nDuring periods of high load on the system, responses may take longer than expected.\nIn such situations, it is recommended to query data in hourly intervals, for example\ndeliveryStartFrom=2025-04-01T**01:00:00**Z and deliveryStartTo=2025-04-01T**02:00:00**Z.\n \n### Response field descriptions\n\n**contracts**: a list of contracts where the delivery start time falls within the range specified by \"delivery start from\" and \"delivery start to\" \n\nEach contract contains:\n- **contractId**: identifier of the contract\n- **contractName**: a descriptive name for the contract (e.g., QH-20250331-09).\n- **deliveryStart**: the timestamp when the contract delivery starts\n- **deliveryEnd**: the timestamp when the contract delivery ends\n- **orders**: a list of orders associated with the contract \n\n  Each order includes:\n  - **orderId**: identifier of the order\n  - **originalOrderId**: original order identifier in the modification chain\n  - **previousOrderId**: identifier of the previous order in the modification chain.\n    When an order is modified and its priority changes, or partially matched, a new order id is assigned\n  - **orderType**:\n    - **Limit** - an order that can be matched either in part or its entirety.\n    If a limit order is not fully matched it will remain active in the market until the product the order is placed on goes into expiry.\n    - **Iceberg** -  a type of limit order, usually with a large volume, with the purpose of hiding the full size\n    of the order by dividing it into smaller clips. The first clip is shown to the market and the next clips will\n    be visible when the previous ones have been fully matched. New clips receive a new time stamp.\n    - **UserDefinedBlock** - a block order consisting of one or several (up to 24) consecutive hourly products.\n    User-defined block orders are all-or-nothing orders where only the entire volume may be executed.\n  - **side**: Buy or Sell\n  - **createdTime**: the timestamp of order creation. Iceberg orders get updated \"created time\" when a new slice is added,\n    but retain the order id. For other order types, they get a new order id and a new \"created time\".\n  - **revisions**: a list of order revisions \n\n    Each revision contains:\n    - **revisionNumber**: revision number for order modification request. Should be incremented with a subsequent order modification request.\n      The initial value to issue an order modification is set to 1 (USER_ADDED status).\n      Please note that order modification with a priority change leads to a new order created (revisionNumber = 1). \n\n    - **updatedTime**: the order entry time (revision=1) or time an order modification (revision>1)\n    - **price**: price in EUR/MWh, GBP/MWh or ISK/MWh\n    - **volume**: quantity in MW\n    - **state**:\n      - **Active** - an order can be matched either in part or in entirety. If the order is not fully\n      matched it will remain \"active\" in the market.\n      - **Inactive** - if the order is fully matched or closed (the product the order is placed on goes into expiry)\n      then the status will be \"inactive\". The inactive order will never be reopened.\n      - **Hibernated** - if the order is deactivated by the user then the order will be placed as \"hibernate\" and can be reopened\n      - **Pending** - pending status is acknowledgment that order received by exchange\n    - **action**:\n      - **UserAdded** - order added by a user\n      - **UserHibernated** - order deactivated by a user\n      - **UserModified** - order modified by a user\n      - **UserDeleted** - order deleted by a user\n      - **SystemHibernated** - order deactivated by the system\n      - **SystemModified** - order modified by the system\n      - **SystemDeleted** - order deleted by the system\n      - **PartialExecution** - order is partially executed\n      - **FullExecution** - order is fully executed\n      - **IcebergSliceAdded** - a new slice of an Iceberg order was added to the service\n    - **expirationTime**: if timeInForce is set to GTD (Good Till Date), the expireTime will determine when the order expires.\n      Accepted value is multiple of 5 minutes, i.e. not 2018-06-21T07:32:52.673Z but either 2018-06-21T07:30:00.000Z or 2018-06-21T07:35:00.000Z.\n    - **timeInForce**:\n      - **FillOrKill** - the order is immediately fully executed or deleted\n      - **ImmediateOrCancel** - the order is executed immediately to its maximum extent. \n      In a case of a partial execution, the remaining volume is removed from the order book.\n      - **GoodForSession** - the order rests in the order book until it is either executed,\n        removed by the user or the current trading session (trading phase) of the underlying contract ends\n      - **GoodTillDate** - the order rests in the order book until the date specified in the expireTime field\n    - **icebergClipSize**: the quantity in MW for when to trigger a new slice (for iceberg orders only, described above)\n    - **clipPriceChange**: the price change after each clip is consumed (for iceberg orders only, described above)\n    - **remainingVolume**: the remaining volume in MW for the whole iceberg order\n\n[Sample response with valid data for area NO1, delivery start from 2025-05-05T01:00:00Z and delivery start to 2025-05-05T02:00:00Z](https://proddataservicespublic.blob.core.windows.net/public-api-response-samples/Intraday/get_api_v2_Intraday_Orders_ByDeliveryStart.json)"
+      parameters:
+      - name: area
+        in: query
+        description: 'Delivery area (e.g., NO1).
+
+          Supported: KT(legacy),NO1,NO2,NO3,NO4,NO5,SE1,SE2,SE3,SE4,FI,DK1,DK2,EE,LT,LV,AT,BE,FR,50Hz,AMP,TTG,TBW,NL,PL,TEL,BG,UK,IS'
+        required: true
+        schema:
+          minLength: 1
+          type: string
+      - name: deliveryStartFrom
+        in: query
+        description: Earliest delivery start time, referring to a UTC hour. Contracts with delivery start at this hour or later will be included in the response. Format yyyy-MM-ddThh:mm:ssZ, for example 2024-08-15T01:00:00Z
+        required: true
+        schema:
+          type: string
+          format: date-time
+      - name: deliveryStartTo
+        in: query
+        description: Latest delivery start time, referring to a UTC hour. Contracts with delivery start earlier than this hour will be included in the response. Format yyyy-MM-ddThh:mm:ssZ, for example 2024-08-15T02:00:00Z
+        required: true
+        schema:
+          type: string
+          format: date-time
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ApiIntradayOrdersContainer'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiIntradayOrdersContainer'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ApiIntradayOrdersContainer'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+  /api/v2/Intraday/Trades/ByContractId:
+    get:
+      tags:
+      - Intraday
+      summary: Intraday Trades By Contract
+      description: "Returns an intraday contract with trades for a delivery start time and contract id, where trades have at least one leg matching at least one of the provided areas. \n\nAll trades have at least one leg belongs to Nord Pool. However, trades where both legs belong to other PXs are excluded from the response. \n\nData is available with a delay of approximately 20 minutes.\n \n### Response field descriptions\n\n- **contractId**: identifier of the contract\n- **contractName**: a descriptive name for the contract (e.g., QH-20250331-09).\n- **deliveryStart**: the timestamp when the contract delivery starts\n- **deliveryEnd**: the timestamp when the contract delivery ends\n- **trades**: a list of trades associated with the contract \n\n  Each trade includes:\n  - **tradeId**: identifier of the trade\n  - **tradeTime**: the timestamp of trade creation\n  - **tradeUpdatedAt**: the trade creation time (revisionNumber=1) or time of a trade modification (revisionNumber>1)\n  - **tradeState**:\n    - **Completed** - the trade is completed\n    - **Cancelled** - the trade is cancelled\n    - **Disputed** - the trade is pending decision for cancellation\n  - **revisionNumber**: revision number for trade modification request. Should be incremented with a subsequent trade modification request.\n  - **price**: price in EUR/MWh, GBP/MWh or ISK/MWh\n  - **volume**: quantity in MW\n  - **tradePhase**: there's two matching modes:\n    - **Continuous** - the normal top of order book matching\n    - **Auction** - the matching mode, where basically the buy and sell orders are matched in a similar manner as auction orders.\n      This only happens when capacity is added in between areas - basically, in that case, the order books can be\n      overlapping with buys in one area being much higher than sells in another area.\n      In order for the price to be fair for both the sellers and buyers, this auction matching mode is used.\n    - **None** - for old trades without this information\n  - **crossPx**:\n    - **false**: both legs belong to the Nord Pool market  \n    - **true**: one of the legs belongs to Other Power Exchanges (OPX). Then the trade contains \"referenceOrderId\" only for the side which is presented in Nord Pool, the other side doesn't have reference order id (\"referenceOrderId\": null).\n  - **legs**: a list of trade legs \n\n    Each leg contains: \n\n    - **deliveryArea**: delivery area that this order belongs to \n\n    - **referenceOrderId**: identifier of the order involved in the trade.\n      In transactions where one party is external to Nord Pool, the referenceOrderId will be null for the leg that belongs to OPX.\n    - **tradeSide**: Buy or Sell\n            \n[Sample response with valid data for areas NO1,AMP, delivery start 2025-05-05T01:00:00Z and contract id NX_519789](https://proddataservicespublic.blob.core.windows.net/public-api-response-samples/Intraday/get_api_v2_Intraday_Trades_ByContractId.json)"
+      parameters:
+      - name: areas
+        in: query
+        description: 'Comma-separated list of areas (e.g., NO1, NO2).
+
+          Supported: KT(legacy),NO1,NO2,NO3,NO4,NO5,SE1,SE2,SE3,SE4,FI,DK1,DK2,EE,LT,LV,AT,BE,FR,50Hz,AMP,TTG,TBW,NL,PL,TEL,BG,UK,IS'
+        required: true
+        schema:
+          minItems: 1
+          type: string
+          items:
+            type: string
+      - name: deliveryStart
+        in: query
+        description: Delivery start time of the contract, referring to a UTC datetime. Format yyyy-MM-ddThh:mm:ssZ, for example 2024-08-15T01:00:00Z
+        required: true
+        schema:
+          type: string
+          format: date-time
+      - name: contractId
+        in: query
+        description: The contract id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/TopLevelPublicIntradayTradeContract'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TopLevelPublicIntradayTradeContract'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/TopLevelPublicIntradayTradeContract'
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+  /api/v2/Intraday/Trades/ByDeliveryStart:
+    get:
+      tags:
+      - Intraday
+      summary: Intraday Trades By Delivery Time
+      description: "Returns intraday contracts with trades, where the contract delivery start is within the deliveryStartFrom-deliveryStartTo time range and the trade has at least one leg in the provided areas. \n\nAll trades have at least one leg belongs to Nord Pool. However, trades where both legs belong to other PXs are excluded from the response. \n\nData is available with a delay of approximately 20 minutes.\n            \n**Note**: The time difference between deliveryStartFrom and deliveryStartTo cannot exceed **12** hours.\nThis limitation was introduced for performance reasons to restrict the response size.\nDuring periods of high load on the system, responses may take longer than expected.\nIn such situations, it is recommended to query data in hourly intervals, for example\ndeliveryStartFrom=2025-04-01T**01:00:00**Z and deliveryStartTo=2025-04-01T**02:00:00**Z.\n \n### Response field descriptions\n            \n**contracts**: a list of contracts where the delivery start time falls within the range specified by \"delivery start from\" and \"delivery start to\" \n\nEach contract contains:\n- **contractId**: identifier of the contract\n- **contractName**: a descriptive name for the contract (e.g., QH-20250331-09).\n- **deliveryStart**: the timestamp when the contract delivery starts\n- **deliveryEnd**: the timestamp when the contract delivery ends\n- **trades**: a list of trades associated with the contract \n\n  Each trade includes:\n  - **tradeId**: identifier of the trade\n  - **tradeTime**: the timestamp of trade creation\n  - **tradeUpdatedAt**: the trade creation time (revisionNumber=1) or time of a trade modification (revisionNumber>1)\n  - **tradeState**:\n    - **Completed** - the trade is completed\n    - **Cancelled** - the trade is cancelled\n    - **Disputed** - the trade is pending decision for cancellation\n  - **revisionNumber**: revision number for trade modification request. Should be incremented with a subsequent trade modification request.\n  - **price**: price in EUR/MWh, GBP/MWh or ISK/MWh\n  - **volume**: quantity in MW\n  - **tradePhase**: there's two matching modes:\n    - **Continuous** - the normal top of order book matching\n    - **Auction** - the matching mode, where basically the buy and sell orders are matched in a similar manner as auction orders.\n      This only happens when capacity is added in between areas - basically, in that case, the order books can be\n      overlapping with buys in one area being much higher than sells in another area.\n      In order for the price to be fair for both the sellers and buyers, this auction matching mode is used.\n    - **None** - for old trades without this information\n  - **crossPx**:\n    - **false**: both legs belong to the Nord Pool market  \n    - **true**: one of the legs belongs to Other Power Exchanges (OPX). Then the trade contains \"referenceOrderId\" only for the side which is presented in Nord Pool, the other side doesn't have reference order id (\"referenceOrderId\": null).\n  - **legs**: a list of trade legs \n\n    Each leg contains: \n\n    - **deliveryArea**: delivery area that this order belongs to \n\n    - **referenceOrderId**: identifier of the order involved in the trade.\n      In transactions where one party is external to Nord Pool, the referenceOrderId will be null for the leg that belongs to OPX.\n    - **tradeSide**: Buy or Sell\n            \n[Sample response with valid data for areas NO1,AMP, delivery start from 2025-05-05T01:00:00Z and delivery start to 2025-05-05T02:00:00Z](https://proddataservicespublic.blob.core.windows.net/public-api-response-samples/Intraday/get_api_v2_Intraday_Trades_ByDeliveryStart.json)"
+      parameters:
+      - name: areas
+        in: query
+        description: 'Comma-separated list of areas (e.g., NO1, NO2).
+
+          Supported: KT(legacy),NO1,NO2,NO3,NO4,NO5,SE1,SE2,SE3,SE4,FI,DK1,DK2,EE,LT,LV,AT,BE,FR,50Hz,AMP,TTG,TBW,NL,PL,TEL,BG,UK,IS'
+        required: true
+        schema:
+          minItems: 1
+          type: string
+          items:
+            type: string
+      - name: deliveryStartFrom
+        in: query
+        description: Earliest delivery start time, referring to a UTC hour. Contracts with delivery start at this hour or later will be included in the response. Format yyyy-MM-ddThh:mm:ssZ, for example 2024-08-15T01:00:00Z
+        required: true
+        schema:
+          type: string
+          format: date-time
+      - name: deliveryStartTo
+        in: query
+        description: Latest delivery start time, referring to a UTC hour. Contracts with delivery start earlier than this hour will be included in the response. Format yyyy-MM-ddThh:mm:ssZ, for example 2024-08-15T02:00:00Z
+        required: true
+        schema:
+          type: string
+          format: date-time
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ApiIntradayContainer'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiIntradayContainer'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ApiIntradayContainer'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+  /api/v2/Intraday/Trades/ByTradeTime:
+    get:
+      tags:
+      - Intraday
+      summary: Intraday Trades By Trade Time
+      description: "Returns intraday contracts with trades, where trades have a trade time in between tradeTimeFrom - tradeTimeTo and at least one leg in the provided areas. \n\nAll trades have at least one leg belongs to Nord Pool. However, trades where both legs belong to other PXs are excluded from the response. \n\nData is available with a delay of approximately 20 minutes.\n            \n**Note**: The time difference between tradeTimeFrom and tradeTimeTo cannot exceed **12** hours.\nThis limitation was introduced for performance reasons to restrict the response size.\nDuring periods of high load on the system, responses may take longer than expected.\nIn such situations, it is recommended to query data in hourly intervals, for example\ntradeTimeFrom=2025-04-01T**01:00:00**Z and tradeTimeTo=2025-04-01T**02:00:00**Z.\n\n### Response field descriptions\n            \n**contracts**: a list of contracts to which these trades belong \n\nEach contract contains:\n- **contractId**: identifier of the contract\n- **contractName**: a descriptive name for the contract (e.g., QH-20250331-09).\n- **deliveryStart**: the timestamp when the contract delivery starts\n- **deliveryEnd**: the timestamp when the contract delivery ends\n- **trades**: a list of trades that have an updated time between updated time from and updated time to \n\n  Each trade includes:\n  - **tradeId**: identifier of the trade\n  - **tradeTime**: the timestamp of trade creation\n  - **tradeUpdatedAt**: the trade creation time (revisionNumber=1) or time of a trade modification (revisionNumber>1)\n  - **tradeState**:\n    - **Completed** - the trade is completed\n    - **Cancelled** - the trade is cancelled\n    - **Disputed** - the trade is pending decision for cancellation\n  - **revisionNumber**: revision number for trade modification request. Should be incremented with a subsequent trade modification request.\n  - **price**: price in EUR/MWh, GBP/MWh or ISK/MWh\n  - **volume**: quantity in MW\n  - **tradePhase**: there's two matching modes:\n    - **Continuous** - the normal top of order book matching\n    - **Auction** - the matching mode, where basically the buy and sell orders are matched in a similar manner as auction orders.\n      This only happens when capacity is added in between areas - basically, in that case, the order books can be\n      overlapping with buys in one area being much higher than sells in another area.\n      In order for the price to be fair for both the sellers and buyers, this auction matching mode is used.\n    - **None** - for old trades without this information\n  - **crossPx**:\n    - **false**: both legs belong to the Nord Pool market  \n    - **true**: one of the legs belongs to Other Power Exchanges (OPX). Then the trade contains \"referenceOrderId\" only for the side which is presented in Nord Pool, the other side doesn't have reference order id (\"referenceOrderId\": null).\n  - **legs**: a list of trade legs \n\n    Each leg contains: \n\n    - **deliveryArea**: delivery area that this order belongs to \n\n    - **referenceOrderId**: identifier of the order involved in the trade.\n      In transactions where one party is external to Nord Pool, the referenceOrderId will be null for the leg that belongs to OPX.\n    - **tradeSide**: Buy or Sell\n            \n[Sample response with valid data for areas NO1,AMP, trade time from 2025-05-05T00:30:00Z and trade time to 2025-05-05T01:54:00Z](https://proddataservicespublic.blob.core.windows.net/public-api-response-samples/Intraday/get_api_v2_Intraday_Trades_ByTradeTime.json)"
+      parameters:
+      - name: areas
+        in: query
+        description: 'Comma-separated list of areas (e.g., NO1, NO2).
+
+          Supported: KT(legacy),NO1,NO2,NO3,NO4,NO5,SE1,SE2,SE3,SE4,FI,DK1,DK2,EE,LT,LV,AT,BE,FR,50Hz,AMP,TTG,TBW,NL,PL,TEL,BG,UK,IS'
+        required: true
+        schema:
+          minItems: 1
+          type: string
+          items:
+            type: string
+      - name: tradeTimeFrom
+        in: query
+        description: Trade date and time starts, referring to a UTC datetime. Trades at or later this time will be included in the response. Format yyyy-MM-ddThh:mm:ssZ, for example 2024-08-15T01:00:00Z
+        required: true
+        schema:
+          type: string
+          format: date-time
+      - name: tradeTimeTo
+        in: query
+        description: Trade date and time ends, referring to a UTC datetime. Trades earlier than this time will be included in the response. Format yyyy-MM-ddThh:mm:ssZ, for example 2024-08-15T01:15:00Z
+        required: true
+        schema:
+          type: string
+          format: date-time
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ApiIntradayContainer'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiIntradayContainer'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ApiIntradayContainer'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+            text/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ValidationProblemDetails'
+components:
+  schemas:
+    PublicIntradayOrderContract:
+      type: object
+      properties:
+        contractId:
+          type: string
+          nullable: true
+        contractName:
+          type: string
+          nullable: true
+        priceUnit:
+          type: string
+          nullable: true
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        orders:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicIntradayOrder'
+          nullable: true
+      additionalProperties: false
+    ApiIntradayContainer:
+      type: object
+      properties:
+        volumeUnit:
+          type: string
+          nullable: true
+        contracts:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicIntradayTradeContract'
+          nullable: true
+      additionalProperties: false
+    ApiTotalMarketStatistic:
+      required:
+      - priceUnit
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        priceUnit:
+          type: string
+          nullable: true
+        volumeUnit:
+          type: string
+          nullable: true
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+        contracts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContractStatistics'
+          nullable: true
+      additionalProperties: false
+    HourlyStatistics:
+      type: object
+      properties:
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        highPrice:
+          type: number
+          format: double
+          nullable: true
+        lowPrice:
+          type: number
+          format: double
+          nullable: true
+        openPrice:
+          type: number
+          format: double
+          nullable: true
+        closePrice:
+          type: number
+          format: double
+          nullable: true
+        averagePrice:
+          type: number
+          format: double
+          nullable: true
+        volume:
+          type: number
+          format: double
+        buyVolume:
+          type: number
+          format: double
+        sellVolume:
+          type: number
+          format: double
+        averagePriceLast3H:
+          type: number
+          format: double
+          nullable: true
+        averagePriceLast1H:
+          type: number
+          format: double
+          nullable: true
+        openTradeTime:
+          type: string
+          format: date-time
+          nullable: true
+        closeTradeTime:
+          type: string
+          format: date-time
+          nullable: true
+      additionalProperties: false
+    CapacityData:
+      type: object
+      properties:
+        inCapacity:
+          type: number
+          format: double
+        outCapacity:
+          type: number
+          format: double
+        publicationTime:
+          type: string
+          format: date-time
+      additionalProperties: false
+    ApiAvailableStatus:
+      enum:
+      - Missing
+      - Available
+      type: string
+    PublicIntradayTrade:
+      type: object
+      properties:
+        tradeId:
+          type: string
+          nullable: true
+        tradeTime:
+          type: string
+          format: date-time
+        tradeUpdatedAt:
+          type: string
+          format: date-time
+        tradeState:
+          $ref: '#/components/schemas/PublicTradeState'
+        revisionNumber:
+          type: integer
+          format: int32
+        price:
+          type: number
+          format: double
+        volume:
+          type: number
+          format: double
+        tradePhase:
+          $ref: '#/components/schemas/TradePhase'
+        crossPx:
+          type: boolean
+        legs:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicIntradayTradeLeg'
+          nullable: true
+      additionalProperties: false
+    ContractStatistics:
+      type: object
+      properties:
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        isLocalContract:
+          type: boolean
+        contractId:
+          type: string
+          nullable: true
+        contractName:
+          type: string
+          nullable: true
+        contractOpenTime:
+          type: string
+          format: date-time
+          nullable: true
+        contractCloseTime:
+          type: string
+          format: date-time
+          nullable: true
+        highPrice:
+          type: number
+          format: double
+          nullable: true
+        lowPrice:
+          type: number
+          format: double
+          nullable: true
+        openPrice:
+          type: number
+          format: double
+          nullable: true
+        closePrice:
+          type: number
+          format: double
+          nullable: true
+        averagePrice:
+          type: number
+          format: double
+          nullable: true
+        volume:
+          type: number
+          format: double
+        buyVolume:
+          type: number
+          format: double
+          nullable: true
+        sellVolume:
+          type: number
+          format: double
+          nullable: true
+        averagePriceLast3H:
+          type: number
+          format: double
+          nullable: true
+        averagePriceLast1H:
+          type: number
+          format: double
+          nullable: true
+        openTradeTime:
+          type: string
+          format: date-time
+          nullable: true
+        closeTradeTime:
+          type: string
+          format: date-time
+          nullable: true
+      additionalProperties: false
+    ApiOrderbook:
+      required:
+      - contractId
+      - deliveryArea
+      - priceUnit
+      - volumeUnit
+      type: object
+      properties:
+        deliveryDateUtc:
+          type: string
+          format: date
+        contractId:
+          type: string
+          nullable: true
+        deliveryArea:
+          type: string
+          nullable: true
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        volumeUnit:
+          type: string
+          nullable: true
+        priceUnit:
+          type: string
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+        revisions:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderBookRevision'
+          nullable: true
+      additionalProperties: false
+    ApiDeliveryAreaMarketYearlyStatistic:
+      required:
+      - priceUnit
+      type: object
+      properties:
+        deliveryArea:
+          type: string
+          nullable: true
+        year:
+          type: integer
+          format: int32
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        priceUnit:
+          type: string
+          nullable: true
+        volumeUnit:
+          type: string
+          nullable: true
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+        contracts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContractStatistics'
+          nullable: true
+      additionalProperties: false
+    ValidationProblemDetails:
+      type: object
+      properties:
+        type:
+          type: string
+          nullable: true
+        title:
+          type: string
+          nullable: true
+        status:
+          type: integer
+          format: int32
+          nullable: true
+        detail:
+          type: string
+          nullable: true
+        instance:
+          type: string
+          nullable: true
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+          nullable: true
+      additionalProperties: {}
+    PublicIntradayOrder:
+      type: object
+      properties:
+        orderId:
+          type: string
+          nullable: true
+        originalOrderId:
+          type: string
+          nullable: true
+        previousOrderId:
+          type: string
+          nullable: true
+        orderType:
+          $ref: '#/components/schemas/OrderType'
+        side:
+          $ref: '#/components/schemas/TradeSide'
+        createdTime:
+          type: string
+          format: date-time
+        revisions:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicOrderRevision'
+          nullable: true
+      additionalProperties: false
+    OrderState:
+      enum:
+      - Unknown
+      - Pending
+      - Active
+      - Hibernated
+      - Inactive
+      - Rejected
+      type: string
+    ApiIntradayOrdersContainer:
+      required:
+      - deliveryArea
+      type: object
+      properties:
+        volumeUnit:
+          type: string
+          nullable: true
+        deliveryArea:
+          type: string
+          nullable: true
+        contracts:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicIntradayOrderContract'
+          nullable: true
+      additionalProperties: false
+    ApiHub2HubCapacity:
+      type: object
+      properties:
+        volumeUnit:
+          type: string
+          nullable: true
+          readOnly: true
+        hubToHubCapacities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Hub2HubCapacity'
+          nullable: true
+      additionalProperties: false
+    PublicTradeState:
+      enum:
+      - None
+      - Completed
+      - Disputed
+      - NotCancelled
+      - Cancelled
+      type: string
+    TimeInForce:
+      enum:
+      - Unknown
+      - ImmediateOrCancel
+      - FillOrKill
+      - None
+      - GoodTillDate
+      - GoodForSession
+      type: string
+    ApiDeliveryAreaMarketHourlyStatistic:
+      required:
+      - priceUnit
+      type: object
+      properties:
+        deliveryArea:
+          type: string
+          nullable: true
+        deliveryDateCET:
+          type: string
+          format: date
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        priceUnit:
+          type: string
+          nullable: true
+        volumeUnit:
+          type: string
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+        hourlyStatistics:
+          type: array
+          items:
+            $ref: '#/components/schemas/HourlyStatistics'
+          nullable: true
+      additionalProperties: false
+    OrderView:
+      type: object
+      properties:
+        orderId:
+          type: string
+          nullable: true
+        price:
+          type: number
+          format: double
+        volume:
+          type: number
+          format: double
+        deleted:
+          type: boolean
+        priorityTime:
+          type: string
+          format: date-time
+        updatedTime:
+          type: string
+          format: date-time
+      additionalProperties: false
+    ApiDeliveryAreaMarketStatistic:
+      required:
+      - priceUnit
+      type: object
+      properties:
+        deliveryArea:
+          type: string
+          nullable: true
+        deliveryDateCET:
+          type: string
+          format: date
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        priceUnit:
+          type: string
+          nullable: true
+        volumeUnit:
+          type: string
+          nullable: true
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+        contracts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContractStatistics'
+          nullable: true
+      additionalProperties: false
+    OrderBookContract:
+      required:
+      - contractId
+      type: object
+      properties:
+        contractId:
+          type: string
+          nullable: true
+        contractName:
+          type: string
+          nullable: true
+        deliveryStart:
+          type: string
+          format: date-time
+          nullable: true
+        deliveryEnd:
+          type: string
+          format: date-time
+          nullable: true
+        isLocalContract:
+          type: boolean
+          nullable: true
+        contractOpenTime:
+          type: string
+          format: date-time
+          nullable: true
+        contractCloseTime:
+          type: string
+          format: date-time
+          nullable: true
+      additionalProperties: false
+    OrderType:
+      enum:
+      - Unknown
+      - Limit
+      - Iceberg
+      - UserDefinedBlock
+      - DirectMatch
+      type: string
+    TopLevelPublicIntradayOrderContract:
+      type: object
+      properties:
+        contractId:
+          type: string
+          nullable: true
+        contractName:
+          type: string
+          nullable: true
+        priceUnit:
+          type: string
+          nullable: true
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        orders:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicIntradayOrder'
+          nullable: true
+        volumeUnit:
+          type: string
+          nullable: true
+        deliveryArea:
+          type: string
+          nullable: true
+      additionalProperties: false
+    ApiOrderBookAreaContracts:
+      required:
+      - deliveryArea
+      type: object
+      properties:
+        deliveryArea:
+          type: string
+          nullable: true
+        deliveryDateUtc:
+          type: string
+          format: date
+        contracts:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderBookContract'
+          nullable: true
+      additionalProperties: false
+    PublicIntradayTradeContract:
+      type: object
+      properties:
+        contractId:
+          type: string
+          nullable: true
+        contractName:
+          type: string
+          nullable: true
+        priceUnit:
+          type: string
+          nullable: true
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        trades:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicIntradayTrade'
+          nullable: true
+      additionalProperties: false
+    TradeSide:
+      enum:
+      - None
+      - Buy
+      - Sell
+      type: string
+    ApiDeliveryAreaYearlyHourlyStatistic:
+      type: object
+      properties:
+        deliveryArea:
+          type: string
+          nullable: true
+        year:
+          type: integer
+          format: int32
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        priceUnit:
+          type: string
+          nullable: true
+        volumeUnit:
+          type: string
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+        hourlyStatistics:
+          type: array
+          items:
+            $ref: '#/components/schemas/HourlyStatistics'
+          nullable: true
+      additionalProperties: false
+    PublicOrderRevision:
+      type: object
+      properties:
+        revisionNumber:
+          type: integer
+          format: int64
+        updatedTime:
+          type: string
+          format: date-time
+        price:
+          type: number
+          format: double
+        volume:
+          type: number
+          format: double
+        state:
+          $ref: '#/components/schemas/OrderState'
+        action:
+          $ref: '#/components/schemas/OrderAction'
+        expirationTime:
+          type: string
+          format: date-time
+          nullable: true
+        timeInForce:
+          $ref: '#/components/schemas/TimeInForce'
+        icebergClipSize:
+          type: number
+          format: double
+          nullable: true
+        clipPriceChange:
+          type: number
+          format: double
+          nullable: true
+        remainingVolume:
+          type: number
+          format: double
+          nullable: true
+      additionalProperties: false
+    TopLevelPublicIntradayTradeContract:
+      type: object
+      properties:
+        contractId:
+          type: string
+          nullable: true
+        contractName:
+          type: string
+          nullable: true
+        priceUnit:
+          type: string
+          nullable: true
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        trades:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicIntradayTrade'
+          nullable: true
+        volumeUnit:
+          type: string
+          nullable: true
+      additionalProperties: false
+    OrderAction:
+      enum:
+      - None
+      - UserAdded
+      - UserHibernated
+      - UserModified
+      - UserDeleted
+      - SystemHibernated
+      - SystemModified
+      - SystemDeleted
+      - PartialExecution
+      - FullExecution
+      - IcebergSliceAdded
+      - SystemExpired
+      type: string
+    ApiTotalMarketHourlyStatistic:
+      required:
+      - priceUnit
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        priceUnit:
+          type: string
+          nullable: true
+        volumeUnit:
+          type: string
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+        hourlyStatistics:
+          type: array
+          items:
+            $ref: '#/components/schemas/HourlyStatistics'
+          nullable: true
+      additionalProperties: false
+    ApiTotalMarketYearlyStatistic:
+      required:
+      - priceUnit
+      type: object
+      properties:
+        year:
+          type: integer
+          format: int32
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        priceUnit:
+          type: string
+          nullable: true
+        volumeUnit:
+          type: string
+          nullable: true
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+        contracts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContractStatistics'
+          nullable: true
+      additionalProperties: false
+    TradePhase:
+      enum:
+      - Unknown
+      - Continuous
+      - Auction
+      type: string
+    PublicIntradayTradeLeg:
+      type: object
+      properties:
+        deliveryArea:
+          type: string
+          nullable: true
+        referenceOrderId:
+          type: string
+          nullable: true
+        tradeSide:
+          $ref: '#/components/schemas/TradeSide'
+      additionalProperties: false
+    ApiTotalMarketYearlyHourlyStatistic:
+      required:
+      - priceUnit
+      type: object
+      properties:
+        year:
+          type: integer
+          format: int32
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        priceUnit:
+          type: string
+          nullable: true
+        volumeUnit:
+          type: string
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+        hourlyStatistics:
+          type: array
+          items:
+            $ref: '#/components/schemas/HourlyStatistics'
+          nullable: true
+      additionalProperties: false
+    Hub2HubCapacity:
+      type: object
+      properties:
+        areaFrom:
+          type: string
+          nullable: true
+        areaTo:
+          type: string
+          nullable: true
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        capacities:
+          type: array
+          items:
+            $ref: '#/components/schemas/CapacityData'
+          nullable: true
+      additionalProperties: false
+    OrderBookRevision:
+      type: object
+      properties:
+        revision:
+          type: integer
+          format: int64
+        isSnapshot:
+          type: boolean
+        buyOrders:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderView'
+          nullable: true
+        sellOrders:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderView'
+          nullable: true
+      additionalProperties: false
+externalDocs:
+  description: Nord Pool Data Portal (public day-ahead prices site)
+  url: https://data.nordpoolgroup.com/
