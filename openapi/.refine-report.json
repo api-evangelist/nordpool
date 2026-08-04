@@ -1,0 +1,28 @@
+{
+  "provider": "nordpool",
+  "sources": [
+    "nordpool-auction-api-openapi.yml",
+    "nordpool-balancemarket-api-openapi.yml",
+    "nordpool-day-ahead-prices-api-openapi.yml",
+    "nordpool-exchangerate-api-openapi.yml",
+    "nordpool-intraday-api-openapi.yml",
+    "nordpool-powersystem-api-openapi.yml",
+    "nordpool-pricecurves-api-openapi.yml",
+    "nordpool-system-api-openapi.yml"
+  ],
+  "outputs": [
+    "nordpool-auction-api-openapi.yml",
+    "nordpool-balancemarket-api-openapi.yml",
+    "nordpool-day-ahead-prices-api-openapi.yml",
+    "nordpool-exchangerate-api-openapi.yml",
+    "nordpool-intraday-api-openapi.yml",
+    "nordpool-powersystem-api-openapi.yml",
+    "nordpool-pricecurves-api-openapi.yml",
+    "nordpool-system-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}
