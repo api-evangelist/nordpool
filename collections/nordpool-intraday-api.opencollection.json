@@ -1,0 +1,467 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Nord Pool Data Portal API (Public) Auction Intraday API",
+    "version": "1.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Intraday",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Intraday Contract Statistics",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/Intraday/ContractStatistics/ByAreas",
+            "params": [
+              {
+                "name": "areas",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated list of areas (e.g., NO1, NO2).\nSupported: KT(legacy),NO1,NO2,NO3,NO4,NO5,SE1,SE2,SE3,SE4,FI,DK1,DK2,EE,LT,LV,AT,BE,FR,GER,50Hz,AMP,TTG,TBW,NL,PL,TEL,BG,UK,IS"
+              },
+              {
+                "name": "date",
+                "value": "",
+                "type": "query",
+                "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15"
+              }
+            ]
+          },
+          "docs": " Returns intraday contract statistics for a date and a list of areas.\n            \nAll intraday trades where at least one leg (buy or/and sell) belongs to Nord Pool, Independent Bulgarian Energy Exchange (IBEX), Bursa Română de Mărfuri S.A (BRM) or Elma Orkuviðskipti (ELMA) and one leg belongs to queried area are included in the calculation of contract statistics. However, trades where both legs belong to other PXs are excluded from the statistics.\nThe calculation includes local and SIDC trades,"
+        },
+        {
+          "info": {
+            "name": "Intraday Contract Total Statistics",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/Intraday/ContractStatistics/Total",
+            "params": [
+              {
+                "name": "date",
+                "value": "",
+                "type": "query",
+                "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15"
+              }
+            ]
+          },
+          "docs": "Returns total intraday contract statistics for a date.\n            \nAll intraday trades where at least one leg (buy or/and sell) belongs to Nord Pool, Independent Bulgarian Energy Exchange (IBEX) or Bursa Română de Mărfuri S.A (BRM) and the currency is EUR are included in the calculation of contract statistics. However, trades where both legs belong to other PXs are excluded from the statistics. The calculation includes local and SIDC trades, as well as block trades and wash trades (trades where"
+        },
+        {
+          "info": {
+            "name": "Intraday Yearly Contract Statistics",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/Intraday/ContractStatistics/Yearly/ByArea",
+            "params": [
+              {
+                "name": "area",
+                "value": "",
+                "type": "query",
+                "description": "One area. For example NO1.\nSupported: KT(legacy),NO1,NO2,NO3,NO4,NO5,SE1,SE2,SE3,SE4,FI,DK1,DK2,EE,LT,LV,AT,BE,FR,GER,50Hz,AMP,TTG,TBW,NL,PL,TEL,BG,UK,IS"
+              },
+              {
+                "name": "year",
+                "value": "",
+                "type": "query",
+                "description": "Year in CET (format: yyyy, e.g., 2024)"
+              }
+            ]
+          },
+          "docs": "Returns intraday contract statistics for a year and one area.\n            \nAll intraday trades where at least one leg (buy or/and sell) belongs to Nord Pool, Independent Bulgarian Energy Exchange (IBEX), Bursa Română de Mărfuri S.A (BRM) or Elma Orkuviðskipti (ELMA) and one leg belongs to queried area are included in the calculation of contract statistics. However, trades where both legs belong to other PXs are excluded from the statistics. The calculation includes local and SIDC trades, as well"
+        },
+        {
+          "info": {
+            "name": "Intraday Yearly Total Contract Statistics",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/Intraday/ContractStatistics/Yearly/Total",
+            "params": [
+              {
+                "name": "year",
+                "value": "",
+                "type": "query",
+                "description": "Year in CET (format: yyyy, e.g., 2024)"
+              }
+            ]
+          },
+          "docs": " Returns all total intraday contract statistics for a year.\n            \nAll intraday trades where at least one leg (buy or/and sell) belongs to Nord Pool, Independent Bulgarian Energy Exchange (IBEX) or Bursa Română de Mărfuri S.A (BRM) and the currency is EUR are included in the calculation of contract statistics. However, trades where both legs belong to other PXs are excluded from the statistics. The calculation includes local and SIDC trades, as well as block trades and wash trades (trades "
+        },
+        {
+          "info": {
+            "name": "Intraday Hourly Statistics",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/Intraday/HourlyStatistics/ByAreas",
+            "params": [
+              {
+                "name": "areas",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated list of areas (e.g., NO1, NO2).\nSupported: KT(legacy),NO1,NO2,NO3,NO4,NO5,SE1,SE2,SE3,SE4,FI,DK1,DK2,EE,LT,LV,AT,BE,FR,GER,50Hz,AMP,TTG,TBW,NL,PL,TEL,BG,UK,IS"
+              },
+              {
+                "name": "date",
+                "value": "",
+                "type": "query",
+                "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15"
+              }
+            ]
+          },
+          "docs": " Returns intraday hourly statistics for a date and a list of areas.\n            \n Intraday hourly statistics provide a comprehensive overview of all trading activity for a specific delivery hour. These statistics are derived from the trade data available for the selected delivery hour.\n            \nAll intraday trades where at least one leg (buy or/and sell) belongs to Nord Pool, Independent Bulgarian Energy Exchange (IBEX), Bursa Română de Mărfuri S.A (BRM) or Elma Orkuviðskipti (ELMA) and one "
+        },
+        {
+          "info": {
+            "name": "Intraday Hourly Total Statistics",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/Intraday/HourlyStatistics/Total",
+            "params": [
+              {
+                "name": "date",
+                "value": "",
+                "type": "query",
+                "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15"
+              }
+            ]
+          },
+          "docs": "Returns total intraday hourly statistics for a date.\n            \nIntraday hourly statistics provide a comprehensive overview of all trading activity for a specific delivery hour across all areas. These statistics are derived from the trade data available for the selected delivery hour.\n            \nAll intraday trades where at least one leg (buy or/and sell) belongs to Nord Pool, Independent Bulgarian Energy Exchange (IBEX) or Bursa Română de Mărfuri S.A (BRM) in trading currency EUR are includ"
+        },
+        {
+          "info": {
+            "name": "Intraday Yearly Hourly Statistics",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/Intraday/HourlyStatistics/Yearly/ByArea",
+            "params": [
+              {
+                "name": "area",
+                "value": "",
+                "type": "query",
+                "description": "One area. For example NO1.\nSupported: KT(legacy),NO1,NO2,NO3,NO4,NO5,SE1,SE2,SE3,SE4,FI,DK1,DK2,EE,LT,LV,AT,BE,FR,GER,50Hz,AMP,TTG,TBW,NL,PL,TEL,BG,UK,IS"
+              },
+              {
+                "name": "year",
+                "value": "",
+                "type": "query",
+                "description": "Year in CET (format: yyyy, e.g., 2024)"
+              }
+            ]
+          },
+          "docs": "Returns all intraday hourly statistics for a year and one area.\n            \nThis aggregate is updated once per day, and includes data up until yesterday (CET).\n            \nIntraday hourly statistics provide a comprehensive overview of all trading activity for a specific delivery hour. These statistics are derived from the trade data available for the selected delivery hour.\n            \nAll intraday trades where at least one leg (buy or/and sell) belongs to Nord Pool, Independent Bulgarian Ene"
+        },
+        {
+          "info": {
+            "name": "Intraday Yearly Hourly Total Statistics",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/Intraday/HourlyStatistics/Yearly/Total",
+            "params": [
+              {
+                "name": "year",
+                "value": "",
+                "type": "query",
+                "description": "Year in CET (format: yyyy, e.g., 2024)"
+              }
+            ]
+          },
+          "docs": " Returns total intraday hourly statistics for a year.\n            \nThis aggregate is updated once per day, and includes data up until yesterday (CET).\n\n Intraday hourly statistics provide a comprehensive overview of all trading activity for a specific delivery hour across all areas. These statistics are derived from the trade data available for the selected delivery hour.\n            \nAll intraday trades where at least one leg (buy or/and sell) belongs to Nord Pool, Independent Bulgarian Energy "
+        },
+        {
+          "info": {
+            "name": "Intraday Hub to Hub Capacities",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/Intraday/HubToHubCapacities/ByAreaFrom",
+            "params": [
+              {
+                "name": "areaFrom",
+                "value": "",
+                "type": "query",
+                "description": "Delivery area (e.g., NO1).\nSupported: NO1,NO2,NO3,NO4,NO5,SE1,SE2,SE3,SE4,FI,DK1,DK2,EE,LT,LV,AT,BE,FR,50Hz,AMP,TTG,TBW,NL,PL,TEL,BG,UK"
+              },
+              {
+                "name": "areaTo",
+                "value": "",
+                "type": "query",
+                "description": "Delivery area (e.g., NO1).\nSupported: NO1,NO2,NO3,NO4,NO5,SE1,SE2,SE3,SE4,FI,DK1,DK2,EE,LT,LV,AT,BE,FR,50Hz,AMP,TTG,TBW,NL,PL,TEL,BG,UK"
+              },
+              {
+                "name": "deliveryStart",
+                "value": "",
+                "type": "query",
+                "description": "Delivery start time of a contract, referring to a full hour in UTC. \nFormat yyyy-MM-ddThh:00:00Z, for example 2024-08-15T01:00:00Z."
+              }
+            ]
+          },
+          "docs": "Returns transmission capacity changes available between two areas, no matter the path through the power grid.\nIt's not a border/cable capacity but rather the sum of all available paths that power could flow.\nData is available with a delay of approximately 25 minutes.\n\n**Note**: The delivery start time must be provided in a full-hour format, such as 2025-03-01T**01:00:00**Z.\nProviding the delivery start time like 2025-03-01T**01:59:59**Z results in a bad request error,\nas hub to hub capacities ar"
+        },
+        {
+          "info": {
+            "name": "Intraday Order Book By Contract",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/Intraday/OrderBook/ByContractId",
+            "params": [
+              {
+                "name": "area",
+                "value": "",
+                "type": "query",
+                "description": "Delivery area (e.g., NO1).\nSupported: NO1,NO2,NO3,NO4,NO5,SE1,SE2,SE3,SE4,FI,DK1,DK2,EE,LT,LV,AT,BE,FR,50Hz,AMP,TTG,TBW,NL,PL,TEL,BG,UK,IS"
+              },
+              {
+                "name": "deliveryDateUtc",
+                "value": "",
+                "type": "query",
+                "description": "Delivery date of the contract, referring to UTC date. Format yyyy-MM-dd, for example 2025-03-20"
+              },
+              {
+                "name": "contractId",
+                "value": "",
+                "type": "query",
+                "description": "The contract id"
+              }
+            ]
+          },
+          "docs": "Returns all intraday order book changes for the given contract and area, where the contract delivery start is within the given UTC date.\nThis data corresponds to the local view data type in the Intraday system.\n            \nOrder book data becomes available with a delay of 2–3 hours after the contract is closed. It contains event messages called revisions that come from XBID\nand/or NPM (Nord Pool Matcher). Each revision represents either:\n- A **delta** (\"isSnapshot\": false) that contains only th"
+        },
+        {
+          "info": {
+            "name": "Intraday Available Order Book contracts",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/Intraday/OrderBook/ContractsIds/ByArea",
+            "params": [
+              {
+                "name": "area",
+                "value": "",
+                "type": "query",
+                "description": "Delivery area (e.g., NO1).\nSupported: NO1,NO2,NO3,NO4,NO5,SE1,SE2,SE3,SE4,FI,DK1,DK2,EE,LT,LV,AT,BE,FR,50Hz,AMP,TTG,TBW,NL,PL,TEL,BG,UK,IS"
+              },
+              {
+                "name": "deliveryDateUtc",
+                "value": "",
+                "type": "query",
+                "description": "Delivery date, referring to UTC date. Format yyyy-MM-dd, for example 2025-03-20"
+              }
+            ]
+          },
+          "docs": "Returns a list of contracts with available order books for a given UTC date and area.\nThe response includes details about each contract, such as its delivery period, opening and closing times, and whether it is a local contract.\n            \n### Response field descriptions\n\n- **contractId**: the identifier of the contract\n- **contractName**: a descriptive name for the contract (e.g., QH-20250331-09).\n- **deliveryStart**: the timestamp when the contract delivery starts\n- **deliveryEnd**: the time"
+        },
+        {
+          "info": {
+            "name": "Intraday Order Revisions By Update Time",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/Intraday/OrderRevisions/ByUpdatedTime",
+            "params": [
+              {
+                "name": "area",
+                "value": "",
+                "type": "query",
+                "description": "Delivery area (e.g., NO1).\nSupported: KT(legacy),NO1,NO2,NO3,NO4,NO5,SE1,SE2,SE3,SE4,FI,DK1,DK2,EE,LT,LV,AT,BE,FR,50Hz,AMP,TTG,TBW,NL,PL,TEL,BG,UK,IS"
+              },
+              {
+                "name": "updatedTimeFrom",
+                "value": "",
+                "type": "query",
+                "description": "Order update date and time starts, referring to a UTC datetime. Format yyyy-MM-ddTHH:mm:ssZ, for example 2024-08-15T01:00:00Z"
+              },
+              {
+                "name": "updatedTimeTo",
+                "value": "",
+                "type": "query",
+                "description": "Order update date and time ends, referring to a UTC datetime. Format yyyy-MM-ddTHH:mm:ssZ, for example 2024-08-15T01:00:00Z"
+              }
+            ]
+          },
+          "docs": "Returns intraday contracts with orders for a given area, where order revisions have an updated time in between updatedTimeFrom and updatedTimeTo.\nData is available with a delay of approximately 20 minutes.\n\n**Note**: The time difference between updatedTimeFrom and updatedTimeTo cannot exceed **4** hours.\nThis limitation was introduced for performance reasons to restrict the response size.\nDuring periods of high load on the system, responses may take longer than expected.\nIn such situations, it i"
+        },
+        {
+          "info": {
+            "name": "Intraday Orders By Contract",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/Intraday/Orders/ByContractId",
+            "params": [
+              {
+                "name": "area",
+                "value": "",
+                "type": "query",
+                "description": "Delivery area (e.g., NO1).\nSupported: KT(legacy),NO1,NO2,NO3,NO4,NO5,SE1,SE2,SE3,SE4,FI,DK1,DK2,EE,LT,LV,AT,BE,FR,50Hz,AMP,TTG,TBW,NL,PL,TEL,BG,UK,IS"
+              },
+              {
+                "name": "deliveryStart",
+                "value": "",
+                "type": "query",
+                "description": "Delivery start time of the contract, referring to a UTC datetime. Format yyyy-MM-ddThh:mm:ssZ, for example 2024-08-15T01:00:00Z"
+              },
+              {
+                "name": "contractId",
+                "value": "",
+                "type": "query",
+                "description": "The contract id"
+              }
+            ]
+          },
+          "docs": "Returns intraday orders for the given contract which starts at the given time for a given area.\nData is available with a delay of approximately 20 minutes.\n \n### Response field descriptions\n\n- **contractId**: identifier of the contract\n- **contractName**: a descriptive name for the contract (e.g., QH-20250331-09).\n- **deliveryStart**: the timestamp when the contract delivery starts\n- **deliveryEnd**: the timestamp when the contract delivery ends\n- **orders**: a list of orders associated with the"
+        },
+        {
+          "info": {
+            "name": "Intraday Orders By Delivery Time",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/Intraday/Orders/ByDeliveryStart",
+            "params": [
+              {
+                "name": "area",
+                "value": "",
+                "type": "query",
+                "description": "Delivery area (e.g., NO1).\nSupported: KT(legacy),NO1,NO2,NO3,NO4,NO5,SE1,SE2,SE3,SE4,FI,DK1,DK2,EE,LT,LV,AT,BE,FR,50Hz,AMP,TTG,TBW,NL,PL,TEL,BG,UK,IS"
+              },
+              {
+                "name": "deliveryStartFrom",
+                "value": "",
+                "type": "query",
+                "description": "Earliest delivery start time, referring to a UTC hour. Contracts with delivery start at this hour or later will be included in the response. Format yyyy-MM-ddThh:mm:ssZ, for example 2024-08-15T01:00:00Z"
+              },
+              {
+                "name": "deliveryStartTo",
+                "value": "",
+                "type": "query",
+                "description": "Latest delivery start time, referring to a UTC hour. Contracts with delivery start earlier than this hour will be included in the response. Format yyyy-MM-ddThh:mm:ssZ, for example 2024-08-15T02:00:00Z"
+              }
+            ]
+          },
+          "docs": "Returns intraday contracts with orders for a given area, where the contract delivery start is within the deliveryStartFrom-deliveryStartTo time range.\nData is available with a delay of approximately 20 minutes.\n\n**Note**: The time difference between deliveryStartFrom and deliveryStartTo cannot exceed **4** hours.\nThis limitation was introduced for performance reasons to restrict the response size.\nDuring periods of high load on the system, responses may take longer than expected.\nIn such situati"
+        },
+        {
+          "info": {
+            "name": "Intraday Trades By Contract",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/Intraday/Trades/ByContractId",
+            "params": [
+              {
+                "name": "areas",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated list of areas (e.g., NO1, NO2).\nSupported: KT(legacy),NO1,NO2,NO3,NO4,NO5,SE1,SE2,SE3,SE4,FI,DK1,DK2,EE,LT,LV,AT,BE,FR,50Hz,AMP,TTG,TBW,NL,PL,TEL,BG,UK,IS"
+              },
+              {
+                "name": "deliveryStart",
+                "value": "",
+                "type": "query",
+                "description": "Delivery start time of the contract, referring to a UTC datetime. Format yyyy-MM-ddThh:mm:ssZ, for example 2024-08-15T01:00:00Z"
+              },
+              {
+                "name": "contractId",
+                "value": "",
+                "type": "query",
+                "description": "The contract id"
+              }
+            ]
+          },
+          "docs": "Returns an intraday contract with trades for a delivery start time and contract id, where trades have at least one leg matching at least one of the provided areas. \n\nAll trades have at least one leg belongs to Nord Pool. However, trades where both legs belong to other PXs are excluded from the response. \n\nData is available with a delay of approximately 20 minutes.\n \n### Response field descriptions\n\n- **contractId**: identifier of the contract\n- **contractName**: a descriptive name for the contra"
+        },
+        {
+          "info": {
+            "name": "Intraday Trades By Delivery Time",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/Intraday/Trades/ByDeliveryStart",
+            "params": [
+              {
+                "name": "areas",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated list of areas (e.g., NO1, NO2).\nSupported: KT(legacy),NO1,NO2,NO3,NO4,NO5,SE1,SE2,SE3,SE4,FI,DK1,DK2,EE,LT,LV,AT,BE,FR,50Hz,AMP,TTG,TBW,NL,PL,TEL,BG,UK,IS"
+              },
+              {
+                "name": "deliveryStartFrom",
+                "value": "",
+                "type": "query",
+                "description": "Earliest delivery start time, referring to a UTC hour. Contracts with delivery start at this hour or later will be included in the response. Format yyyy-MM-ddThh:mm:ssZ, for example 2024-08-15T01:00:00Z"
+              },
+              {
+                "name": "deliveryStartTo",
+                "value": "",
+                "type": "query",
+                "description": "Latest delivery start time, referring to a UTC hour. Contracts with delivery start earlier than this hour will be included in the response. Format yyyy-MM-ddThh:mm:ssZ, for example 2024-08-15T02:00:00Z"
+              }
+            ]
+          },
+          "docs": "Returns intraday contracts with trades, where the contract delivery start is within the deliveryStartFrom-deliveryStartTo time range and the trade has at least one leg in the provided areas. \n\nAll trades have at least one leg belongs to Nord Pool. However, trades where both legs belong to other PXs are excluded from the response. \n\nData is available with a delay of approximately 20 minutes.\n            \n**Note**: The time difference between deliveryStartFrom and deliveryStartTo cannot exceed **1"
+        },
+        {
+          "info": {
+            "name": "Intraday Trades By Trade Time",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/Intraday/Trades/ByTradeTime",
+            "params": [
+              {
+                "name": "areas",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated list of areas (e.g., NO1, NO2).\nSupported: KT(legacy),NO1,NO2,NO3,NO4,NO5,SE1,SE2,SE3,SE4,FI,DK1,DK2,EE,LT,LV,AT,BE,FR,50Hz,AMP,TTG,TBW,NL,PL,TEL,BG,UK,IS"
+              },
+              {
+                "name": "tradeTimeFrom",
+                "value": "",
+                "type": "query",
+                "description": "Trade date and time starts, referring to a UTC datetime. Trades at or later this time will be included in the response. Format yyyy-MM-ddThh:mm:ssZ, for example 2024-08-15T01:00:00Z"
+              },
+              {
+                "name": "tradeTimeTo",
+                "value": "",
+                "type": "query",
+                "description": "Trade date and time ends, referring to a UTC datetime. Trades earlier than this time will be included in the response. Format yyyy-MM-ddThh:mm:ssZ, for example 2024-08-15T01:15:00Z"
+              }
+            ]
+          },
+          "docs": "Returns intraday contracts with trades, where trades have a trade time in between tradeTimeFrom - tradeTimeTo and at least one leg in the provided areas. \n\nAll trades have at least one leg belongs to Nord Pool. However, trades where both legs belong to other PXs are excluded from the response. \n\nData is available with a delay of approximately 20 minutes.\n            \n**Note**: The time difference between tradeTimeFrom and tradeTimeTo cannot exceed **12** hours.\nThis limitation was introduced for"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

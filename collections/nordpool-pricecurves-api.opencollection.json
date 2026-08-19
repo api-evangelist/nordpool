@@ -1,0 +1,37 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Nord Pool Data Portal API (Public) Auction PriceCurves API",
+    "version": "1.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "PriceCurves",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "N2EX Price Curves",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/Auction/N2EX_DayAhead/PriceCurves/UK",
+            "params": [
+              {
+                "name": "date",
+                "value": "",
+                "type": "query",
+                "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example, 2024-08-15"
+              }
+            ]
+          },
+          "docs": "Returns the N2EX UK price curve data for a given date.\n            \nThese price curves only contain order information for what is happening in the UK delivery area. No price curve information is available for the coupled NO2 area, since the trading activity in NO2 is small. \n            \n### Response field descriptions\n            \n**status**: Missing if no data exists for the requested date. Available if data is present\n\n#### orderPositions: a list of delivery period, and associated aggregated "
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

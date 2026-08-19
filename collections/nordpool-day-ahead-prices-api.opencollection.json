@@ -1,0 +1,98 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Nord Pool Data Portal API (Public) Auction Day-Ahead Prices API",
+    "version": "1.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Day-Ahead Prices",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Day-ahead prices by delivery area",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/DayAheadPrices",
+            "params": [
+              {
+                "name": "date",
+                "value": "",
+                "type": "query",
+                "description": "Delivery date (CET), format yyyy-MM-dd."
+              },
+              {
+                "name": "market",
+                "value": "",
+                "type": "query",
+                "description": "Market to query. DayAhead is the day-ahead auction market."
+              },
+              {
+                "name": "deliveryArea",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated bidding/delivery area codes, for example NO2 or SE3,FI,DK1."
+              },
+              {
+                "name": "currency",
+                "value": "",
+                "type": "query",
+                "description": "Currency for returned prices (EUR or a local currency such as NOK, SEK, DKK)."
+              }
+            ]
+          },
+          "docs": "Returns day-ahead auction prices for one or more delivery areas on a given CET delivery date, in 15-minute Market Time Unit entries plus per-area block-average aggregates and daily statistics. Verified live (HTTP 200 with price data) on 2026-07-11."
+        },
+        {
+          "info": {
+            "name": "Day-ahead price indices by index name",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/DayAheadPriceIndices",
+            "params": [
+              {
+                "name": "date",
+                "value": "",
+                "type": "query",
+                "description": "Delivery date (CET), format yyyy-MM-dd."
+              },
+              {
+                "name": "market",
+                "value": "",
+                "type": "query",
+                "description": "Market to query. DayAhead is the day-ahead auction market."
+              },
+              {
+                "name": "indexNames",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated index names (typically area codes such as NO2 or SE3)."
+              },
+              {
+                "name": "currency",
+                "value": "",
+                "type": "query",
+                "description": "Currency for returned index values."
+              },
+              {
+                "name": "resolutionInMinutes",
+                "value": "",
+                "type": "query",
+                "description": "Index resolution in minutes (for example 15 or 60)."
+              }
+            ]
+          },
+          "docs": "Returns day-ahead price index values (area price indices at a chosen resolution) for a given CET delivery date. Verified live (HTTP 200) on 2026-07-11."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

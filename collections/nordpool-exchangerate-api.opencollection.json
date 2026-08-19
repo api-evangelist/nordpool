@@ -1,0 +1,56 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Nord Pool Data Portal API (Public) Auction ExchangeRate API",
+    "version": "1.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "ExchangeRate",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Exchange rates",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/ExchangeRate/Daily",
+            "params": [
+              {
+                "name": "date",
+                "value": "",
+                "type": "query",
+                "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15"
+              }
+            ]
+          },
+          "docs": "Returns the exchange rate used for a specific date.\n            \n### Nordic Day-ahead market and local currencies\nFor the Nordic Day-ahead market, local currency trading is allowed. At the auction day, a preliminary exchange rate is retrieved for local currencies to EUR (for example, SEK -> EUR) from a bank. This preliminary exchange rate is used to calculate order prices in EUR based on user provided input. If the user places an order with price 100 SEK and the SEK -> EUR **preliminary** exchan"
+        },
+        {
+          "info": {
+            "name": "Yearly Exchange rates",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/ExchangeRate/Yearly",
+            "params": [
+              {
+                "name": "year",
+                "value": "",
+                "type": "query",
+                "description": "Delivery year, referring to CET year. Format yyyy, for example 2024"
+              }
+            ]
+          },
+          "docs": "Returns the exchange rates for a specific year.\n            \n### Nordic Day-ahead market and local currencies\nFor the Nordic Day-ahead market, local currency trading is allowed. At the auction day, a preliminary exchange rate is retrieved for local currencies to EUR (for example, SEK -> EUR) from a bank. This preliminary exchange rate is used to calculate order prices in EUR based on user provided input. If the user places an order with price 100 SEK and the SEK -> EUR **preliminary** exchange r"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

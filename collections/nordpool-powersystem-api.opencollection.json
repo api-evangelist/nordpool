@@ -1,0 +1,437 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Nord Pool Data Portal API (Public) Auction PowerSystem API",
+    "version": "1.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "PowerSystem",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Clean Horizon Premium Storage Index - Delivered by Nord Pool",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/CleanHorizonStorageIndex/Daily/ByAreas",
+            "params": [
+              {
+                "name": "areas",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated list of areas (e.g., SE1, SE2).\nSupported: BE, CNOR, CSUD, DE, DK1, DK2, EE, ES, FI, FR, ITCALA, LT, LV, NORD, PL, PT, SARD, SE1, SE2,\nSE3, SE4, SICI, SUD, TEL"
+              },
+              {
+                "name": "month",
+                "value": "",
+                "type": "query",
+                "description": "Month in UTC. Format yyyy-MM-dd, for example 2025-01-01.\nMust be the first day of the month. If another day is provided, it will be transformed to the first day of that month."
+              }
+            ]
+          },
+          "docs": "Returns a list of daily gross revenues of storage assets for a list of areas and month.\n\nDaily storage index provides information on how much money could a 1, 2, and 4-hour storage asset have earned in a given day. It contains details on each component of the revenue stack\n(day-ahead, intraday, FCR, aFRR, mFRR, etc).\n\n### Response field descriptions\n- **area**: biding zone the index is calculated for\n- **status**: Missing if no data found for the area. Available if data is present\n- **unit**: cu"
+        },
+        {
+          "info": {
+            "name": "Clean Horizon Storage Index - Delivered by Nord Pool",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/CleanHorizonStorageIndex/Monthly/ByAreas",
+            "params": [
+              {
+                "name": "areas",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated list of areas (e.g., SE1, SE2).\nSupported: BE, CNOR, CSUD, DE, DK1, DK2, EE, ES, FI, FR, ITCALA, LT, LV, NORD, PL, PT, SARD, SE1, SE2,\nSE3, SE4, SICI, SUD, TEL"
+              }
+            ]
+          },
+          "docs": "Returns a list of monthly gross revenues of storage assets for a list of areas.\n\nMonthly storage index provides information on how much money could a 1, 2, and 4-hour storage asset have earned in a given month.\nValues are calculated based on premium indexes by summing up daily total revenues for the month.  \n\n### Response field descriptions\n- **area**: biding zone the index is calculated for\n- **status**: Missing if no data found for the area. Available if data is present\n- **unit**: currency un"
+        },
+        {
+          "info": {
+            "name": "Consumption Forecasts",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/PowerSystem/ConsumptionForecasts/ByAreas",
+            "params": [
+              {
+                "name": "areas",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated list of areas (e.g., NO1, NO2).\nSupported: 50HZ, AMP, AT, BE, DE-LU, LU, DK1, DK2, EE, FI, FR, LT, LV, NL, NO1, NO2, NO3, NO4, NO5, PL, SE1, SE2,\nSE3, SE4, TBW, TTG, TEL, BG"
+              },
+              {
+                "name": "date",
+                "value": "",
+                "type": "query",
+                "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15"
+              }
+            ]
+          },
+          "docs": "Returns a list of consumption forecasts for a date and a list of areas.\n            \nConsumption forecasts tells how much electricity is expected to be consumed / used in an area and delivery period. \n            \nThis corresponds to the \"Total Load / Day-Ahead\" data type in the Entso-e Transparency Platform.\n            \n### Response field descriptions\n- **status**: Missing if no data found for the date and area. Available if data is present\n- **consumptionForecasts**: a list of delivery period"
+        },
+        {
+          "info": {
+            "name": "Consumption Forecasts By Location",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/PowerSystem/ConsumptionForecasts/ByLocations",
+            "params": [
+              {
+                "name": "locations",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated list of locations (e.g., NO, SE).\nSupported: AT, BE, DE, LU, DK, EE, FI, FR, LT, LV, NL, NO, PL, SE, RO, BG, BALTIC, CWE, DE-LU, NORDIC"
+              },
+              {
+                "name": "date",
+                "value": "",
+                "type": "query",
+                "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15"
+              }
+            ]
+          },
+          "docs": "Returns a list of consumption forecasts for a date and a list of locations.\n            \nConsumption forecasts tells how much electricity is expected to be consumed / used in an area and delivery period. Consumption forecasts by Location aggregates delivery area values into country or region values. \n            \n### Response field descriptions\n- **status**: Missing if no data found for the date and area. Available if data is present\n- **locationType**: Country or Region\n- **deliveryAreas**: del"
+        },
+        {
+          "info": {
+            "name": "Consumption",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/PowerSystem/Consumptions/ByAreas",
+            "params": [
+              {
+                "name": "areas",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated list of areas (e.g., NO1, NO2).\nSupported: 50HZ, AMP, AT, BE, DE-LU, LU, DK1, DK2, EE, FI, FR, LT, LV, NL, NO1, NO2, NO3, NO4, NO5, PL, SE1, SE2,\nSE3, SE4, TBW, TTG, TEL, BG"
+              },
+              {
+                "name": "date",
+                "value": "",
+                "type": "query",
+                "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15"
+              }
+            ]
+          },
+          "docs": "Returns a list of consumptions for a date and a list of areas.\n            \nConsumption tells how much electricity is being consumed / used in an area and delivery period. \n            \nThis corresponds to the \"Total Load / Actual\" data type in the Entso-e Transparency Platform.\n            \n### Response field descriptions\n- **status**: Missing if no data found for the date and area. Available if data is present\n- **consumptions**: a list of delivery periods\n  - **deliveryStart**: start of deliv"
+        },
+        {
+          "info": {
+            "name": "Consumption By Location",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/PowerSystem/Consumptions/ByLocations",
+            "params": [
+              {
+                "name": "locations",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated list of locations (e.g., NO, SE).\nSupported: AT, BE, DE, LU, DK, EE, FI, FR, LT, LV, NL, NO, PL, SE, RO, BG, BALTIC, CWE, DE-LU, NORDIC"
+              },
+              {
+                "name": "date",
+                "value": "",
+                "type": "query",
+                "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15"
+              }
+            ]
+          },
+          "docs": " Returns a list of consumptions for a date and a list of locations.\n            \nConsumption tells how much electricity is being consumed / used in an area and delivery period. Consumption by location aggregates delivery area consumption value into country or region values. \n            \n### Response field descriptions\n- **status**: Missing if no data found for the date and area. Available if data is present\n- **locationType**: Country or Region\n- **deliveryAreas**: delivery areas used for this "
+        },
+        {
+          "info": {
+            "name": "Yearly Consumption",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/PowerSystem/Consumptions/Yearly/ByArea",
+            "params": [
+              {
+                "name": "area",
+                "value": "",
+                "type": "query",
+                "description": "One area. For example NO1.\nSupported: 50HZ, AMP, AT, BE, DE-LU, LU, DK1, DK2, EE, FI, FR, LT, LV, NL, NO1, NO2, NO3, NO4, NO5, PL, SE1, SE2,\nSE3, SE4, TBW, TTG, TEL, BG"
+              },
+              {
+                "name": "year",
+                "value": "",
+                "type": "query",
+                "description": "Year in CET (format: yyyy, e.g., 2024)"
+              }
+            ]
+          },
+          "docs": " Returns a list of consumptions for a year and one area.\n            \nConsumption tells how much electricity is being consumed / used in an area and delivery period. \n            \nThis corresponds to the \"Total Load / Actual\" data type in the Entso-e Transparency Platform.\n            \n This yearly summary is updated in a rolling manner, and is updated daily.\n\n### Response field descriptions\n- **yearlySummary**: total MWh consumption for the year\n- **monthlySummaries**: a list of monthly consump"
+        },
+        {
+          "info": {
+            "name": "Yearly Consumption by Location",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/PowerSystem/Consumptions/Yearly/ByLocation",
+            "params": [
+              {
+                "name": "location",
+                "value": "",
+                "type": "query",
+                "description": "One location. For example NO.\nSupported: AT, BE, DE, LU, DK, EE, FI, FR, LT, LV, NL, NO, PL, SE, RO, BG, BALTIC, CWE, DE-LU, NORDIC"
+              },
+              {
+                "name": "year",
+                "value": "",
+                "type": "query",
+                "description": "Year in CET (format: yyyy, e.g., 2024)"
+              }
+            ]
+          },
+          "docs": " Returns a list of consumptions for a year and one location.\n\nConsumption tells how much electricity is being consumed / used in an area and delivery period. Consumption by location aggregates delivery area consumption value into country or region values. \n            \n This yearly summary is updated in a rolling manner, and is updated daily.\n            \n### Response field descriptions\n- **status**: Missing if no data found for the date and area. Available if data is present\n- **locationType**:"
+        },
+        {
+          "info": {
+            "name": "Exchange",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/PowerSystem/Exchanges/ByAreas",
+            "params": [
+              {
+                "name": "areas",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated list of areas (e.g., NO1, NO2).\nSupported: 50HZ, AMP, AT, BE, DE-LU, DK1, DK2, EE, FI, FR, LT, LV, NL, NO1, NO2, NO3, NO4, NO5, PL, SE1, SE2, SE3,\nSE4, TBW, TTG, TEL, BG"
+              },
+              {
+                "name": "date",
+                "value": "",
+                "type": "query",
+                "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15"
+              }
+            ]
+          },
+          "docs": "Returns a list of exchanges for a date and a list of areas.\n            \nExchange tells how much electricity has been importer or exported for an area and delivery period. This is the actual measured flow.\n            \nThis corresponds to the \"Physical Flows\" data type in the Entso-e Transparency Platform.\n            \n### Response field descriptions\n- **dailyTotalImport**: total MWh imported volume\n- **dailyTotalExport**: total MWh exported volume\n- **dailyTotalNetPosition**: total net position"
+        },
+        {
+          "info": {
+            "name": "Yearly Exchange",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/PowerSystem/Exchanges/Yearly/ByArea",
+            "params": [
+              {
+                "name": "area",
+                "value": "",
+                "type": "query",
+                "description": "One area. For example NO1.\nSupported: 50HZ, AMP, AT, BE, DE-LU, DK1, DK2, EE, FI, FR, LT, LV, NL, NO1, NO2, NO3, NO4, NO5, PL, SE1, SE2, SE3,\nSE4, TBW, TTG, TEL, BG"
+              },
+              {
+                "name": "year",
+                "value": "",
+                "type": "query",
+                "description": "Year in CET (format: yyyy, e.g., 2024)"
+              }
+            ]
+          },
+          "docs": "Returns an annual summary of exchanges for a year and one area.\n            \nExchange tells how much electricity has been importer or exported for an area and delivery period. This is the actual measured flow.\n            \nThis corresponds to the \"Physical Flows\" data type in the Entso-e Transparency Platform.\n            \n### Response field descriptions\n- **dailyTotalImport**: total MWh imported volume\n- **dailyTotalExport**: total MWh exported volume\n- **dailyTotalNetPosition**: total net posi"
+        },
+        {
+          "info": {
+            "name": "Hydro Reservoir Reserves",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/PowerSystem/HydroReservoirReserves/ByAreas",
+            "params": [
+              {
+                "name": "areas",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated list of areas (e.g., NO1, NO2).\nSupported: NO, NO1, NO2, NO3, NO4, NO5, SE, SE1, SE2, SE3, SE4, FI, TEL"
+              },
+              {
+                "name": "year",
+                "value": "",
+                "type": "query",
+                "description": "Year in CET (format: yyyy, e.g., 2024)"
+              }
+            ]
+          },
+          "docs": "Returns a list of weekly hydro reservoir values for a year and a list of areas.\n            \n### Response field descriptions\n- **hydroReservoirReserves**: a list of weekly reservoir values \n  - **isoWeek**: the ISO week for the year\n  - **weekStartDate**: CET start date for the week\n  - **weekEndDate**: CET end date for the week\n  - **maxCapacityInGigawattHour**: maximum storage capacity for the area (or region)\n  - **currentCapacityInGigawattHours**: current weekly capacity\n  - **utilizationPer"
+        },
+        {
+          "info": {
+            "name": "Production Forecasts",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/PowerSystem/ProductionForecasts/ByAreas",
+            "params": [
+              {
+                "name": "areas",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated list of areas (e.g., NO1, NO2).\nSupported: 50HZ, AMP, AT, BE, DE-LU, LU, DK1, DK2, EE, FI, FR, LT, LV, NL, NO1, NO2, NO3, NO4, NO5, PL, SE1, SE2,\nSE3, SE4, TBW, TTG, TEL, BG"
+              },
+              {
+                "name": "date",
+                "value": "",
+                "type": "query",
+                "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15"
+              }
+            ]
+          },
+          "docs": "Returns a list of production forecasts for a date and a list of areas.\n            \nThis data type aggregates data from the \"Generation Forecasts for Wind and Solar\" and \"Generation Forecast - Day ahead\" views, from the Transparency Platform. \n            \n### Response field descriptions\n- **status**: Missing if no data found for the date and area. Available if data is present\n- **productionForecasts**: a list of delivery periods\n  - **forecastByType**: a dictionary of production types.\n    - **"
+        },
+        {
+          "info": {
+            "name": "Production Forecasts by Location",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/PowerSystem/ProductionForecasts/ByLocations",
+            "params": [
+              {
+                "name": "locations",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated list of locations\nSupported: AT, BE, DE, LU, DK, EE, FI, FR, LT, LV, NL, NO, PL, SE, RO, BG, BALTIC, CWE, DE-LU, NORDIC"
+              },
+              {
+                "name": "date",
+                "value": "",
+                "type": "query",
+                "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15"
+              }
+            ]
+          },
+          "docs": "Returns a list of production forecasts by locations for a date and a list of locations.\n            \nProduction Forecast by Location aggregates delivery area Production Forecast values into country or region values. \n            \n### Response field descriptions\n- **status**: Missing if no data found for the date and area. Available if data is present\n- **locationType**: Country or Region\n- **deliveryAreas**: delivery areas used for this locational aggregation\n- **productionForecasts**: a list of"
+        },
+        {
+          "info": {
+            "name": "Production",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/PowerSystem/Productions/ByAreas",
+            "params": [
+              {
+                "name": "areas",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated list of areas (e.g., NO1, NO2).\nSupported: 50HZ, AMP, AT, BE, DE-LU, LU, DK1, DK2, EE, FI, FR, LT, LV, NL, NO1, NO2, NO3, NO4, NO5, PL, SE1, SE2,\nSE3, SE4, TBW, TTG, TEL, BG"
+              },
+              {
+                "name": "date",
+                "value": "",
+                "type": "query",
+                "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15"
+              }
+            ]
+          },
+          "docs": "Returns a list of productions for a date and a list of areas.\n            \nProduction tells how much electricity is being produced in an area and delivery period for each production type. \n            \nThis corresponds to the \"Actual Generation per Production Type\" data type in the Entso-e Transparency Platform.\n\n### Response field descriptions\n- **status**: Missing if no data found for the date and area. Available if data is present\n- **productions**: a list of delivery periods\n  - **deliverySt"
+        },
+        {
+          "info": {
+            "name": "Production By Location",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/PowerSystem/Productions/ByLocations",
+            "params": [
+              {
+                "name": "locations",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated list of locations (e.g., NO, SE).\nSupported: AT, BE, DE, LU, DK, EE, FI, FR, LT, LV, NL, NO, PL, SE, RO, BG, BALTIC, CWE, DE-LU, NORDIC"
+              },
+              {
+                "name": "date",
+                "value": "",
+                "type": "query",
+                "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15"
+              }
+            ]
+          },
+          "docs": "Returns a list of productions for a date and a list of locations.\n            \nProduction tells how much electricity is being produced in an area and delivery period for each production type. Production by location aggregates delivery area production value into country or region values. \n            \n### Response field descriptions\n- **status**: Missing if no data found for the date and area. Available if data is present\n- **locationType**: Country or Region\n- **deliveryAreas**: delivery areas u"
+        },
+        {
+          "info": {
+            "name": "Yearly Production",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/PowerSystem/Productions/Yearly/ByArea",
+            "params": [
+              {
+                "name": "area",
+                "value": "",
+                "type": "query",
+                "description": "One area. For example NO1.\nSupported: 50HZ, AMP, AT, BE, DE-LU, LU, DK1, DK2, EE, FI, FR, LT, LV, NL, NO1, NO2, NO3, NO4, NO5, PL, SE1, SE2,\nSE3, SE4, TBW, TTG, TEL, BG"
+              },
+              {
+                "name": "year",
+                "value": "",
+                "type": "query",
+                "description": "Year in CET (format: yyyy, e.g., 2024)"
+              }
+            ]
+          },
+          "docs": "Returns a list of productions for a year and one area.\n\nProduction tells how much electricity is being produced in an area and delivery period for each production type. \n            \nThis corresponds to the \"Actual Generation per Production Type\" data type in the Entso-e Transparency Platform.\n\n### Response field descriptions\n- **status**: Missing if no data found for the date and area. Available if data is present\n- **yearlySummary**: yearly total aggregated production\n  - **byType**: a diction"
+        },
+        {
+          "info": {
+            "name": "Yearly Production By Location",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/PowerSystem/Productions/Yearly/ByLocation",
+            "params": [
+              {
+                "name": "location",
+                "value": "",
+                "type": "query",
+                "description": "One location. For example NO.\nSupported: AT, BE, DE, LU, DK, EE, FI, FR, LT, LV, NL, NO, PL, SE, RO, BG, BALTIC, CWE, DE-LU, NORDIC"
+              },
+              {
+                "name": "year",
+                "value": "",
+                "type": "query",
+                "description": "Year in CET (format: yyyy, e.g., 2024)"
+              }
+            ]
+          },
+          "docs": "Returns a list of productions for a year and one location.\n            \nProduction tells how much electricity is being produced in an area and delivery period for each production type. Production by location aggregates delivery area production value into country or region values. \n            \n### Response field descriptions\n- **status**: Missing if no data found for the date and area. Available if data is present\n- **locationType**: Country or Region\n- **deliveryAreas**: delivery areas used for"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

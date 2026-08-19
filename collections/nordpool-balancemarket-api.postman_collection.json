@@ -1,0 +1,569 @@
+{
+  "item": [
+    {
+      "id": "8a3a67cd-343b-4410-bcba-1a43886c9807",
+      "name": "BalanceMarket",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "87bbf1e0-42c0-42bd-b8f1-43ecd31fcd73",
+          "name": "Manual Frequency Restoration Reserves",
+          "request": {
+            "name": "Manual Frequency Restoration Reserves",
+            "description": {
+              "content": "Returns a list of Manual Frequency Restoration Reserves (mFRR) for a date, currency and a list of areas. \n\n### Response field descriptions\n- **status**: Missing if no data exists. Available if data is present\n- **exchangeRate**: exchange rate used to calculate values from EUR. If the currency is EUR, then the exchange rate is 1\n            \n**manualFrequencyRestorationReserves**: a list of delivery periods for the day, containing\n - **deliveryStart**: start of delivery period\n - **deliveryEnd**: end of delivery period\n - **acceptedUpBidVolume**: the total volume of orders available for up activation, given in MW\n - **activatedUpVolume**: the volume of activated up regulation, given in MW\n - **acceptedDownBidVolume**: the total volume of orders available for down activation, given in MW\n - **activatedDownBidVolume**: the volume of activated down regulation, given in MW\n - **downPrice**: the price for down regulation. Given in currency/MWh \n - **upPrice**: the price for up regulation. Given in currency/MWh\n - **imbalancePrice**: the overall imbalance price. Usually equal to either upPrice or downPrice depending on what activations are done.\n            \nNote that non-EUR prices are just estimates - we do not guarantee (or expect) that TSOs are using the same exchange rates as we do.\n            \nData source: **Entso-e Transparency platform. Update frequency and data availability depends on data being reported to Entso-e.**",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v2",
+                "BalanceMarket",
+                "ManualFrequencyRestorationReserves",
+                "ByAreas"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "areas",
+                  "value": "<string>",
+                  "description": "(Required) Comma-separated list of areas (e.g., NO1, NO2).\nSupported: NO1,NO2,NO3,NO4,NO5,SE1,SE2,SE3,SE4,FI,DK1,DK2"
+                },
+                {
+                  "disabled": false,
+                  "key": "currency",
+                  "value": "<string>",
+                  "description": "(Required) Currency of returned prices. Restricted to 1 currency per query. Supported: EUR, SEK, NOK, DKK"
+                },
+                {
+                  "disabled": false,
+                  "key": "date",
+                  "value": "<date>",
+                  "description": "(Required) Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "text/plain"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "6d4ec030-0a9a-4b32-842d-1692fb333e59",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "BalanceMarket",
+                    "ManualFrequencyRestorationReserves",
+                    "ByAreas"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "areas",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "currency",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "date",
+                      "value": "<date>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"currency\": \"string\",\n    \"deliveryDateCET\": \"2008-06-10\",\n    \"updatedAt\": \"1968-04-17T19:57:11.498Z\",\n    \"deliveryArea\": \"string\",\n    \"status\": \"Available\",\n    \"exchangeRate\": 1356.7158080735608,\n    \"manualFrequencyRestorationReserves\": [\n      {\n        \"deliveryStart\": \"1984-10-22T06:35:26.565Z\",\n        \"deliveryEnd\": \"1995-11-12T22:12:32.222Z\",\n        \"acceptedUpBidVolume\": 2011.8601289095861,\n        \"acceptedDownBidVolume\": 6911.058388812114,\n        \"activatedUpVolume\": 4758.80702315981,\n        \"activatedDownVolume\": 1139.0726741539104,\n        \"downPrice\": 6985.653553945654,\n        \"upPrice\": 9534.578328717645,\n        \"imbalancePrice\": 609.5972379015125\n      },\n      {\n        \"deliveryStart\": \"1949-10-24T02:36:02.494Z\",\n        \"deliveryEnd\": \"2015-02-25T21:08:31.098Z\",\n        \"acceptedUpBidVolume\": 7010.876134609385,\n        \"acceptedDownBidVolume\": 6823.54856625902,\n        \"activatedUpVolume\": 6957.269162839476,\n        \"activatedDownVolume\": 9174.068729279388,\n        \"downPrice\": 8292.522822153442,\n        \"upPrice\": 2196.2808885561935,\n        \"imbalancePrice\": 7899.208819391377\n      }\n    ]\n  },\n  {\n    \"currency\": \"string\",\n    \"deliveryDateCET\": \"1973-03-04\",\n    \"updatedAt\": \"2018-05-14T10:46:57.976Z\",\n    \"deliveryArea\": \"string\",\n    \"status\": \"Missing\",\n    \"exchangeRate\": 8115.656646919538,\n    \"manualFrequencyRestorationReserves\": [\n      {\n        \"deliveryStart\": \"1974-06-28T05:17:12.485Z\",\n        \"deliveryEnd\": \"1979-10-08T02:17:43.586Z\",\n        \"acceptedUpBidVolume\": 9649.479047921644,\n        \"acceptedDownBidVolume\": 514.9637740646873,\n        \"activatedUpVolume\": 3496.6959748910385,\n        \"activatedDownVolume\": 4963.861304240631,\n        \"downPrice\": 9215.990530699433,\n        \"upPrice\": 7854.2434549531035,\n        \"imbalancePrice\": 2043.125222654133\n      },\n      {\n        \"deliveryStart\": \"1973-02-07T17:34:51.775Z\",\n        \"deliveryEnd\": \"2021-12-24T21:18:29.536Z\",\n        \"acceptedUpBidVolume\": 6493.774021161236,\n        \"acceptedDownBidVolume\": 3557.1404037849375,\n        \"activatedUpVolume\": 7499.690548213317,\n        \"activatedDownVolume\": 5138.623817018413,\n        \"downPrice\": 7763.543234732132,\n        \"upPrice\": 7897.484808638941,\n        \"imbalancePrice\": 3655.894785216132\n      }\n    ]\n  }\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "78ad7680-9645-4eb9-88de-c40ab7ed1a4b",
+              "name": "Bad Request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "BalanceMarket",
+                    "ManualFrequencyRestorationReserves",
+                    "ByAreas"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "areas",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "currency",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "date",
+                      "value": "<date>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"type\": \"string\",\n  \"title\": \"string\",\n  \"status\": 8777,\n  \"detail\": \"string\",\n  \"instance\": \"string\",\n  \"errors\": {\n    \"key_0\": [\n      \"string\",\n      \"string\"\n    ]\n  },\n  \"key_0\": {},\n  \"key_1\": {}\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "71b43fea-461a-46c8-b2cc-b05fca28ce98",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "BalanceMarket",
+                    "ManualFrequencyRestorationReserves",
+                    "ByAreas"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "areas",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "currency",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "date",
+                      "value": "<date>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "\"string\"",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2de842be-bb77-4dc0-8850-971152868f4b",
+              "name": "Forbidden",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "BalanceMarket",
+                    "ManualFrequencyRestorationReserves",
+                    "ByAreas"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "areas",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "currency",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "date",
+                      "value": "<date>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "\"string\"",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "6b07f561-7d45-419a-9d71-9b613c95e885",
+          "name": "Yearly Manual Frequency Restoration Reserves",
+          "request": {
+            "name": "Yearly Manual Frequency Restoration Reserves",
+            "description": {
+              "content": " Returns an annual summary of Manual Frequency Restoration Reserves (mFRR) for a year, currency and one area.\n            \n This yearly summary is updated in a rolling manner, and is updated daily.\n            \n### Response field descriptions\n            \n**yearlySummary**:\n- **acceptedUpBidVolume**: total volume of accepted orders for up regulation for the year, in MWh\n- **activatedUpBidVolume**: total volume of activated up regulation bids for the year, in MWh\n- **acceptedDownBidVolume**: total volume of accepted orders for down regulation for the year, in MWh\n- **activatedDownBidVolume**: total volume of activated down regulation bids for the year, in MWh\n- **downPrice**: average down price for the year, in currency / MWh\n- **upPrice**: average up price for the year, in currency / MWh\n- **imbalancePrice**: average imbalance price for the year, in currency / MWh\n\n**monthlySummaries**: \n- **acceptedUpBidVolume**: total volume of accepted orders for up regulation for the month, in MWh\n- **activatedUpBidVolume**: total volume of activated up regulation bids for the month, in MWh\n- **acceptedDownBidVolume**: total volume of accepted orders for down regulation for the month, in MWh\n- **activatedDownBidVolume**: total volume of activated down regulation bids for the month, in MWh\n- **downPrice**: average down price for the month, in currency / MWh\n- **upPrice**: average up price for the month, in currency / MWh\n- **imbalancePrice**: average imbalance price for the month, in currency / MWh\n- **deliveryDateStartCET**: the earliest date taken into account in this monthly summary\n- **deliveryDateEndCET**: the latest date taken into account in this monthly summary \n\n**dailySummaries**: a list of average values for the day\n- **acceptedUpBidVolume**: total volume of accepted orders for up regulation for the day, in MWh\n- **activatedUpBidVolume**: total volume of activated up regulation bids for the day, in MWh\n- **acceptedDownBidVolume**: total volume of accepted orders for down regulation for the day, in MWh\n- **activatedDownBidVolume**: total volume of activated down regulation bids for the day, in MWh\n- **downPrice**: average down price for the day, in currency / MWh\n- **upPrice**: average up price for the day, in currency / MWh\n- **imbalancePrice**: average imbalance price for the day, in currency / MWh\n- **deliveryDateCET**: the CET delivery date for this summary \n\n**content**: a list of delivery periods, containing\n - **deliveryStart**: start of delivery period\n - **deliveryEnd**: end of delivery period\n - **acceptedUpBidVolume**: the total volume of orders available for up activation, given in MW\n - **activatedUpVolume**: the volume of activated up regulation, given in MW\n - **acceptedDownBidVolume**: the total volume of orders available for down activation, given in MW\n - **activatedDownBidVolume**: the volume of activated down regulation, given in MW\n - **downPrice**: the price for down regulation. Given in currency/MWh \n - **upPrice**: the price for up regulation. Given in currency/MWh\n - **imbalancePrice**: the overall imbalance price. Usually equal to either upPrice or downPrice depending on what activations are done.\n            \nNote that non-EUR prices are just estimates - we do not guarantee (or expect) that TSOs are using the same exchange rates as we do.\n            \nData source: **Entso-e Transparency platform. Update frequency and data availability depends on data being reported to Entso-e.**",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v2",
+                "BalanceMarket",
+                "ManualFrequencyRestorationReserves",
+                "Yearly",
+                "ByArea"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "area",
+                  "value": "<string>",
+                  "description": "(Required) One area. For example NO1.\nSupported: NO1,NO2,NO3,NO4,NO5,SE1,SE2,SE3,SE4,FI,DK1,DK2"
+                },
+                {
+                  "disabled": false,
+                  "key": "currency",
+                  "value": "<string>",
+                  "description": "(Required) Currency of returned prices. Restricted to 1 currency per query. Supported: EUR, SEK, NOK, DKK"
+                },
+                {
+                  "disabled": false,
+                  "key": "year",
+                  "value": "<integer>",
+                  "description": "(Required) Year in CET (format: yyyy, e.g., 2024)"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "text/plain"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "3262ad4b-adc4-43cf-b0e9-7ab91a454d9a",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "BalanceMarket",
+                    "ManualFrequencyRestorationReserves",
+                    "Yearly",
+                    "ByArea"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "area",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "currency",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "year",
+                      "value": "<integer>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"currency\": \"string\",\n  \"deliveryArea\": \"string\",\n  \"year\": 4848,\n  \"status\": \"Available\",\n  \"updatedAt\": \"2011-03-22T16:56:34.512Z\",\n  \"unit\": \"string\",\n  \"totalVolumeUnit\": \"string\",\n  \"dailySummaries\": [\n    {\n      \"acceptedUpBidVolume\": 7876.805197110456,\n      \"acceptedDownBidVolume\": 9627.024395347871,\n      \"activatedUpVolume\": 1257.3393651054532,\n      \"activatedDownVolume\": 5728.953894478057,\n      \"downPrice\": 5607.340920204897,\n      \"upPrice\": 8986.085993995546,\n      \"imbalancePrice\": 6879.077901740144,\n      \"deliveryDateCET\": \"1983-11-18\"\n    },\n    {\n      \"acceptedUpBidVolume\": 6861.082947764457,\n      \"acceptedDownBidVolume\": 8423.26103371167,\n      \"activatedUpVolume\": 4408.72587307441,\n      \"activatedDownVolume\": 4886.722046736018,\n      \"downPrice\": 7563.158231811739,\n      \"upPrice\": 2276.8482818533585,\n      \"imbalancePrice\": 5726.594588343678,\n      \"deliveryDateCET\": \"2022-05-30\"\n    }\n  ],\n  \"monthlySummaries\": [\n    {\n      \"acceptedUpBidVolume\": 2691.7910198853046,\n      \"acceptedDownBidVolume\": 4940.610521926302,\n      \"activatedUpVolume\": 8108.004470665043,\n      \"activatedDownVolume\": 5541.689835914502,\n      \"downPrice\": 8709.17180068482,\n      \"upPrice\": 829.711515951288,\n      \"imbalancePrice\": 8234.59157170632,\n      \"deliveryDateStartCET\": \"2000-06-23\",\n      \"deliveryDateEndCET\": \"1975-04-03\"\n    },\n    {\n      \"acceptedUpBidVolume\": 7650.170001331844,\n      \"acceptedDownBidVolume\": 6338.4660179819575,\n      \"activatedUpVolume\": 9035.376491134872,\n      \"activatedDownVolume\": 6733.79465328443,\n      \"downPrice\": 6963.204338402874,\n      \"upPrice\": 5213.31785988973,\n      \"imbalancePrice\": 5495.840223164202,\n      \"deliveryDateStartCET\": \"1956-07-24\",\n      \"deliveryDateEndCET\": \"2020-03-07\"\n    }\n  ],\n  \"yearlySummary\": {\n    \"acceptedUpBidVolume\": 4050.849192737576,\n    \"acceptedDownBidVolume\": 5320.334119520902,\n    \"activatedUpVolume\": 8861.228528687176,\n    \"activatedDownVolume\": 678.816862722863,\n    \"downPrice\": 8545.764289389597,\n    \"upPrice\": 9106.337311654019,\n    \"imbalancePrice\": 5118.7386843501645\n  },\n  \"content\": [\n    {\n      \"acceptedUpBidVolume\": 3491.6666005014818,\n      \"acceptedDownBidVolume\": 2041.8947271952159,\n      \"activatedUpVolume\": 3602.36344594567,\n      \"activatedDownVolume\": 1339.823366277616,\n      \"downPrice\": 1037.7921822098258,\n      \"upPrice\": 8206.921645078995,\n      \"imbalancePrice\": 1279.3141656703167,\n      \"deliveryStart\": \"2017-08-22T17:47:10.981Z\",\n      \"deliveryEnd\": \"1971-02-09T14:38:26.857Z\"\n    },\n    {\n      \"acceptedUpBidVolume\": 6394.041382189109,\n      \"acceptedDownBidVolume\": 6545.004996300317,\n      \"activatedUpVolume\": 1387.9652250469953,\n      \"activatedDownVolume\": 5671.728681941962,\n      \"downPrice\": 5751.796543455814,\n      \"upPrice\": 6815.563243161516,\n      \"imbalancePrice\": 3271.1013298590606,\n      \"deliveryStart\": \"1955-12-17T07:36:18.270Z\",\n      \"deliveryEnd\": \"1983-09-23T04:46:10.412Z\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "6fe9aacb-b5f1-42dd-9b13-d7a236f6eb3e",
+              "name": "Bad Request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "BalanceMarket",
+                    "ManualFrequencyRestorationReserves",
+                    "Yearly",
+                    "ByArea"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "area",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "currency",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "year",
+                      "value": "<integer>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"type\": \"string\",\n  \"title\": \"string\",\n  \"status\": 2091,\n  \"detail\": \"string\",\n  \"instance\": \"string\",\n  \"errors\": {\n    \"key_0\": [\n      \"string\",\n      \"string\"\n    ],\n    \"key_1\": [\n      \"string\",\n      \"string\"\n    ],\n    \"key_2\": [\n      \"string\",\n      \"string\"\n    ]\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d9e7243f-05a4-4826-9c34-223de50aeb35",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "BalanceMarket",
+                    "ManualFrequencyRestorationReserves",
+                    "Yearly",
+                    "ByArea"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "area",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "currency",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "year",
+                      "value": "<integer>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "\"string\"",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "6232cfa5-ea71-45ff-8704-b10129aaeab9",
+              "name": "Forbidden",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "BalanceMarket",
+                    "ManualFrequencyRestorationReserves",
+                    "Yearly",
+                    "ByArea"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "area",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "currency",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "year",
+                      "value": "<integer>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "\"string\"",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://dataportal-api.nordpoolgroup.com",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "48c0561b-800b-4b34-b3fd-82f901ed9fe3",
+    "name": "Nord Pool Data Portal API (Public) Auction BalanceMarket API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The unauthenticated JSON API behind the Nord Pool Data Portal (data.nordpoolgroup.com), where Nord Pool publishes day-ahead electricity prices for the Nordic, Baltic, CWE, and UK bidding areas. These endpoints return the same day-ahead auction results shown on the public website, in 15-minute Market Time Unit resolution, and are widely used by open-source integrations such as Home Assistant. IMPORTANT - this API is not part of Nord Pool's officially documented, subscription-backed developer offering. It is not covered by an SLA or the API General Terms, and Nord Pool may change or restrict it at any time. The two operations below were observed live and verified returning data on 2026-07-11; request and response shapes are modeled from those observed responses rather than from official reference documentation. For supported programmatic access, use the Nord Pool Market Data API (data-api.nordpoolgroup.com) with a Power Data Services subscription.\n\nContact Support:\n Name: Nord Pool",
+      "type": "text/plain"
+    }
+  }
+}

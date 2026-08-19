@@ -1,0 +1,954 @@
+{
+  "item": [
+    {
+      "id": "6466d4a5-010f-4055-92c9-4df9b2dd732a",
+      "name": "System",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "c821d332-134e-4e1a-b91c-ac5f4ab226cc",
+          "name": "System Price",
+          "request": {
+            "name": "System Price",
+            "description": {
+              "content": "Returns the system price for a delivery date and currency.\n            \nSystem price is an artificial index price based on orders from the Day-ahead auction. The system price is calculating a single price for the Nordic region (Sweden, Finland, Norway, Denmark) based on orders from all power exchanges in the Nordics. Import and export flows from other regions are set to the same as the Day-ahead auction outcome. All capacity constraints are removed within the Nordic region, and a single price is gotten by matching all orders from the Nordic region.\n            \n### Response field descriptions\n- **status**: Missing if data does not exist. Preliminary if the market coupling session is not complete, or the exchange rate has not been finalized yet. Final once exchange rate is set and market coupling session is complete. Cancelled if the auction is cancelled.\n- **exchangeRate**: the exchange rate used to calculate the currency price. 1 if the currency is the same as the main market currency.\n- **prices**: the settlement price for each period. If no trading happens, then the price might be null\n- **blockPrices**: average price for periods (block) of the day\n            \nPreliminary prices can change, and exchange rates for local currencies are only finalized on Norwegian banking days.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v2",
+                "System",
+                "Price"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "currency",
+                  "value": "<string>",
+                  "description": "(Required) Available currencies: EUR, SEK, NOK, DKK"
+                },
+                {
+                  "disabled": false,
+                  "key": "date",
+                  "value": "<date>",
+                  "description": "(Required) Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "text/plain"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "fef57f6f-99a4-4e03-920f-ff76f356ae2c",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "System",
+                    "Price"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "currency",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "date",
+                      "value": "<date>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"currency\": \"string\",\n  \"marketMainCurrency\": \"string\",\n  \"deliveryDateCET\": \"1982-05-17\",\n  \"updatedAt\": \"2000-11-02T00:42:49.131Z\",\n  \"status\": \"Final\",\n  \"unit\": \"string\",\n  \"exchangeRate\": 7647.238518016093,\n  \"averagePrice\": 9416.199065435881,\n  \"minPrice\": 1506.40708000068,\n  \"maxPrice\": 8156.417751809017,\n  \"prices\": [\n    {\n      \"deliveryStart\": \"1997-07-25T04:52:01.765Z\",\n      \"deliveryEnd\": \"2009-05-17T15:09:43.421Z\",\n      \"price\": 9752.443537126028\n    },\n    {\n      \"deliveryStart\": \"1947-02-06T05:38:45.733Z\",\n      \"deliveryEnd\": \"2004-10-03T21:48:19.900Z\",\n      \"price\": 2023.1074122739667\n    }\n  ],\n  \"blockPrices\": [\n    {\n      \"blockName\": \"string\",\n      \"blockStart\": \"1954-10-27T17:37:51.166Z\",\n      \"blockEnd\": \"1951-04-03T23:12:44.849Z\",\n      \"minPrice\": 1749.60894150485,\n      \"maxPrice\": 9554.849078217807,\n      \"averagePrice\": 8892.121412700635\n    },\n    {\n      \"blockName\": \"string\",\n      \"blockStart\": \"1986-03-21T06:35:43.162Z\",\n      \"blockEnd\": \"1974-09-29T01:18:39.569Z\",\n      \"minPrice\": 6263.2584908513945,\n      \"maxPrice\": 1970.1027878786736,\n      \"averagePrice\": 7108.938613513085\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c51ef8fd-290b-4a90-a408-e142b8d07cf9",
+              "name": "Bad Request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "System",
+                    "Price"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "currency",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "date",
+                      "value": "<date>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"type\": \"string\",\n  \"title\": \"string\",\n  \"status\": 5385,\n  \"detail\": \"string\",\n  \"instance\": \"string\",\n  \"errors\": {\n    \"key_0\": [\n      \"string\",\n      \"string\"\n    ],\n    \"key_1\": [\n      \"string\",\n      \"string\"\n    ]\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "006f11f3-4f04-474a-a5f0-36ac81ea1a5f",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "System",
+                    "Price"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "currency",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "date",
+                      "value": "<date>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "\"string\"",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "deb67f57-db22-447b-b3c2-b60bd2f1a7dc",
+              "name": "Forbidden",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "System",
+                    "Price"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "currency",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "date",
+                      "value": "<date>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "\"string\"",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "590222a3-e8e6-4176-b822-2c9ad59e273d",
+          "name": "Yearly System Price",
+          "request": {
+            "name": "Yearly System Price",
+            "description": {
+              "content": " Returns system prices for a year and currency\n            \nSystem price is an artificial index price based on orders from the Day-ahead auction. The system price is calculating a single price for the Nordic region (Sweden, Finland, Norway, Denmark) based on orders from all power exchanges in the Nordics. Import and export flows from other regions are set to the same as the Day-ahead auction outcome. All capacity constraints are removed within the Nordic region, and a single price is gotten by matching all orders from the Nordic region.\n            \n### Response field descriptions\n- **prices**: the settlement price for each period. If no trading happens, then the price might be null\n- **blockPrices**: average price for a periods of the day, called blocks.\n- **dailySummaries**: contains min, max and average price for each day in the year\n- **monthlySummaries**: contains min, max and average price for each month of the year\n- **weeklySummaries**: contains min, max and average price for each week of the year. Note this can include date ranges outside the actual year, since weeks do not align nicely with the yearly calendar.\n- **yearlySummary**: min, max and average price for the full year.\n            \n Only final system prices are included in this endpoint.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v2",
+                "System",
+                "Price",
+                "Yearly"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "currency",
+                  "value": "<string>",
+                  "description": "(Required) Available currencies: EUR, SEK, NOK, DKK"
+                },
+                {
+                  "disabled": false,
+                  "key": "year",
+                  "value": "<integer>",
+                  "description": "(Required) Year in CET (format: yyyy, e.g., 2024)"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "text/plain"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "5d0b2f5a-86ec-43ee-a314-71c691ba556e",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "System",
+                    "Price",
+                    "Yearly"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "currency",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "year",
+                      "value": "<integer>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"currency\": \"string\",\n  \"marketMainCurrency\": \"string\",\n  \"unit\": \"string\",\n  \"year\": 5442,\n  \"status\": \"Cancelled\",\n  \"blockPrices\": [\n    {\n      \"blockName\": \"string\",\n      \"blockStart\": \"1964-10-04T18:20:20.701Z\",\n      \"blockEnd\": \"2000-11-09T14:30:46.846Z\",\n      \"minPrice\": 9104.495286115922,\n      \"maxPrice\": 118.40225814633065,\n      \"averagePrice\": 8011.208959083758\n    },\n    {\n      \"blockName\": \"string\",\n      \"blockStart\": \"1952-09-06T12:58:56.248Z\",\n      \"blockEnd\": \"1961-03-12T23:23:11.543Z\",\n      \"minPrice\": 8106.311499166282,\n      \"maxPrice\": 6045.9141662671855,\n      \"averagePrice\": 3208.425116771607\n    }\n  ],\n  \"prices\": [\n    {\n      \"deliveryStart\": \"1992-06-10T05:05:15.385Z\",\n      \"deliveryEnd\": \"1986-11-09T17:06:05.916Z\",\n      \"price\": 7911.363783357717\n    },\n    {\n      \"deliveryStart\": \"1988-06-20T23:44:57.183Z\",\n      \"deliveryEnd\": \"1956-09-13T15:46:29.158Z\",\n      \"price\": 6573.382112086116\n    }\n  ],\n  \"yearlySummary\": {\n    \"averagePrice\": 7404.621542002551,\n    \"minPrice\": 6992.2206833828295,\n    \"maxPrice\": 4694.9353639802575\n  },\n  \"dailySummaries\": [\n    {\n      \"averagePrice\": 2802.1507304035977,\n      \"minPrice\": 7991.919957583724,\n      \"maxPrice\": 9631.028483863452,\n      \"deliveryDateCET\": \"1955-10-13\"\n    },\n    {\n      \"averagePrice\": 5282.210676134316,\n      \"minPrice\": 9946.224551086267,\n      \"maxPrice\": 2519.825810794041,\n      \"deliveryDateCET\": \"2025-09-09\"\n    }\n  ],\n  \"weeklySummaries\": [\n    {\n      \"averagePrice\": 9684.843497462127,\n      \"minPrice\": 6678.975184145723,\n      \"maxPrice\": 4326.066781391274,\n      \"isoWeekNumber\": 5858,\n      \"deliveryDateStartCET\": \"1949-06-28\",\n      \"deliveryDateEndCET\": \"1978-05-13\"\n    },\n    {\n      \"averagePrice\": 4303.672120536664,\n      \"minPrice\": 2620.0611739671854,\n      \"maxPrice\": 1054.6478702099182,\n      \"isoWeekNumber\": 4071,\n      \"deliveryDateStartCET\": \"1954-10-16\",\n      \"deliveryDateEndCET\": \"1956-05-16\"\n    }\n  ],\n  \"monthlySummaries\": [\n    {\n      \"averagePrice\": 2136.724846103467,\n      \"minPrice\": 3722.5437310636435,\n      \"maxPrice\": 4934.047152513425,\n      \"deliveryDateStartCET\": \"1953-06-03\",\n      \"deliveryDateEndCET\": \"2006-12-13\"\n    },\n    {\n      \"averagePrice\": 2534.241109042218,\n      \"minPrice\": 870.2010055320663,\n      \"maxPrice\": 2115.877542973749,\n      \"deliveryDateStartCET\": \"1980-02-20\",\n      \"deliveryDateEndCET\": \"2012-12-27\"\n    }\n  ],\n  \"updatedAt\": \"1970-07-30T04:05:38.634Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "05521f99-d5e3-49c2-a3c5-7b0c5103e0b5",
+              "name": "Bad Request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "System",
+                    "Price",
+                    "Yearly"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "currency",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "year",
+                      "value": "<integer>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"type\": \"string\",\n  \"title\": \"string\",\n  \"status\": 4560,\n  \"detail\": \"string\",\n  \"instance\": \"string\",\n  \"errors\": {\n    \"key_0\": [\n      \"string\",\n      \"string\"\n    ],\n    \"key_1\": [\n      \"string\",\n      \"string\"\n    ],\n    \"key_2\": [\n      \"string\",\n      \"string\"\n    ],\n    \"key_3\": [\n      \"string\",\n      \"string\"\n    ]\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f8270fdf-2c3c-4f8d-be44-2eb004bb3e07",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "System",
+                    "Price",
+                    "Yearly"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "currency",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "year",
+                      "value": "<integer>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "\"string\"",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b5ae9c00-e8f8-4e37-b63a-21703d7fcd85",
+              "name": "Forbidden",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "System",
+                    "Price",
+                    "Yearly"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "currency",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "year",
+                      "value": "<integer>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "\"string\"",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "43db3c4a-2af5-4d98-bccf-f534ccbd2093",
+          "name": "System Turnover",
+          "request": {
+            "name": "System Turnover",
+            "description": {
+              "content": "Returns the system turnover volume for a date.\n            \nSystem turnover refers to the total purchase volume that comes from the system price calculation across the whole Nordic region.\n            \n### Response field descriptions\n- **status**: Missing if data does not exist. Preliminary if the market coupling session is not complete. Final once the market coupling session is complete. Cancelled if the auction is cancelled.\n- **totalTurnover**: the total daily turnover in MWh\n- **averageTurnover**: the average turnover for the day across all delivery periods\n- **minTurnover**: the minimum turnover for the day\n- **maxTurnover**: the maximum turnover for the day\n- **volumes**: the turnover volume in MW for each delivery period\n- **blockVolumes**: list of turnover in MWh for a period of the day.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v2",
+                "System",
+                "Turnover"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "date",
+                  "value": "<date>",
+                  "description": "(Required) Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "text/plain"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "b2a121e3-45a7-4c22-ac86-84c8564df91f",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "System",
+                    "Turnover"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "date",
+                      "value": "<date>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"deliveryDateCET\": \"1955-01-25\",\n  \"updatedAt\": \"2004-07-13T02:34:07.021Z\",\n  \"status\": \"Missing\",\n  \"unit\": \"string\",\n  \"totalTurnoverUnit\": \"string\",\n  \"totalTurnover\": 1155.0772365674911,\n  \"averageTurnover\": 4941.628070340007,\n  \"minTurnover\": 2972.9899901365598,\n  \"maxTurnover\": 4693.666698282089,\n  \"blockVolumesUnit\": \"string\",\n  \"blockVolumes\": [\n    {\n      \"blockName\": \"string\",\n      \"blockStart\": \"1966-12-20T09:49:47.647Z\",\n      \"blockEnd\": \"2006-12-09T23:27:02.229Z\",\n      \"turnover\": 7160.2182496054675\n    },\n    {\n      \"blockName\": \"string\",\n      \"blockStart\": \"1970-05-03T11:39:39.914Z\",\n      \"blockEnd\": \"1966-08-02T12:52:03.271Z\",\n      \"turnover\": 3223.9757674904745\n    }\n  ],\n  \"volumes\": [\n    {\n      \"deliveryStart\": \"2008-07-16T16:04:28.303Z\",\n      \"deliveryEnd\": \"1960-02-09T03:44:59.599Z\",\n      \"turnover\": 5174.117707399591\n    },\n    {\n      \"deliveryStart\": \"1989-03-21T08:53:24.340Z\",\n      \"deliveryEnd\": \"2024-01-30T06:55:42.243Z\",\n      \"turnover\": 5244.586299914945\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "4f0409fa-1986-4191-84c3-3507d2bf4f16",
+              "name": "Bad Request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "System",
+                    "Turnover"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "date",
+                      "value": "<date>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"type\": \"string\",\n  \"title\": \"string\",\n  \"status\": 4560,\n  \"detail\": \"string\",\n  \"instance\": \"string\",\n  \"errors\": {\n    \"key_0\": [\n      \"string\",\n      \"string\"\n    ],\n    \"key_1\": [\n      \"string\",\n      \"string\"\n    ],\n    \"key_2\": [\n      \"string\",\n      \"string\"\n    ],\n    \"key_3\": [\n      \"string\",\n      \"string\"\n    ]\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "9e85fec6-c774-4eec-bd7d-3eb6b26c501a",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "System",
+                    "Turnover"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "date",
+                      "value": "<date>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "\"string\"",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ecf54a35-8eaa-4642-80c1-95c87b061364",
+              "name": "Forbidden",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "System",
+                    "Turnover"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "date",
+                      "value": "<date>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "\"string\"",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "890caf09-904f-46e2-9b4c-93a1cd8166c5",
+          "name": "Yearly System Turnover",
+          "request": {
+            "name": "Yearly System Turnover",
+            "description": {
+              "content": "Returns system turnover volumes for a year\n            \nSystem turnover refers to the total purchase volume that comes from the system price calculation across the whole Nordic region.\n            \n### Response field descriptions\n**yearlySummary**: \n - **totalTurnover**: contains total turnover volume in MWh for the year\n - **averageTurnover**: the average turnover volume in MW across all delivery periods\n - **minTurnover**: the minimum turnover in MW across all delivery periods\n - **maxTurnover**: the maximum turnover in MW across all delivery periods\n            \n**monthlySummary**: a list of monthly aggregate values\n - **totalTurnover**: contains total turnover volume in MWh for the month\n - **averageTurnover**: the average turnover volume in MW across all delivery periods in the month\n - **minTurnover**: the minimum turnover in MW across all delivery periods in the month\n - **maxTurnover**: the maximum turnover in MW across all delivery periods in the month\n            \n**dailySummary**: a list of daily aggregate values\n - **totalTurnover**: contains total turnover volume in MWh for the day\n - **averageTurnover**: the average turnover volume in MW across all delivery periods in the day\n - **minTurnover**: the minimum turnover in MW across all delivery periods in the day\n - **maxTurnover**: the maximum turnover in MW across all delivery periods in the day\n\n**blockSummaries**: a list of turnover volumes in MWh for a period of the day.\n            \n**volumes**: a list of turnover volumes in MW per delivery period\n\nOnly final system turnover volumes are included in this endpoint.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v2",
+                "System",
+                "Turnover",
+                "Yearly"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "year",
+                  "value": "<integer>",
+                  "description": "(Required) Year in CET (format: yyyy, e.g., 2024)"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "text/plain"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "5af98e13-f971-40ec-8e4c-1d84a9e38516",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "System",
+                    "Turnover",
+                    "Yearly"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "year",
+                      "value": "<integer>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"year\": 1192,\n  \"status\": \"Final\",\n  \"updatedAt\": \"2011-09-29T12:50:57.214Z\",\n  \"unit\": \"string\",\n  \"totalTurnoverUnit\": \"string\",\n  \"blockTurnoverUnit\": \"string\",\n  \"dailySummaries\": [\n    {\n      \"totalTurnover\": 7192.719698550138,\n      \"averageTurnover\": 2488.3495268908405,\n      \"minTurnover\": 457.70115231072,\n      \"maxTurnover\": 5053.153401711296,\n      \"deliveryDateCET\": \"2023-04-02\"\n    },\n    {\n      \"totalTurnover\": 1907.813024867152,\n      \"averageTurnover\": 4342.205194729939,\n      \"minTurnover\": 6070.082799599672,\n      \"maxTurnover\": 2081.249679395081,\n      \"deliveryDateCET\": \"2015-05-22\"\n    }\n  ],\n  \"monthlySummaries\": [\n    {\n      \"totalTurnover\": 2464.6290300377073,\n      \"averageTurnover\": 7391.131112286662,\n      \"minTurnover\": 1613.9968212996002,\n      \"maxTurnover\": 1013.3598101201924,\n      \"deliveryDateStartCET\": \"2026-01-31\",\n      \"deliveryDateEndCET\": \"1998-12-23\"\n    },\n    {\n      \"totalTurnover\": 6744.428768581983,\n      \"averageTurnover\": 1297.038418724049,\n      \"minTurnover\": 6389.5761168539075,\n      \"maxTurnover\": 8090.328335860126,\n      \"deliveryDateStartCET\": \"2004-12-03\",\n      \"deliveryDateEndCET\": \"1961-03-29\"\n    }\n  ],\n  \"yearlySummary\": {\n    \"totalTurnover\": 6837.237535551443,\n    \"averageTurnover\": 4777.184223761538,\n    \"minTurnover\": 7873.684543333368,\n    \"maxTurnover\": 2508.3832810173735\n  },\n  \"blockSummaries\": [\n    {\n      \"blockName\": \"string\",\n      \"blockStart\": \"1969-11-24T16:26:15.858Z\",\n      \"blockEnd\": \"1973-03-02T09:19:56.244Z\",\n      \"turnover\": 2532.990428507185\n    },\n    {\n      \"blockName\": \"string\",\n      \"blockStart\": \"2011-06-15T18:48:34.779Z\",\n      \"blockEnd\": \"2000-10-04T00:50:39.677Z\",\n      \"turnover\": 219.8892974108213\n    }\n  ],\n  \"volumes\": [\n    {\n      \"deliveryStart\": \"1972-03-11T23:32:30.897Z\",\n      \"deliveryEnd\": \"1962-10-16T00:37:27.388Z\",\n      \"turnover\": 8904.317225967987\n    },\n    {\n      \"deliveryStart\": \"1967-01-28T13:11:40.954Z\",\n      \"deliveryEnd\": \"1988-09-01T02:37:19.212Z\",\n      \"turnover\": 3797.449140090041\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ab6e449b-63b3-4d8f-9e97-ef5263751166",
+              "name": "Bad Request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "System",
+                    "Turnover",
+                    "Yearly"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "year",
+                      "value": "<integer>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"type\": \"string\",\n  \"title\": \"string\",\n  \"status\": 4560,\n  \"detail\": \"string\",\n  \"instance\": \"string\",\n  \"errors\": {\n    \"key_0\": [\n      \"string\",\n      \"string\"\n    ],\n    \"key_1\": [\n      \"string\",\n      \"string\"\n    ],\n    \"key_2\": [\n      \"string\",\n      \"string\"\n    ],\n    \"key_3\": [\n      \"string\",\n      \"string\"\n    ]\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d93a1bf1-32a7-4988-90d0-2f106b31590f",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "System",
+                    "Turnover",
+                    "Yearly"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "year",
+                      "value": "<integer>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "\"string\"",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3513dfc0-0279-40fd-b6f1-9e7b85876055",
+              "name": "Forbidden",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "System",
+                    "Turnover",
+                    "Yearly"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "year",
+                      "value": "<integer>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "\"string\"",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://dataportal-api.nordpoolgroup.com",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "4b20f06b-74e5-4142-95c8-b530171ce279",
+    "name": "Nord Pool Data Portal API (Public) Auction System API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The unauthenticated JSON API behind the Nord Pool Data Portal (data.nordpoolgroup.com), where Nord Pool publishes day-ahead electricity prices for the Nordic, Baltic, CWE, and UK bidding areas. These endpoints return the same day-ahead auction results shown on the public website, in 15-minute Market Time Unit resolution, and are widely used by open-source integrations such as Home Assistant. IMPORTANT - this API is not part of Nord Pool's officially documented, subscription-backed developer offering. It is not covered by an SLA or the API General Terms, and Nord Pool may change or restrict it at any time. The two operations below were observed live and verified returning data on 2026-07-11; request and response shapes are modeled from those observed responses rather than from official reference documentation. For supported programmatic access, use the Nord Pool Market Data API (data-api.nordpoolgroup.com) with a Power Data Services subscription.\n\nContact Support:\n Name: Nord Pool",
+      "type": "text/plain"
+    }
+  }
+}

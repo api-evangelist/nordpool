@@ -1,0 +1,368 @@
+{
+  "item": [
+    {
+      "id": "b057830d-e257-4423-8699-cfaeacfd4082",
+      "name": "Day-Ahead Prices",
+      "description": {
+        "content": "Public day-ahead auction prices and price indices.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "fb78341f-7dbd-4cfa-82a2-b70855de48c8",
+          "name": "Day-ahead prices by delivery area",
+          "request": {
+            "name": "Day-ahead prices by delivery area",
+            "description": {
+              "content": "Returns day-ahead auction prices for one or more delivery areas on a given CET delivery date, in 15-minute Market Time Unit entries plus per-area block-average aggregates and daily statistics. Verified live (HTTP 200 with price data) on 2026-07-11.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "DayAheadPrices"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "date",
+                  "value": "<date>",
+                  "description": "(Required) Delivery date (CET), format yyyy-MM-dd."
+                },
+                {
+                  "disabled": false,
+                  "key": "market",
+                  "value": "<string>",
+                  "description": "(Required) Market to query. DayAhead is the day-ahead auction market."
+                },
+                {
+                  "disabled": false,
+                  "key": "deliveryArea",
+                  "value": "<string>",
+                  "description": "(Required) Comma-separated bidding/delivery area codes, for example NO2 or SE3,FI,DK1."
+                },
+                {
+                  "disabled": false,
+                  "key": "currency",
+                  "value": "<string>",
+                  "description": "(Required) Currency for returned prices (EUR or a local currency such as NOK, SEK, DKK)."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "4f9ba14b-60f4-4b5e-a3fe-150128c7cb97",
+              "name": "Day-ahead prices for the requested areas and date.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "DayAheadPrices"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "date",
+                      "value": "2026-07-10"
+                    },
+                    {
+                      "key": "market",
+                      "value": "DayAhead"
+                    },
+                    {
+                      "key": "deliveryArea",
+                      "value": "NO2"
+                    },
+                    {
+                      "key": "currency",
+                      "value": "EUR"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"deliveryDateCET\": \"2026-07-10\",\n  \"version\": 3,\n  \"updatedAt\": \"1975-11-14T16:08:44.151Z\",\n  \"deliveryAreas\": [\n    \"NO2\"\n  ],\n  \"market\": \"DayAhead\",\n  \"multiAreaEntries\": [\n    {\n      \"deliveryStart\": \"1963-02-03T17:09:14.391Z\",\n      \"deliveryEnd\": \"1977-01-04T16:48:44.930Z\",\n      \"entryPerArea\": {\n        \"key_0\": 9357.864265964487,\n        \"key_1\": 5135.686620241568\n      }\n    },\n    {\n      \"deliveryStart\": \"1948-01-07T04:44:50.412Z\",\n      \"deliveryEnd\": \"2007-08-08T06:59:49.911Z\",\n      \"entryPerArea\": {\n        \"key_0\": 5370.177297026404\n      }\n    }\n  ],\n  \"currency\": \"EUR\",\n  \"exchangeRate\": 5342.099543900107,\n  \"areaStates\": [\n    {\n      \"state\": \"Final\",\n      \"areas\": [\n        \"string\",\n        \"string\"\n      ]\n    },\n    {\n      \"state\": \"Final\",\n      \"areas\": [\n        \"string\",\n        \"string\"\n      ]\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "bed66ee8-18bc-4d82-8584-dc0786249dc2",
+              "name": "No data published yet for the requested delivery date.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "DayAheadPrices"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "date",
+                      "value": "2026-07-10"
+                    },
+                    {
+                      "key": "market",
+                      "value": "DayAhead"
+                    },
+                    {
+                      "key": "deliveryArea",
+                      "value": "NO2"
+                    },
+                    {
+                      "key": "currency",
+                      "value": "EUR"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "No Content",
+              "code": 204,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "c8645051-309d-4938-9180-01560a252e46",
+          "name": "Day-ahead price indices by index name",
+          "request": {
+            "name": "Day-ahead price indices by index name",
+            "description": {
+              "content": "Returns day-ahead price index values (area price indices at a chosen resolution) for a given CET delivery date. Verified live (HTTP 200) on 2026-07-11.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "DayAheadPriceIndices"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "date",
+                  "value": "<date>",
+                  "description": "(Required) Delivery date (CET), format yyyy-MM-dd."
+                },
+                {
+                  "disabled": false,
+                  "key": "market",
+                  "value": "<string>",
+                  "description": "(Required) Market to query. DayAhead is the day-ahead auction market."
+                },
+                {
+                  "disabled": false,
+                  "key": "indexNames",
+                  "value": "<string>",
+                  "description": "(Required) Comma-separated index names (typically area codes such as NO2 or SE3)."
+                },
+                {
+                  "disabled": false,
+                  "key": "currency",
+                  "value": "<string>",
+                  "description": "(Required) Currency for returned index values."
+                },
+                {
+                  "disabled": false,
+                  "key": "resolutionInMinutes",
+                  "value": "<integer>",
+                  "description": "Index resolution in minutes (for example 15 or 60)."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "e70d4d83-4142-4a32-a53c-18a3b5489a9a",
+              "name": "Day-ahead price index values for the requested indices and date.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "DayAheadPriceIndices"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "date",
+                      "value": "2026-07-10"
+                    },
+                    {
+                      "key": "market",
+                      "value": "DayAhead"
+                    },
+                    {
+                      "key": "indexNames",
+                      "value": "NO2"
+                    },
+                    {
+                      "key": "currency",
+                      "value": "EUR"
+                    },
+                    {
+                      "key": "resolutionInMinutes",
+                      "value": "60"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"deliveryDateCET\": \"2026-07-10\",\n  \"version\": 3,\n  \"updatedAt\": \"1986-01-27T15:46:26.986Z\",\n  \"deliveryAreas\": [\n    \"NO2\"\n  ],\n  \"market\": \"DayAhead\",\n  \"multiAreaEntries\": [\n    {\n      \"deliveryStart\": \"2013-06-20T11:27:01.251Z\",\n      \"deliveryEnd\": \"2009-03-11T04:39:10.906Z\",\n      \"entryPerArea\": {\n        \"key_0\": 3863.921462609291,\n        \"key_1\": 2389.2924946548765,\n        \"key_2\": 5913.26400937179\n      }\n    },\n    {\n      \"deliveryStart\": \"1948-12-15T13:44:48.627Z\",\n      \"deliveryEnd\": \"1977-10-20T20:26:59.119Z\",\n      \"entryPerArea\": {\n        \"key_0\": 4602.799599144481,\n        \"key_1\": 6555.602341074967\n      }\n    }\n  ],\n  \"currency\": \"EUR\",\n  \"exchangeRate\": 7141.621343607084,\n  \"areaStates\": [\n    {\n      \"state\": \"Final\",\n      \"areas\": [\n        \"string\",\n        \"string\"\n      ]\n    },\n    {\n      \"state\": \"Final\",\n      \"areas\": [\n        \"string\",\n        \"string\"\n      ]\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2c9f54d2-f12e-4e01-b55a-a5833f437b34",
+              "name": "No data published yet for the requested delivery date.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "DayAheadPriceIndices"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "date",
+                      "value": "2026-07-10"
+                    },
+                    {
+                      "key": "market",
+                      "value": "DayAhead"
+                    },
+                    {
+                      "key": "indexNames",
+                      "value": "NO2"
+                    },
+                    {
+                      "key": "currency",
+                      "value": "EUR"
+                    },
+                    {
+                      "key": "resolutionInMinutes",
+                      "value": "60"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "No Content",
+              "code": 204,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://dataportal-api.nordpoolgroup.com",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "20fc3467-632b-4517-801f-e9025de00306",
+    "name": "Nord Pool Data Portal API (Public) Auction Day-Ahead Prices API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The unauthenticated JSON API behind the Nord Pool Data Portal (data.nordpoolgroup.com), where Nord Pool publishes day-ahead electricity prices for the Nordic, Baltic, CWE, and UK bidding areas. These endpoints return the same day-ahead auction results shown on the public website, in 15-minute Market Time Unit resolution, and are widely used by open-source integrations such as Home Assistant. IMPORTANT - this API is not part of Nord Pool's officially documented, subscription-backed developer offering. It is not covered by an SLA or the API General Terms, and Nord Pool may change or restrict it at any time. The two operations below were observed live and verified returning data on 2026-07-11; request and response shapes are modeled from those observed responses rather than from official reference documentation. For supported programmatic access, use the Nord Pool Market Data API (data-api.nordpoolgroup.com) with a Power Data Services subscription.\n\nContact Support:\n Name: Nord Pool",
+      "type": "text/plain"
+    }
+  }
+}

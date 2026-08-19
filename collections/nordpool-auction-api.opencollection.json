@@ -1,0 +1,473 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Nord Pool Data Portal API (Public) Auction API",
+    "version": "1.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Auction",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Aggregated bidding curves",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/Auction/:market/BidCurves/ByRegion",
+            "params": [
+              {
+                "name": "market",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "region",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "date",
+                "value": "",
+                "type": "query",
+                "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15"
+              }
+            ]
+          },
+          "docs": "Returns aggregated bid curves for a date and region.\n \nAggregated bidding curves explains why the price forms as it does in a region for a market. If we plot aggregated supply and demand curves in the same chart, then the intersection of these two curves should happen on the realized price point.\n            \nSome regions contain multiple delivery areas. In this case, the intersection point will explain what the price would have been if no capacity constraint existed in between the sub-areas. Us"
+        },
+        {
+          "info": {
+            "name": "ATC Capacities",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/Auction/Capacities/ByAreas",
+            "params": [
+              {
+                "name": "market",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "areas",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated list of areas (e.g., NO1, NO2). \n\nSupported: SE(legacy), NO1, NO1A, NO2, NO2_ND, NO2_NK, NO2_SK, NO2A, NO3, NO4, NO5, SE1, SE2, SE3, SE3_FS, SE3_KS, SE3_SWL, SE4, SE4_BC, SE4_NB, SE4_SP, SE4_SWL,\nFI, FI_EL, FI_FS, DK1, DK1_CO, DK1_DE, DK1_KS, DK1_SB, DK1_SK, DK1A, DK2, DK2_KO, DK2_SB, EE, LT, LV, AT, BE, DE_BC, DE_DK1, DE_KO, DE_NK, FR, GER, NL,\nNL_CO, NL_ND, PL, PL_LP, PL_SP, TEL, BG, RO_BG, UK"
+              },
+              {
+                "name": "date",
+                "value": "",
+                "type": "query",
+                "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15"
+              }
+            ]
+          },
+          "docs": "ATC capacities constrains how much power can flow in between two areas. The matching algorithm takes these capacities into account when optimizing power flow from low price to high price areas. Note that for some regions in some markets, flow based capacity constraints are used instead or in combination with ATC capacities.\n            \nCapacities are given for each delivery period for the delivery date in question, and are separated into import and export capacities.\n            \n### Response f"
+        },
+        {
+          "info": {
+            "name": "Yearly ATC capacities",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/Auction/Capacities/Yearly/ByArea",
+            "params": [
+              {
+                "name": "market",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "area",
+                "value": "",
+                "type": "query",
+                "description": "One area. For example NO1. \n\nSupported: SE(legacy), NO1, NO1A, NO2, NO2_ND, NO2_NK, NO2_SK, NO2A, NO3, NO4, NO5, SE1, SE2, SE3, SE3_FS, SE3_KS, SE3_SWL, SE4, SE4_BC, SE4_NB, SE4_SP, SE4_SWL,\nFI, FI_EL, FI_FS, DK1, DK1_CO, DK1_DE, DK1_KS, DK1_SB, DK1_SK, DK1A, DK2, DK2_KO, DK2_SB, EE, LT, LV, AT, BE, DE_BC, DE_DK1, DE_KO, DE_NK, FR, GER, NL,\nNL_CO, NL_ND, PL, PL_LP, PL_SP, TEL, BG, RO_BG, UK"
+              },
+              {
+                "name": "year",
+                "value": "",
+                "type": "query",
+                "description": "Year in CET (format: yyyy, e.g., 2024)"
+              }
+            ]
+          },
+          "docs": "Returns a list of auction capacities for a market, year and one area.\n            \n### Response field descriptions\n            \n**importsByConnection**\n- **area**: the area imported from\n- **connection**: the named connection to the import area. In some cases, multiple capacity values exist in between two areas - if that's the case, then connection will be used to distinguish the values.\n- **capacity**: the max MW that can be imported on this connection\n- **lossFactor**: in case there is a loss "
+        },
+        {
+          "info": {
+            "name": "Flow-based Constraints",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/Auction/FlowBasedConstraints/ByDomain",
+            "params": [
+              {
+                "name": "market",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "flowBasedDomain",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "date",
+                "value": "",
+                "type": "query",
+                "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15"
+              }
+            ]
+          },
+          "docs": "Returns a list of flow-based constraints per market, date and one domain\n            \nFlow-based capacity constraints represent limits on critical network elements in the power grid. Flow-based constraints are used in combination with ATC capacities to calculate flows inside of flow-based regions.\n            \nFlow-based capacity constraints are given per delivery period. Each period contains multiple constraints, and each constraint consists of:\n- **RAM (Remaining Available Margin)** - the avai"
+        },
+        {
+          "info": {
+            "name": "Auction Flows",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/Auction/Flows/ByAreas",
+            "params": [
+              {
+                "name": "market",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "areas",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated list of areas (e.g., NO1, NO2).\nSupported: SE(legacy),NO1,NO2,NO3,NO4,NO5,SE1,SE2,SE3,SE4,FI,DK1,DK2,EE,LT,LV,AT,BE,FR,GER,NL,PL,UK,TEL,BG"
+              },
+              {
+                "name": "date",
+                "value": "",
+                "type": "query",
+                "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15"
+              }
+            ]
+          },
+          "docs": "Returns a list of auction flows per area for a market, date and list of areas.\n            \nFlows are describing how much power are exchanged in between areas.\n            \nThis is the flow coming from Euphemia - note that in the Nordic region a post coupling calculation is done to adjust this flow. See Scheduled Physical Flows for Nordic Day-ahead flows after 30th of October 2024.\n            \nFlows are always described from an area point of view. Some flows will have a loss on the cable - impo"
+        },
+        {
+          "info": {
+            "name": "Yearly Auction Flows",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/Auction/Flows/Yearly/ByArea",
+            "params": [
+              {
+                "name": "market",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "area",
+                "value": "",
+                "type": "query",
+                "description": "One area. For example NO1.\nSupported: NO1,NO2,NO3,NO4,NO5,SE1,SE2,SE3,SE4,FI,DK1,DK2,EE,LT,LV,AT,BE,FR,GER,NL,PL,UK,TEL,BG"
+              },
+              {
+                "name": "year",
+                "value": "",
+                "type": "query",
+                "description": "Year in CET (format: yyyy, e.g., 2024)"
+              }
+            ]
+          },
+          "docs": "Returns a list of auction flows for a market, year and one area.\n            \nFlows are describing how much power are exchanged in between areas.\n            \nThis is the flow coming from Euphemia - note that in the Nordic region a post coupling calculation is done to adjust this flow. See Scheduled Physical Flows for Nordic Day-ahead flows after 30th of October 2024.\n            \nFlows are always described from an area point of view. Some flows will have a loss on the cable - imports in an area"
+        },
+        {
+          "info": {
+            "name": "Auction Price Indices",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/Auction/PriceIndices/ByIndexNames",
+            "params": [
+              {
+                "name": "market",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "indexNames",
+                "value": "",
+                "type": "query",
+                "description": "A comma-separated list of index names (e.g. NO1, NO2, FI, BE).\nSupported: SYSTEM, NO1, NO2, NO3, NO4, NO5, SE1, SE2, SE3, SE4, FI, DK1, DK2, EE,\nLT, LV, AT, BE, FR, GER, 50Hz, AMP, TTG, TBW, NL, PL, UK, TEL, BG, SE(legacy)"
+              },
+              {
+                "name": "currency",
+                "value": "",
+                "type": "query",
+                "description": "Currency of returned prices. Note that local currencies are not available for all areas, and\ncurrency availability varies across markets. Supported: EUR, GBP, SEK, NOK, DKK, PLN, RON"
+              },
+              {
+                "name": "date",
+                "value": "",
+                "type": "query",
+                "description": "Delivery date, referring to CET date. Format: yyyy-MM-dd (e.g. 2025-02-20)"
+              },
+              {
+                "name": "resolution",
+                "value": "",
+                "type": "query",
+                "description": "The data-resolution of the requested price data: PT1H = 1h, PT30M = 30min, PT15M = 15min"
+              }
+            ]
+          },
+          "docs": " Price indices are normalized prices for a set resolution, for one delivery area or a group of delivery areas.\n            \nIf official prices exists in a certain resolution, then official prices are used. If no centrally agreed official price exists for a resolution, then an average price is calculated.\n            \nNote that settlement is always done in the lowest trading resolution for the market and area, price indices are just an indication of what the average price would be in different re"
+        },
+        {
+          "info": {
+            "name": "Yearly Auction Price Indices",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/Auction/PriceIndices/Yearly/ByIndexName",
+            "params": [
+              {
+                "name": "market",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "indexName",
+                "value": "",
+                "type": "query",
+                "description": "One area. For example NO1.\nSupported: SYSTEM, NO1, NO2, NO3, NO4, NO5, SE1, SE2, SE3, SE4, FI, DK1, DK2, EE,\nLT, LV, AT, BE, FR, GER, 50Hz, AMP, TTG, TBW, NL, PL, UK, TEL, BG, SE(legacy)"
+              },
+              {
+                "name": "currency",
+                "value": "",
+                "type": "query",
+                "description": "Currency of returned price indices. Note that local currencies are not available for all indices, and\ncurrency availability varies across markets. Supported: EUR, GBP, SEK, NOK, DKK, PLN, RON"
+              },
+              {
+                "name": "year",
+                "value": "",
+                "type": "query",
+                "description": "Year in CET (format: yyyy, e.g., 2024)"
+              },
+              {
+                "name": "resolution",
+                "value": "",
+                "type": "query",
+                "description": "The data-resolution of the requested price data: PT1H = 1h, PT30M = 30min, PT15M = 15min"
+              }
+            ]
+          },
+          "docs": " Price indices are normalized prices for a set resolution, for one delivery area or a group of delivery areas.\n            \nIf official prices exists in a certain resolution, then official prices are used. If no centrally agreed official price exists for a resolution, then an average price is calculated.\n            \nNote that settlement is always done in the lowest trading resolution for the market and area, price indices are just an indication of what the average price would be in different re"
+        },
+        {
+          "info": {
+            "name": "Auction Prices",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/Auction/Prices/ByAreas",
+            "params": [
+              {
+                "name": "market",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "areas",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated list of areas (e.g., NO1, NO2).\nSupported: SE(legacy),NO1,NO2,NO3,NO4,NO5,SE1,SE2,SE3,SE4,FI,DK1,DK2,EE,LT,LV,AT,BE,FR,GER,50Hz,AMP,TTG,TBW,NL,PL,UK,TEL,BG"
+              },
+              {
+                "name": "currency",
+                "value": "",
+                "type": "query",
+                "description": "Currency of returned prices. Note that local currencies are not available for all areas, and\ncurrency availability varies across markets. Supported: EUR, GBP, SEK, NOK, DKK, PLN, RON"
+              },
+              {
+                "name": "date",
+                "value": "",
+                "type": "query",
+                "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15"
+              }
+            ]
+          },
+          "docs": "Returns a list of auction prices for a market, currency, date and list of areas.\n### Response field descriptions\n- **status**: Missing if data does not exist. Preliminary if the market coupling session is not complete, or the exchange rate has not been finalized yet. Final once exchange rate is set and market coupling session is complete. Cancelled if the auction is cancelled.\n- **exchangeRate**: the exchange rate used to calculate the currency price. 1 if the currency is the same as the main ma"
+        },
+        {
+          "info": {
+            "name": "Yearly Auction Prices",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/Auction/Prices/Yearly/ByArea",
+            "params": [
+              {
+                "name": "market",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "area",
+                "value": "",
+                "type": "query",
+                "description": "One area. For example NO1.\nSupported: NO1,NO2,NO3,NO4,NO5,SE1,SE2,SE3,SE4,FI,DK1,DK2,EE,LT,LV,AT,BE,FR,GER,50Hz,AMP,TTG,TBW,NL,PL,UK,TEL,BG"
+              },
+              {
+                "name": "currency",
+                "value": "",
+                "type": "query",
+                "description": "Currency of returned prices. Note that local currencies are not available for all areas, and\ncurrency availability varies across markets. Supported: EUR, SEK, NOK, DKK, PLN, RON"
+              },
+              {
+                "name": "year",
+                "value": "",
+                "type": "query",
+                "description": "Year in CET (format: yyyy, e.g., 2024)"
+              }
+            ]
+          },
+          "docs": " Returns a list of auction prices for a market, currency, year and one area.\n            \n### Response field descriptions\n- **prices**: the settlement price for each period. If no trading happens, then the price might be null\n- **blockPrices**: average price for a periods of the day, called blocks.\n- **dailySummaries**: contains min, max and average price for each day in the year\n- **monthlySummaries**: contains min, max and average price for each month of the year\n- **weeklySummaries**: contain"
+        },
+        {
+          "info": {
+            "name": "Auction Scheduled Physical Flows",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/Auction/ScheduledPhysicalFlows/ByAreas",
+            "params": [
+              {
+                "name": "market",
+                "value": "",
+                "type": "query",
+                "description": "Market for which the flows are requested. Supported: DayAhead."
+              },
+              {
+                "name": "areas",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated list of areas (e.g., NO1, NO2).\nSupported: DK1, DK2, FI, NO1, NO2, NO3, NO4, NO5, SE1, SE2, SE3, SE4."
+              },
+              {
+                "name": "date",
+                "value": "",
+                "type": "query",
+                "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-11-01."
+              }
+            ]
+          },
+          "docs": "Scheduled physical flows are published for the day-ahead market after the Nordic Flow-based go-live on the 30th of October 2024.\n            \nScheduled physical flows are re-calculated flows for Nordic flow-based regions. The Nordic Flow-based implementation sometimes ends up breaching physical constraints in the power grid, and a post-coupling re-calculation is done and published to the JAO publication tool, which is the source of this data.\n            \nThe re-calculated flows should end up wi"
+        },
+        {
+          "info": {
+            "name": "Yearly Scheduled Physical Flows",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/Auction/ScheduledPhysicalFlows/Yearly/ByArea",
+            "params": [
+              {
+                "name": "market",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "area",
+                "value": "",
+                "type": "query",
+                "description": "One area. For example NO1.\nSupported:  DK1,DK2,FI,NO1,NO2,NO3,NO4,NO5,SE1,SE2,SE3,SE4"
+              },
+              {
+                "name": "year",
+                "value": "",
+                "type": "query",
+                "description": "Year in CET (format: yyyy, e.g., 2024)"
+              }
+            ]
+          },
+          "docs": "Scheduled physical flows are published for the day-ahead market after the Nordic Flow-based go-live on the 30th of October 2024.\n            \nScheduled physical flows are re-calculated flows for Nordic flow-based regions. The Nordic Flow-based implementation sometimes ends up breaching physical constraints in the power grid, and a post-coupling re-calculation is done and published to the JAO publication tool, which is the source of this data.\n            \nThe re-calculated flows should end up wi"
+        },
+        {
+          "info": {
+            "name": "Auction Volumes",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/Auction/Volumes/ByAreas",
+            "params": [
+              {
+                "name": "market",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "areas",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated list of areas (e.g., NO1, NO2).\nSupported: SE(legacy),NO1,NO2,NO3,NO4,NO5,SE1,SE2,SE3,SE4,FI,DK1,DK2,EE,LT,LV,AT,BE,FR,GER,50Hz,AMP,TTG,TBW,NL,PL,UK,TEL,BG"
+              },
+              {
+                "name": "date",
+                "value": "",
+                "type": "query",
+                "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15"
+              }
+            ]
+          },
+          "docs": "Returns a list of auction volumes for a market, date and list of areas.\n            \nNote that this volume only reflect Nord Pool's part of the traded volume, not the market total volume.\n            \n### Response field descriptions\n- **status**: Missing if data does not exist. Preliminary if the market coupling session is not complete. Final once the market coupling session is complete. Cancelled if the auction is cancelled.\n            \n**totalVolume**\n- **buy**: total MWh bought in the area a"
+        },
+        {
+          "info": {
+            "name": "Yearly Auction Volumes",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/Auction/Volumes/Yearly/ByArea",
+            "params": [
+              {
+                "name": "market",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "area",
+                "value": "",
+                "type": "query",
+                "description": "One area. For example NO1.\nSupported: NO1,NO2,NO3,NO4,NO5,SE1,SE2,SE3,SE4,FI,DK1,DK2,EE,LT,LV,AT,BE,FR,GER,50Hz,AMP,TTG,TBW,NL,PL,UK,TEL,BG"
+              },
+              {
+                "name": "year",
+                "value": "",
+                "type": "query",
+                "description": "Year in CET (format: yyyy, e.g., 2024)"
+              }
+            ]
+          },
+          "docs": "Returns a list of auction volumes for a market, year and one area.\n            \nNote that this volume only reflect Nord Pool's part of the traded volume, not the market total volume.\n            \n            \n### Response field descriptions\n**yearlySummary**: \n - **totalVolume**: contains total bought and sold MWh for the year\n - **averageVolume**: the average bought and sold MW across all delivery periods\n - **minVolume**: the minimum bought and sold MW across all delivery periods\n - **maxVolum"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

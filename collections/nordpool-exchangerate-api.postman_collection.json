@@ -1,0 +1,466 @@
+{
+  "item": [
+    {
+      "id": "8412ce8b-55e8-4f6a-a7db-fd42954c2465",
+      "name": "ExchangeRate",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "7c697585-b2dd-4f58-83a3-ef3917525e74",
+          "name": "Exchange rates",
+          "request": {
+            "name": "Exchange rates",
+            "description": {
+              "content": "Returns the exchange rate used for a specific date.\n            \n### Nordic Day-ahead market and local currencies\nFor the Nordic Day-ahead market, local currency trading is allowed. At the auction day, a preliminary exchange rate is retrieved for local currencies to EUR (for example, SEK -> EUR) from a bank. This preliminary exchange rate is used to calculate order prices in EUR based on user provided input. If the user places an order with price 100 SEK and the SEK -> EUR **preliminary** exchange rate is 0.1, then the order value in EUR is 10. All orders are matched in EUR.\n            \n After the market coupling session is complete, on the first available banking day (on normal week days, this is the same day. On weekends, this usually means next Monday) Nord Pool performs a currency exchange hedging process. Here we get a **final** exchange rate based on how much local currencies are exchanged.\n            \nThe final local currency prices are then re-calculated using the final exchange rate, this time from EUR -> local currency. To continue the sample above, if our final EUR -> SEK exchange rate is  9.98, then the settled price will be 99.80 SEK rather than the original 100 SEK. If the final exchange rate would be 10.02, then the settled price would be 100.20 SEK.\n            \n### Other exchange rates (PLN, RON, GBP)\n\nOther currencies does not follow the same hedging flow as in the Nordics. Usually exchange rate is agreed upon before auctions happen and thus no price adjustments are needed.\n            \n### Response field descriptions\n**rates**: a list currency exchange rates for the day\n- **fromCurrency**: the currency exchanged from\n- **toCurrency**: the currency exchanged to\n- **rate**: the exchange rate used to transform fromCurrency -> toCurrency\n- **status**: Preliminary or Final. Preliminary rates can change, Final rates will not be changed. For usage, see the description above\n- **modified**: the last update time",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v2",
+                "ExchangeRate",
+                "Daily"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "date",
+                  "value": "<date>",
+                  "description": "(Required) Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "text/plain"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "7d5c5ada-ca5c-46f9-aa89-5801e844ba98",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "ExchangeRate",
+                    "Daily"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "date",
+                      "value": "<date>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"rates\": [\n    {\n      \"fromCurrency\": \"string\",\n      \"toCurrency\": \"string\",\n      \"rate\": 5732.835857780065,\n      \"status\": \"Preliminary\",\n      \"modified\": \"1996-04-09T17:59:22.711Z\"\n    },\n    {\n      \"fromCurrency\": \"string\",\n      \"toCurrency\": \"string\",\n      \"rate\": 5033.847271225843,\n      \"status\": \"Final\",\n      \"modified\": \"1993-06-21T17:14:44.296Z\"\n    }\n  ],\n  \"dateCET\": \"1982-11-09\",\n  \"status\": \"Missing\",\n  \"updatedAt\": \"1974-04-07T09:30:40.396Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1935c4cf-23c0-4e24-9c81-a8ce754746c5",
+              "name": "Bad Request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "ExchangeRate",
+                    "Daily"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "date",
+                      "value": "<date>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"type\": \"string\",\n  \"title\": \"string\",\n  \"status\": 2650,\n  \"detail\": \"string\",\n  \"instance\": \"string\",\n  \"errors\": {\n    \"key_0\": [\n      \"string\",\n      \"string\"\n    ],\n    \"key_1\": [\n      \"string\",\n      \"string\"\n    ]\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "6eb72c1f-85e9-439d-8a5c-d92ce796f623",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "ExchangeRate",
+                    "Daily"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "date",
+                      "value": "<date>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "\"string\"",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "bbfd8e08-2511-42c9-8402-0b5258cb324f",
+              "name": "Forbidden",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "ExchangeRate",
+                    "Daily"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "date",
+                      "value": "<date>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "\"string\"",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "db0078bc-3891-482a-b309-9d57d651075d",
+          "name": "Yearly Exchange rates",
+          "request": {
+            "name": "Yearly Exchange rates",
+            "description": {
+              "content": "Returns the exchange rates for a specific year.\n            \n### Nordic Day-ahead market and local currencies\nFor the Nordic Day-ahead market, local currency trading is allowed. At the auction day, a preliminary exchange rate is retrieved for local currencies to EUR (for example, SEK -> EUR) from a bank. This preliminary exchange rate is used to calculate order prices in EUR based on user provided input. If the user places an order with price 100 SEK and the SEK -> EUR **preliminary** exchange rate is 0.1, then the order value in EUR is 10. All orders are matched in EUR.\n            \n After the market coupling session is complete, on the first available banking day (on normal week days, this is the same day. On weekends, this usually means next Monday) Nord Pool performs a currency exchange hedging process. Here we get a **final** exchange rate based on how much local currencies are exchanged.\n            \nThe final local currency prices are then re-calculated using the final exchange rate, this time from EUR -> local currency. To continue the sample above, if our final EUR -> SEK exchange rate is  9.98, then the settled price will be 99.80 SEK rather than the original 100 SEK. If the final exchange rate would be 10.02, then the settled price would be 100.20 SEK.\n            \n### Other exchange rates (PLN, RON, GBP)\n\nOther currencies does not follow the same hedging flow as in the Nordics. Usually exchange rate is agreed upon before auctions happen and thus no price adjustments are needed.\n            \n### Response field descriptions\n**dailyExchangeRates**: a list of exchange rates per delivery date\n            \nEach daily exchange rate contains\n\n**dateCET**: the delivery date in CET time the rate is used for\n            \n**rates**: a list currency exchange rates for the day\n- **fromCurrency**: the currency exchanged from\n- **toCurrency**: the currency exchanged to\n- **rate**: the exchange rate used to transform fromCurrency -> toCurrency\n- **status**: Preliminary or Final. Preliminary rates can change, Final rates will not be changed. For usage, see the description above\n- **modified**: the last update time",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v2",
+                "ExchangeRate",
+                "Yearly"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "year",
+                  "value": "<integer>",
+                  "description": "(Required) Delivery year, referring to CET year. Format yyyy, for example 2024"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "text/plain"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "d41f260f-e83e-4047-b7dc-8ac9c9f7a5e6",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "ExchangeRate",
+                    "Yearly"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "year",
+                      "value": "<integer>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"year\": 3780,\n  \"status\": \"Missing\",\n  \"dailyExchangeRates\": [\n    {\n      \"rates\": [\n        {\n          \"fromCurrency\": \"string\",\n          \"toCurrency\": \"string\",\n          \"rate\": 2443.050805528062,\n          \"status\": \"Preliminary\",\n          \"modified\": \"1978-04-15T10:46:12.694Z\"\n        },\n        {\n          \"fromCurrency\": \"string\",\n          \"toCurrency\": \"string\",\n          \"rate\": 3645.3434661147953,\n          \"status\": \"Final\",\n          \"modified\": \"1956-09-27T05:13:22.832Z\"\n        }\n      ],\n      \"dateCET\": \"1973-06-24\",\n      \"updatedAt\": \"1982-06-04T20:53:17.133Z\"\n    },\n    {\n      \"rates\": [\n        {\n          \"fromCurrency\": \"string\",\n          \"toCurrency\": \"string\",\n          \"rate\": 9090.786674883811,\n          \"status\": \"Final\",\n          \"modified\": \"1993-07-25T18:44:39.202Z\"\n        },\n        {\n          \"fromCurrency\": \"string\",\n          \"toCurrency\": \"string\",\n          \"rate\": 4176.7212414694295,\n          \"status\": \"Preliminary\",\n          \"modified\": \"2009-01-07T15:00:49.200Z\"\n        }\n      ],\n      \"dateCET\": \"1973-05-23\",\n      \"updatedAt\": \"1998-12-04T02:54:38.062Z\"\n    }\n  ],\n  \"updatedAt\": \"1965-10-01T18:21:40.241Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "dbb7d39b-24f9-4baf-959d-5ff00900b736",
+              "name": "Bad Request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "ExchangeRate",
+                    "Yearly"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "year",
+                      "value": "<integer>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"type\": \"string\",\n  \"title\": \"string\",\n  \"status\": 3446,\n  \"detail\": \"string\",\n  \"instance\": \"string\",\n  \"errors\": {\n    \"key_0\": [\n      \"string\",\n      \"string\"\n    ]\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1b972fa6-adcc-4066-981e-536effb5f6e8",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "ExchangeRate",
+                    "Yearly"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "year",
+                      "value": "<integer>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "\"string\"",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b72c990c-cbee-4deb-adad-547ba9afcde8",
+              "name": "Forbidden",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "ExchangeRate",
+                    "Yearly"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "year",
+                      "value": "<integer>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "\"string\"",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://dataportal-api.nordpoolgroup.com",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "db0ccb82-f88b-4b39-b124-6eaa0e07be98",
+    "name": "Nord Pool Data Portal API (Public) Auction ExchangeRate API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The unauthenticated JSON API behind the Nord Pool Data Portal (data.nordpoolgroup.com), where Nord Pool publishes day-ahead electricity prices for the Nordic, Baltic, CWE, and UK bidding areas. These endpoints return the same day-ahead auction results shown on the public website, in 15-minute Market Time Unit resolution, and are widely used by open-source integrations such as Home Assistant. IMPORTANT - this API is not part of Nord Pool's officially documented, subscription-backed developer offering. It is not covered by an SLA or the API General Terms, and Nord Pool may change or restrict it at any time. The two operations below were observed live and verified returning data on 2026-07-11; request and response shapes are modeled from those observed responses rather than from official reference documentation. For supported programmatic access, use the Nord Pool Market Data API (data-api.nordpoolgroup.com) with a Power Data Services subscription.\n\nContact Support:\n Name: Nord Pool",
+      "type": "text/plain"
+    }
+  }
+}

@@ -1,0 +1,259 @@
+{
+  "item": [
+    {
+      "id": "660903c5-c901-4865-a3b3-1f86cde3205f",
+      "name": "PriceCurves",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "441eddc9-91bd-4aa5-b657-b84fb380d71f",
+          "name": "N2EX Price Curves",
+          "request": {
+            "name": "N2EX Price Curves",
+            "description": {
+              "content": "Returns the N2EX UK price curve data for a given date.\n            \nThese price curves only contain order information for what is happening in the UK delivery area. No price curve information is available for the coupled NO2 area, since the trading activity in NO2 is small. \n            \n### Response field descriptions\n            \n**status**: Missing if no data exists for the requested date. Available if data is present\n\n#### orderPositions: a list of delivery period, and associated aggregated demand and supply curve orders\n- **demandCurve**: list of aggregated demand (=buy) curve order volume for price points\n- **supplyCurve**: list of aggregated supply (=sell) curve order volume for price points\n- **deliveryStart**: start of delivery period\n- **deliveryEnd**: end of delivery period\n            \n#### blockOrders: a list of block orders\n- **side**: Buy or Sell\n- **exclusiveGroupId**: if not null, then this block is part of an exclusive group. Group all blocks by exclusive group id to see the exclusive group.\n- **minimumAcceptanceRatio**: the minimum acceptance ratio needed for the block to activate. Typically in the 0.5-1 range, where 0.5 = 50% of the volume needs to be filled to activate\n- **linkedOrderId**: if not null, then this block will only activate if the linked block order with this id activates. To find the parent, find the block order with the corresponding id.\n- **price**: the average price for the block order to activate\n- **paradoxicallyRejected**: if true, then the block restrictions are within the correct price and volume limits, but activating the block would cause price and volume to shift enough to disqualify the block from activation.\n- **actualAcceptanceRatio**: the ratio of the block that was accepted, in a range of 0-1. 1 = 100% of volume accepted.\n- **intervals**: periods for the block, with corresponding volumes and accepted volumes.\n            \nNote that the intersection of the supply and demand curve positions will not add up to the realized price - for that, block order activations as well as import and export flows needs to be taken into account as well.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v2",
+                "Auction",
+                "N2EX_DayAhead",
+                "PriceCurves",
+                "UK"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "date",
+                  "value": "<date>",
+                  "description": "(Required) Delivery date, referring to CET date. Format yyyy-MM-dd, for example, 2024-08-15"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "text/plain"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "a6d55930-ff4e-432f-9054-546ebf18ab6a",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "Auction",
+                    "N2EX_DayAhead",
+                    "PriceCurves",
+                    "UK"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "date",
+                      "value": "<date>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"deliveryDateCET\": \"1984-11-10\",\n  \"status\": \"Missing\",\n  \"currencyUnit\": \"string\",\n  \"volumeUnit\": \"string\",\n  \"orderPositions\": [\n    {\n      \"deliveryStart\": \"1956-01-03T04:05:10.761Z\",\n      \"deliveryEnd\": \"2008-04-01T12:11:49.181Z\",\n      \"demandCurve\": [\n        {\n          \"price\": 2602.116939912299,\n          \"volume\": 4629.660017429713\n        },\n        {\n          \"price\": 2008.4710657061078,\n          \"volume\": 9696.824735487959\n        }\n      ],\n      \"supplyCurve\": [\n        {\n          \"price\": 6861.475549052762,\n          \"volume\": 3657.6907887663524\n        },\n        {\n          \"price\": 7956.26557531582,\n          \"volume\": 5023.134266464236\n        }\n      ]\n    },\n    {\n      \"deliveryStart\": \"1994-12-28T09:06:02.750Z\",\n      \"deliveryEnd\": \"2005-12-15T18:17:15.048Z\",\n      \"demandCurve\": [\n        {\n          \"price\": 9274.782410784104,\n          \"volume\": 3947.258139754116\n        },\n        {\n          \"price\": 3388.839859465107,\n          \"volume\": 7081.674173078341\n        }\n      ],\n      \"supplyCurve\": [\n        {\n          \"price\": 7900.7647957438085,\n          \"volume\": 2425.0817884976595\n        },\n        {\n          \"price\": 5021.895863071803,\n          \"volume\": 3089.900166946683\n        }\n      ]\n    }\n  ],\n  \"market\": \"SemGb_IntradayAuction1\",\n  \"deliveryArea\": \"string\",\n  \"blockOrders\": [\n    {\n      \"id\": 8414,\n      \"side\": \"Buy\",\n      \"exclusiveGroupId\": 8724,\n      \"minimumAcceptanceRatio\": 7193.813709036885,\n      \"linkedOrderId\": 1814,\n      \"price\": 6487.425253498821,\n      \"paradoxicallyRejected\": true,\n      \"actualAcceptanceRatio\": 6183.433667104393,\n      \"intervals\": [\n        {\n          \"deliveryStart\": \"1964-01-04T05:26:03.993Z\",\n          \"deliveryEnd\": \"1963-01-30T11:41:34.352Z\",\n          \"volume\": 9431.96348233969,\n          \"acceptedVolume\": 2327.5422608114495\n        },\n        {\n          \"deliveryStart\": \"1994-11-04T14:09:30.874Z\",\n          \"deliveryEnd\": \"2008-01-11T10:34:13.375Z\",\n          \"volume\": 5684.039741576792,\n          \"acceptedVolume\": 2188.598097297947\n        }\n      ]\n    },\n    {\n      \"id\": 8958,\n      \"side\": \"Buy\",\n      \"exclusiveGroupId\": 3840,\n      \"minimumAcceptanceRatio\": 8385.89750101561,\n      \"linkedOrderId\": 41,\n      \"price\": 4896.084962118297,\n      \"paradoxicallyRejected\": true,\n      \"actualAcceptanceRatio\": 7975.458416926988,\n      \"intervals\": [\n        {\n          \"deliveryStart\": \"1961-03-23T16:22:11.727Z\",\n          \"deliveryEnd\": \"1994-10-03T20:21:50.958Z\",\n          \"volume\": 2008.500364668615,\n          \"acceptedVolume\": 7665.055946360612\n        },\n        {\n          \"deliveryStart\": \"1978-01-07T20:12:34.036Z\",\n          \"deliveryEnd\": \"2021-09-18T16:22:42.506Z\",\n          \"volume\": 1665.6718636723556,\n          \"acceptedVolume\": 4580.826069324494\n        }\n      ]\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b5a82d7a-1ccf-4a0e-8865-71ddaf03404b",
+              "name": "Bad Request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "Auction",
+                    "N2EX_DayAhead",
+                    "PriceCurves",
+                    "UK"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "date",
+                      "value": "<date>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"type\": \"string\",\n  \"title\": \"string\",\n  \"status\": 4144,\n  \"detail\": \"string\",\n  \"instance\": \"string\",\n  \"errors\": {\n    \"key_0\": [\n      \"string\",\n      \"string\"\n    ]\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "93a3b723-7bae-4cac-8d68-05b6c83b4fbd",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "Auction",
+                    "N2EX_DayAhead",
+                    "PriceCurves",
+                    "UK"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "date",
+                      "value": "<date>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "\"string\"",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1e7eca38-c5ed-459b-a819-45badd427b4e",
+              "name": "Forbidden",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v2",
+                    "Auction",
+                    "N2EX_DayAhead",
+                    "PriceCurves",
+                    "UK"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "date",
+                      "value": "<date>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "\"string\"",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://dataportal-api.nordpoolgroup.com",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "64578199-c5c7-4c0d-8b8c-9507df928f29",
+    "name": "Nord Pool Data Portal API (Public) Auction PriceCurves API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The unauthenticated JSON API behind the Nord Pool Data Portal (data.nordpoolgroup.com), where Nord Pool publishes day-ahead electricity prices for the Nordic, Baltic, CWE, and UK bidding areas. These endpoints return the same day-ahead auction results shown on the public website, in 15-minute Market Time Unit resolution, and are widely used by open-source integrations such as Home Assistant. IMPORTANT - this API is not part of Nord Pool's officially documented, subscription-backed developer offering. It is not covered by an SLA or the API General Terms, and Nord Pool may change or restrict it at any time. The two operations below were observed live and verified returning data on 2026-07-11; request and response shapes are modeled from those observed responses rather than from official reference documentation. For supported programmatic access, use the Nord Pool Market Data API (data-api.nordpoolgroup.com) with a Power Data Services subscription.\n\nContact Support:\n Name: Nord Pool",
+      "type": "text/plain"
+    }
+  }
+}

@@ -1,0 +1,106 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Nord Pool Data Portal API (Public) Auction System API",
+    "version": "1.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "System",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "System Price",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/System/Price",
+            "params": [
+              {
+                "name": "currency",
+                "value": "",
+                "type": "query",
+                "description": "Available currencies: EUR, SEK, NOK, DKK"
+              },
+              {
+                "name": "date",
+                "value": "",
+                "type": "query",
+                "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15"
+              }
+            ]
+          },
+          "docs": "Returns the system price for a delivery date and currency.\n            \nSystem price is an artificial index price based on orders from the Day-ahead auction. The system price is calculating a single price for the Nordic region (Sweden, Finland, Norway, Denmark) based on orders from all power exchanges in the Nordics. Import and export flows from other regions are set to the same as the Day-ahead auction outcome. All capacity constraints are removed within the Nordic region, and a single price is"
+        },
+        {
+          "info": {
+            "name": "Yearly System Price",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/System/Price/Yearly",
+            "params": [
+              {
+                "name": "currency",
+                "value": "",
+                "type": "query",
+                "description": "Available currencies: EUR, SEK, NOK, DKK"
+              },
+              {
+                "name": "year",
+                "value": "",
+                "type": "query",
+                "description": "Year in CET (format: yyyy, e.g., 2024)"
+              }
+            ]
+          },
+          "docs": " Returns system prices for a year and currency\n            \nSystem price is an artificial index price based on orders from the Day-ahead auction. The system price is calculating a single price for the Nordic region (Sweden, Finland, Norway, Denmark) based on orders from all power exchanges in the Nordics. Import and export flows from other regions are set to the same as the Day-ahead auction outcome. All capacity constraints are removed within the Nordic region, and a single price is gotten by m"
+        },
+        {
+          "info": {
+            "name": "System Turnover",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/System/Turnover",
+            "params": [
+              {
+                "name": "date",
+                "value": "",
+                "type": "query",
+                "description": "Delivery date, referring to CET date. Format yyyy-MM-dd, for example 2024-08-15"
+              }
+            ]
+          },
+          "docs": "Returns the system turnover volume for a date.\n            \nSystem turnover refers to the total purchase volume that comes from the system price calculation across the whole Nordic region.\n            \n### Response field descriptions\n- **status**: Missing if data does not exist. Preliminary if the market coupling session is not complete. Final once the market coupling session is complete. Cancelled if the auction is cancelled.\n- **totalTurnover**: the total daily turnover in MWh\n- **averageTurno"
+        },
+        {
+          "info": {
+            "name": "Yearly System Turnover",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://dataportal-api.nordpoolgroup.com/api/v2/System/Turnover/Yearly",
+            "params": [
+              {
+                "name": "year",
+                "value": "",
+                "type": "query",
+                "description": "Year in CET (format: yyyy, e.g., 2024)"
+              }
+            ]
+          },
+          "docs": "Returns system turnover volumes for a year\n            \nSystem turnover refers to the total purchase volume that comes from the system price calculation across the whole Nordic region.\n            \n### Response field descriptions\n**yearlySummary**: \n - **totalTurnover**: contains total turnover volume in MWh for the year\n - **averageTurnover**: the average turnover volume in MW across all delivery periods\n - **minTurnover**: the minimum turnover in MW across all delivery periods\n - **maxTurnover"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
