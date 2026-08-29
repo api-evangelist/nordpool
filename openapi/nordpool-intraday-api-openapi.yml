@@ -1,14 +1,16 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
-  title: Nord Pool Data Portal API (Public) Auction Intraday API
-  version: '1.0'
-  description: The unauthenticated JSON API behind the Nord Pool Data Portal (data.nordpoolgroup.com), where Nord Pool publishes day-ahead electricity prices for the Nordic, Baltic, CWE, and UK bidding areas. These endpoints return the same day-ahead auction results shown on the public website, in 15-minute Market Time Unit resolution, and are widely used by open-source integrations such as Home Assistant. IMPORTANT - this API is not part of Nord Pool's officially documented, subscription-backed developer offering. It is not covered by an SLA or the API General Terms, and Nord Pool may change or restrict it at any time. The two operations below were observed live and verified returning data on 2026-07-11; request and response shapes are modeled from those observed responses rather than from official reference documentation. For supported programmatic access, use the Nord Pool Market Data API (data-api.nordpoolgroup.com) with a Power Data Services subscription.
+  title: Nord Pool Market Data Intraday API
+  description: 'Nord Pool''s Market Data API (v2) provides programmatic access to European power exchange market data: day-ahead auction prices, price indices, volumes, capacities, flows and aggregated bid curves; intraday continuous statistics, orders, trades and order books; balance market (mFRR) data; power system data (production, consumption, forecasts, hydro reservoir reserves); system price and turnover; and exchange rates. This document is the provider''s published OpenAPI definition, retrieved from https://data-api.nordpoolgroup.com/swagger/v2/swagger.json on 2026-07-11. Access to the data requires a paid Nord Pool Power Data Services subscription; authentication is OAuth 2.0 against https://sts.nordpoolgroup.com.'
+  version: v2
   contact:
-    name: Nord Pool
-    url: https://data.nordpoolgroup.com/
+    name: Nord Pool Power Data Services
+    url: https://www.nordpoolgroup.com/en/services/power-market-data-services/
 servers:
-- url: https://dataportal-api.nordpoolgroup.com
-  description: Nord Pool Data Portal backend (public, unauthenticated)
+- url: https://data-api.nordpoolgroup.com
+  description: Nord Pool Market Data API (production)
+security:
+- oauth2: []
 tags:
 - name: Intraday
 paths:
@@ -1297,18 +1299,104 @@ paths:
                 $ref: '#/components/schemas/ValidationProblemDetails'
 components:
   schemas:
-    PublicIntradayOrderContract:
+    OrderBookRevision:
+      type: object
+      properties:
+        revision:
+          type: integer
+          format: int64
+        isSnapshot:
+          type: boolean
+        buyOrders:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/OrderView'
+        sellOrders:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/OrderView'
+      additionalProperties: false
+    ApiDeliveryAreaMarketHourlyStatistic:
+      required:
+      - priceUnit
+      type: object
+      properties:
+        deliveryArea:
+          type:
+          - string
+          - 'null'
+        deliveryDateCET:
+          type: string
+          format: date
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        priceUnit:
+          type:
+          - string
+          - 'null'
+        volumeUnit:
+          type:
+          - string
+          - 'null'
+        updatedAt:
+          type: string
+          format: date-time
+        hourlyStatistics:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/HourlyStatistics'
+      additionalProperties: false
+    TradeSide:
+      enum:
+      - None
+      - Buy
+      - Sell
+      type: string
+    Hub2HubCapacity:
+      type: object
+      properties:
+        areaFrom:
+          type:
+          - string
+          - 'null'
+        areaTo:
+          type:
+          - string
+          - 'null'
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        capacities:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/CapacityData'
+      additionalProperties: false
+    TopLevelPublicIntradayOrderContract:
       type: object
       properties:
         contractId:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         contractName:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         priceUnit:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         deliveryStart:
           type: string
           format: date-time
@@ -1316,24 +1404,21 @@ components:
           type: string
           format: date-time
         orders:
-          type: array
+          type:
+          - array
+          - 'null'
           items:
             $ref: '#/components/schemas/PublicIntradayOrder'
-          nullable: true
-      additionalProperties: false
-    ApiIntradayContainer:
-      type: object
-      properties:
         volumeUnit:
-          type: string
-          nullable: true
-        contracts:
-          type: array
-          items:
-            $ref: '#/components/schemas/PublicIntradayTradeContract'
-          nullable: true
+          type:
+          - string
+          - 'null'
+        deliveryArea:
+          type:
+          - string
+          - 'null'
       additionalProperties: false
-    ApiTotalMarketStatistic:
+    ApiTotalMarketHourlyStatistic:
       required:
       - priceUnit
       type: object
@@ -1344,100 +1429,78 @@ components:
         status:
           $ref: '#/components/schemas/ApiAvailableStatus'
         priceUnit:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         volumeUnit:
-          type: string
-          nullable: true
-          readOnly: true
+          type:
+          - string
+          - 'null'
         updatedAt:
           type: string
           format: date-time
-        contracts:
-          type: array
+        hourlyStatistics:
+          type:
+          - array
+          - 'null'
           items:
-            $ref: '#/components/schemas/ContractStatistics'
-          nullable: true
+            $ref: '#/components/schemas/HourlyStatistics'
       additionalProperties: false
-    HourlyStatistics:
+    PublicIntradayOrder:
       type: object
       properties:
-        deliveryStart:
+        orderId:
+          type:
+          - string
+          - 'null'
+        originalOrderId:
+          type:
+          - string
+          - 'null'
+        previousOrderId:
+          type:
+          - string
+          - 'null'
+        orderType:
+          $ref: '#/components/schemas/OrderType'
+        side:
+          $ref: '#/components/schemas/TradeSide'
+        createdTime:
           type: string
           format: date-time
-        deliveryEnd:
-          type: string
-          format: date-time
-        highPrice:
-          type: number
-          format: double
-          nullable: true
-        lowPrice:
-          type: number
-          format: double
-          nullable: true
-        openPrice:
-          type: number
-          format: double
-          nullable: true
-        closePrice:
-          type: number
-          format: double
-          nullable: true
-        averagePrice:
-          type: number
-          format: double
-          nullable: true
-        volume:
-          type: number
-          format: double
-        buyVolume:
-          type: number
-          format: double
-        sellVolume:
-          type: number
-          format: double
-        averagePriceLast3H:
-          type: number
-          format: double
-          nullable: true
-        averagePriceLast1H:
-          type: number
-          format: double
-          nullable: true
-        openTradeTime:
-          type: string
-          format: date-time
-          nullable: true
-        closeTradeTime:
-          type: string
-          format: date-time
-          nullable: true
+        revisions:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/PublicOrderRevision'
       additionalProperties: false
-    CapacityData:
+    ApiOrderBookAreaContracts:
+      required:
+      - deliveryArea
       type: object
       properties:
-        inCapacity:
-          type: number
-          format: double
-        outCapacity:
-          type: number
-          format: double
-        publicationTime:
+        deliveryArea:
+          type:
+          - string
+          - 'null'
+        deliveryDateUtc:
           type: string
-          format: date-time
+          format: date
+        contracts:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/OrderBookContract'
       additionalProperties: false
-    ApiAvailableStatus:
-      enum:
-      - Missing
-      - Available
-      type: string
     PublicIntradayTrade:
       type: object
       properties:
         tradeId:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         tradeTime:
           type: string
           format: date-time
@@ -1460,431 +1523,65 @@ components:
         crossPx:
           type: boolean
         legs:
-          type: array
+          type:
+          - array
+          - 'null'
           items:
             $ref: '#/components/schemas/PublicIntradayTradeLeg'
-          nullable: true
       additionalProperties: false
-    ContractStatistics:
-      type: object
-      properties:
-        deliveryStart:
-          type: string
-          format: date-time
-        deliveryEnd:
-          type: string
-          format: date-time
-        isLocalContract:
-          type: boolean
-        contractId:
-          type: string
-          nullable: true
-        contractName:
-          type: string
-          nullable: true
-        contractOpenTime:
-          type: string
-          format: date-time
-          nullable: true
-        contractCloseTime:
-          type: string
-          format: date-time
-          nullable: true
-        highPrice:
-          type: number
-          format: double
-          nullable: true
-        lowPrice:
-          type: number
-          format: double
-          nullable: true
-        openPrice:
-          type: number
-          format: double
-          nullable: true
-        closePrice:
-          type: number
-          format: double
-          nullable: true
-        averagePrice:
-          type: number
-          format: double
-          nullable: true
-        volume:
-          type: number
-          format: double
-        buyVolume:
-          type: number
-          format: double
-          nullable: true
-        sellVolume:
-          type: number
-          format: double
-          nullable: true
-        averagePriceLast3H:
-          type: number
-          format: double
-          nullable: true
-        averagePriceLast1H:
-          type: number
-          format: double
-          nullable: true
-        openTradeTime:
-          type: string
-          format: date-time
-          nullable: true
-        closeTradeTime:
-          type: string
-          format: date-time
-          nullable: true
-      additionalProperties: false
-    ApiOrderbook:
-      required:
-      - contractId
-      - deliveryArea
-      - priceUnit
-      - volumeUnit
-      type: object
-      properties:
-        deliveryDateUtc:
-          type: string
-          format: date
-        contractId:
-          type: string
-          nullable: true
-        deliveryArea:
-          type: string
-          nullable: true
-        status:
-          $ref: '#/components/schemas/ApiAvailableStatus'
-        volumeUnit:
-          type: string
-          nullable: true
-        priceUnit:
-          type: string
-          nullable: true
-        updatedAt:
-          type: string
-          format: date-time
-        revisions:
-          type: array
-          items:
-            $ref: '#/components/schemas/OrderBookRevision'
-          nullable: true
-      additionalProperties: false
-    ApiDeliveryAreaMarketYearlyStatistic:
-      required:
-      - priceUnit
-      type: object
-      properties:
-        deliveryArea:
-          type: string
-          nullable: true
-        year:
-          type: integer
-          format: int32
-        status:
-          $ref: '#/components/schemas/ApiAvailableStatus'
-        priceUnit:
-          type: string
-          nullable: true
-        volumeUnit:
-          type: string
-          nullable: true
-          readOnly: true
-        updatedAt:
-          type: string
-          format: date-time
-        contracts:
-          type: array
-          items:
-            $ref: '#/components/schemas/ContractStatistics'
-          nullable: true
-      additionalProperties: false
-    ValidationProblemDetails:
-      type: object
-      properties:
-        type:
-          type: string
-          nullable: true
-        title:
-          type: string
-          nullable: true
-        status:
-          type: integer
-          format: int32
-          nullable: true
-        detail:
-          type: string
-          nullable: true
-        instance:
-          type: string
-          nullable: true
-        errors:
-          type: object
-          additionalProperties:
-            type: array
-            items:
-              type: string
-          nullable: true
-      additionalProperties: {}
-    PublicIntradayOrder:
-      type: object
-      properties:
-        orderId:
-          type: string
-          nullable: true
-        originalOrderId:
-          type: string
-          nullable: true
-        previousOrderId:
-          type: string
-          nullable: true
-        orderType:
-          $ref: '#/components/schemas/OrderType'
-        side:
-          $ref: '#/components/schemas/TradeSide'
-        createdTime:
-          type: string
-          format: date-time
-        revisions:
-          type: array
-          items:
-            $ref: '#/components/schemas/PublicOrderRevision'
-          nullable: true
-      additionalProperties: false
-    OrderState:
+    ApiAvailableStatus:
       enum:
-      - Unknown
-      - Pending
-      - Active
-      - Hibernated
-      - Inactive
-      - Rejected
+      - Missing
+      - Available
       type: string
-    ApiIntradayOrdersContainer:
-      required:
-      - deliveryArea
-      type: object
-      properties:
-        volumeUnit:
-          type: string
-          nullable: true
-        deliveryArea:
-          type: string
-          nullable: true
-        contracts:
-          type: array
-          items:
-            $ref: '#/components/schemas/PublicIntradayOrderContract'
-          nullable: true
-      additionalProperties: false
-    ApiHub2HubCapacity:
-      type: object
-      properties:
-        volumeUnit:
-          type: string
-          nullable: true
-          readOnly: true
-        hubToHubCapacities:
-          type: array
-          items:
-            $ref: '#/components/schemas/Hub2HubCapacity'
-          nullable: true
-      additionalProperties: false
-    PublicTradeState:
-      enum:
-      - None
-      - Completed
-      - Disputed
-      - NotCancelled
-      - Cancelled
-      type: string
-    TimeInForce:
-      enum:
-      - Unknown
-      - ImmediateOrCancel
-      - FillOrKill
-      - None
-      - GoodTillDate
-      - GoodForSession
-      type: string
-    ApiDeliveryAreaMarketHourlyStatistic:
-      required:
-      - priceUnit
-      type: object
-      properties:
-        deliveryArea:
-          type: string
-          nullable: true
-        deliveryDateCET:
-          type: string
-          format: date
-        status:
-          $ref: '#/components/schemas/ApiAvailableStatus'
-        priceUnit:
-          type: string
-          nullable: true
-        volumeUnit:
-          type: string
-          nullable: true
-        updatedAt:
-          type: string
-          format: date-time
-        hourlyStatistics:
-          type: array
-          items:
-            $ref: '#/components/schemas/HourlyStatistics'
-          nullable: true
-      additionalProperties: false
-    OrderView:
-      type: object
-      properties:
-        orderId:
-          type: string
-          nullable: true
-        price:
-          type: number
-          format: double
-        volume:
-          type: number
-          format: double
-        deleted:
-          type: boolean
-        priorityTime:
-          type: string
-          format: date-time
-        updatedTime:
-          type: string
-          format: date-time
-      additionalProperties: false
     ApiDeliveryAreaMarketStatistic:
       required:
       - priceUnit
       type: object
       properties:
         deliveryArea:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         deliveryDateCET:
           type: string
           format: date
         status:
           $ref: '#/components/schemas/ApiAvailableStatus'
         priceUnit:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         volumeUnit:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
           readOnly: true
         updatedAt:
           type: string
           format: date-time
         contracts:
-          type: array
+          type:
+          - array
+          - 'null'
           items:
             $ref: '#/components/schemas/ContractStatistics'
-          nullable: true
-      additionalProperties: false
-    OrderBookContract:
-      required:
-      - contractId
-      type: object
-      properties:
-        contractId:
-          type: string
-          nullable: true
-        contractName:
-          type: string
-          nullable: true
-        deliveryStart:
-          type: string
-          format: date-time
-          nullable: true
-        deliveryEnd:
-          type: string
-          format: date-time
-          nullable: true
-        isLocalContract:
-          type: boolean
-          nullable: true
-        contractOpenTime:
-          type: string
-          format: date-time
-          nullable: true
-        contractCloseTime:
-          type: string
-          format: date-time
-          nullable: true
-      additionalProperties: false
-    OrderType:
-      enum:
-      - Unknown
-      - Limit
-      - Iceberg
-      - UserDefinedBlock
-      - DirectMatch
-      type: string
-    TopLevelPublicIntradayOrderContract:
-      type: object
-      properties:
-        contractId:
-          type: string
-          nullable: true
-        contractName:
-          type: string
-          nullable: true
-        priceUnit:
-          type: string
-          nullable: true
-        deliveryStart:
-          type: string
-          format: date-time
-        deliveryEnd:
-          type: string
-          format: date-time
-        orders:
-          type: array
-          items:
-            $ref: '#/components/schemas/PublicIntradayOrder'
-          nullable: true
-        volumeUnit:
-          type: string
-          nullable: true
-        deliveryArea:
-          type: string
-          nullable: true
-      additionalProperties: false
-    ApiOrderBookAreaContracts:
-      required:
-      - deliveryArea
-      type: object
-      properties:
-        deliveryArea:
-          type: string
-          nullable: true
-        deliveryDateUtc:
-          type: string
-          format: date
-        contracts:
-          type: array
-          items:
-            $ref: '#/components/schemas/OrderBookContract'
-          nullable: true
       additionalProperties: false
     PublicIntradayTradeContract:
       type: object
       properties:
         contractId:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         contractName:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         priceUnit:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         deliveryStart:
           type: string
           format: date-time
@@ -1892,42 +1589,109 @@ components:
           type: string
           format: date-time
         trades:
-          type: array
+          type:
+          - array
+          - 'null'
           items:
             $ref: '#/components/schemas/PublicIntradayTrade'
-          nullable: true
       additionalProperties: false
-    TradeSide:
-      enum:
-      - None
-      - Buy
-      - Sell
-      type: string
-    ApiDeliveryAreaYearlyHourlyStatistic:
+    ApiTotalMarketYearlyHourlyStatistic:
+      required:
+      - priceUnit
       type: object
       properties:
-        deliveryArea:
-          type: string
-          nullable: true
         year:
           type: integer
           format: int32
         status:
           $ref: '#/components/schemas/ApiAvailableStatus'
         priceUnit:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         volumeUnit:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         updatedAt:
           type: string
           format: date-time
         hourlyStatistics:
-          type: array
+          type:
+          - array
+          - 'null'
           items:
             $ref: '#/components/schemas/HourlyStatistics'
-          nullable: true
+      additionalProperties: false
+    PublicIntradayOrderContract:
+      type: object
+      properties:
+        contractId:
+          type:
+          - string
+          - 'null'
+        contractName:
+          type:
+          - string
+          - 'null'
+        priceUnit:
+          type:
+          - string
+          - 'null'
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        orders:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/PublicIntradayOrder'
+      additionalProperties: false
+    CapacityData:
+      type: object
+      properties:
+        inCapacity:
+          type: number
+          format: double
+        outCapacity:
+          type: number
+          format: double
+        publicationTime:
+          type: string
+          format: date-time
+      additionalProperties: false
+    ApiTotalMarketStatistic:
+      required:
+      - priceUnit
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        priceUnit:
+          type:
+          - string
+          - 'null'
+        volumeUnit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+        contracts:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ContractStatistics'
       additionalProperties: false
     PublicOrderRevision:
       type: object
@@ -1949,51 +1713,431 @@ components:
         action:
           $ref: '#/components/schemas/OrderAction'
         expirationTime:
-          type: string
+          type:
+          - string
+          - 'null'
           format: date-time
-          nullable: true
         timeInForce:
           $ref: '#/components/schemas/TimeInForce'
         icebergClipSize:
-          type: number
+          type:
+          - number
+          - 'null'
           format: double
-          nullable: true
         clipPriceChange:
-          type: number
+          type:
+          - number
+          - 'null'
           format: double
-          nullable: true
         remainingVolume:
-          type: number
+          type:
+          - number
+          - 'null'
           format: double
-          nullable: true
       additionalProperties: false
-    TopLevelPublicIntradayTradeContract:
+    ApiHub2HubCapacity:
       type: object
       properties:
-        contractId:
-          type: string
-          nullable: true
-        contractName:
-          type: string
-          nullable: true
+        volumeUnit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        hubToHubCapacities:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/Hub2HubCapacity'
+      additionalProperties: false
+    ApiDeliveryAreaMarketYearlyStatistic:
+      required:
+      - priceUnit
+      type: object
+      properties:
+        deliveryArea:
+          type:
+          - string
+          - 'null'
+        year:
+          type: integer
+          format: int32
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
         priceUnit:
+          type:
+          - string
+          - 'null'
+        volumeUnit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        updatedAt:
           type: string
-          nullable: true
+          format: date-time
+        contracts:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ContractStatistics'
+      additionalProperties: false
+    OrderState:
+      enum:
+      - Unknown
+      - Pending
+      - Active
+      - Hibernated
+      - Inactive
+      - Rejected
+      type: string
+    ContractStatistics:
+      type: object
+      properties:
         deliveryStart:
           type: string
           format: date-time
         deliveryEnd:
           type: string
           format: date-time
-        trades:
-          type: array
-          items:
-            $ref: '#/components/schemas/PublicIntradayTrade'
-          nullable: true
-        volumeUnit:
-          type: string
-          nullable: true
+        isLocalContract:
+          type: boolean
+        contractId:
+          type:
+          - string
+          - 'null'
+        contractName:
+          type:
+          - string
+          - 'null'
+        contractOpenTime:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        contractCloseTime:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        highPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        lowPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        openPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        closePrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        averagePrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        volume:
+          type: number
+          format: double
+        buyVolume:
+          type:
+          - number
+          - 'null'
+          format: double
+        sellVolume:
+          type:
+          - number
+          - 'null'
+          format: double
+        averagePriceLast3H:
+          type:
+          - number
+          - 'null'
+          format: double
+        averagePriceLast1H:
+          type:
+          - number
+          - 'null'
+          format: double
+        openTradeTime:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        closeTradeTime:
+          type:
+          - string
+          - 'null'
+          format: date-time
       additionalProperties: false
+    ApiTotalMarketYearlyStatistic:
+      required:
+      - priceUnit
+      type: object
+      properties:
+        year:
+          type: integer
+          format: int32
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        priceUnit:
+          type:
+          - string
+          - 'null'
+        volumeUnit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+        contracts:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ContractStatistics'
+      additionalProperties: false
+    HourlyStatistics:
+      type: object
+      properties:
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        highPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        lowPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        openPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        closePrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        averagePrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        volume:
+          type: number
+          format: double
+        buyVolume:
+          type: number
+          format: double
+        sellVolume:
+          type: number
+          format: double
+        averagePriceLast3H:
+          type:
+          - number
+          - 'null'
+          format: double
+        averagePriceLast1H:
+          type:
+          - number
+          - 'null'
+          format: double
+        openTradeTime:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        closeTradeTime:
+          type:
+          - string
+          - 'null'
+          format: date-time
+      additionalProperties: false
+    ApiDeliveryAreaYearlyHourlyStatistic:
+      type: object
+      properties:
+        deliveryArea:
+          type:
+          - string
+          - 'null'
+        year:
+          type: integer
+          format: int32
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        priceUnit:
+          type:
+          - string
+          - 'null'
+        volumeUnit:
+          type:
+          - string
+          - 'null'
+        updatedAt:
+          type: string
+          format: date-time
+        hourlyStatistics:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/HourlyStatistics'
+      additionalProperties: false
+    OrderView:
+      type: object
+      properties:
+        orderId:
+          type:
+          - string
+          - 'null'
+        price:
+          type: number
+          format: double
+        volume:
+          type: number
+          format: double
+        deleted:
+          type: boolean
+        priorityTime:
+          type: string
+          format: date-time
+        updatedTime:
+          type: string
+          format: date-time
+      additionalProperties: false
+    ApiIntradayOrdersContainer:
+      required:
+      - deliveryArea
+      type: object
+      properties:
+        volumeUnit:
+          type:
+          - string
+          - 'null'
+        deliveryArea:
+          type:
+          - string
+          - 'null'
+        contracts:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/PublicIntradayOrderContract'
+      additionalProperties: false
+    PublicTradeState:
+      enum:
+      - None
+      - Completed
+      - Disputed
+      - NotCancelled
+      - Cancelled
+      type: string
+    ApiOrderbook:
+      required:
+      - contractId
+      - deliveryArea
+      - priceUnit
+      - volumeUnit
+      type: object
+      properties:
+        deliveryDateUtc:
+          type: string
+          format: date
+        contractId:
+          type:
+          - string
+          - 'null'
+        deliveryArea:
+          type:
+          - string
+          - 'null'
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        volumeUnit:
+          type:
+          - string
+          - 'null'
+        priceUnit:
+          type:
+          - string
+          - 'null'
+        updatedAt:
+          type: string
+          format: date-time
+        revisions:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/OrderBookRevision'
+      additionalProperties: false
+    OrderBookContract:
+      required:
+      - contractId
+      type: object
+      properties:
+        contractId:
+          type:
+          - string
+          - 'null'
+        contractName:
+          type:
+          - string
+          - 'null'
+        deliveryStart:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        deliveryEnd:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        isLocalContract:
+          type:
+          - boolean
+          - 'null'
+        contractOpenTime:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        contractCloseTime:
+          type:
+          - string
+          - 'null'
+          format: date-time
+      additionalProperties: false
+    OrderType:
+      enum:
+      - Unknown
+      - Limit
+      - Iceberg
+      - UserDefinedBlock
+      - DirectMatch
+      type: string
     OrderAction:
       enum:
       - None
@@ -2009,56 +2153,51 @@ components:
       - IcebergSliceAdded
       - SystemExpired
       type: string
-    ApiTotalMarketHourlyStatistic:
-      required:
-      - priceUnit
+    ApiIntradayContainer:
       type: object
       properties:
-        deliveryDateCET:
-          type: string
-          format: date
-        status:
-          $ref: '#/components/schemas/ApiAvailableStatus'
-        priceUnit:
-          type: string
-          nullable: true
         volumeUnit:
-          type: string
-          nullable: true
-        updatedAt:
-          type: string
-          format: date-time
-        hourlyStatistics:
-          type: array
-          items:
-            $ref: '#/components/schemas/HourlyStatistics'
-          nullable: true
-      additionalProperties: false
-    ApiTotalMarketYearlyStatistic:
-      required:
-      - priceUnit
-      type: object
-      properties:
-        year:
-          type: integer
-          format: int32
-        status:
-          $ref: '#/components/schemas/ApiAvailableStatus'
-        priceUnit:
-          type: string
-          nullable: true
-        volumeUnit:
-          type: string
-          nullable: true
-          readOnly: true
-        updatedAt:
-          type: string
-          format: date-time
+          type:
+          - string
+          - 'null'
         contracts:
-          type: array
+          type:
+          - array
+          - 'null'
           items:
-            $ref: '#/components/schemas/ContractStatistics'
-          nullable: true
+            $ref: '#/components/schemas/PublicIntradayTradeContract'
+      additionalProperties: false
+    TopLevelPublicIntradayTradeContract:
+      type: object
+      properties:
+        contractId:
+          type:
+          - string
+          - 'null'
+        contractName:
+          type:
+          - string
+          - 'null'
+        priceUnit:
+          type:
+          - string
+          - 'null'
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        trades:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/PublicIntradayTrade'
+        volumeUnit:
+          type:
+          - string
+          - 'null'
       additionalProperties: false
     TradePhase:
       enum:
@@ -2070,79 +2209,68 @@ components:
       type: object
       properties:
         deliveryArea:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         referenceOrderId:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         tradeSide:
           $ref: '#/components/schemas/TradeSide'
       additionalProperties: false
-    ApiTotalMarketYearlyHourlyStatistic:
-      required:
-      - priceUnit
+    ValidationProblemDetails:
       type: object
       properties:
-        year:
-          type: integer
-          format: int32
+        type:
+          type:
+          - string
+          - 'null'
+        title:
+          type:
+          - string
+          - 'null'
         status:
-          $ref: '#/components/schemas/ApiAvailableStatus'
-        priceUnit:
-          type: string
-          nullable: true
-        volumeUnit:
-          type: string
-          nullable: true
-        updatedAt:
-          type: string
-          format: date-time
-        hourlyStatistics:
-          type: array
-          items:
-            $ref: '#/components/schemas/HourlyStatistics'
-          nullable: true
-      additionalProperties: false
-    Hub2HubCapacity:
-      type: object
-      properties:
-        areaFrom:
-          type: string
-          nullable: true
-        areaTo:
-          type: string
-          nullable: true
-        deliveryStart:
-          type: string
-          format: date-time
-        deliveryEnd:
-          type: string
-          format: date-time
-        capacities:
-          type: array
-          items:
-            $ref: '#/components/schemas/CapacityData'
-          nullable: true
-      additionalProperties: false
-    OrderBookRevision:
-      type: object
-      properties:
-        revision:
-          type: integer
-          format: int64
-        isSnapshot:
-          type: boolean
-        buyOrders:
-          type: array
-          items:
-            $ref: '#/components/schemas/OrderView'
-          nullable: true
-        sellOrders:
-          type: array
-          items:
-            $ref: '#/components/schemas/OrderView'
-          nullable: true
-      additionalProperties: false
+          type:
+          - integer
+          - 'null'
+          format: int32
+        detail:
+          type:
+          - string
+          - 'null'
+        instance:
+          type:
+          - string
+          - 'null'
+        errors:
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: array
+            items:
+              type: string
+      additionalProperties: {}
+    TimeInForce:
+      enum:
+      - Unknown
+      - ImmediateOrCancel
+      - FillOrKill
+      - None
+      - GoodTillDate
+      - GoodForSession
+      type: string
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      description: Oauth2 Authentication
+      flows:
+        authorizationCode:
+          authorizationUrl: https://sts.nordpoolgroup.com/connect/authorize
+          tokenUrl: https://sts.nordpoolgroup.com/connect/token
+          scopes:
+            marketdata_api: '...'
 externalDocs:
-  description: Nord Pool Data Portal (public day-ahead prices site)
-  url: https://data.nordpoolgroup.com/
+  description: Nord Pool Developer Portal
+  url: https://developers.nordpoolgroup.com/

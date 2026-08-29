@@ -1,19 +1,13 @@
 {
   "provider": "nordpool",
   "sources": [
-    "nordpool-auction-api-openapi.yml",
-    "nordpool-balancemarket-api-openapi.yml",
-    "nordpool-day-ahead-prices-api-openapi.yml",
-    "nordpool-exchangerate-api-openapi.yml",
-    "nordpool-intraday-api-openapi.yml",
-    "nordpool-powersystem-api-openapi.yml",
-    "nordpool-pricecurves-api-openapi.yml",
-    "nordpool-system-api-openapi.yml"
+    "_original/nordpool-data-portal-openapi.yml",
+    "_original/nordpool-market-data-openapi.yml"
   ],
   "outputs": [
+    "nordpool-day-ahead-prices-api-openapi.yml",
     "nordpool-auction-api-openapi.yml",
     "nordpool-balancemarket-api-openapi.yml",
-    "nordpool-day-ahead-prices-api-openapi.yml",
     "nordpool-exchangerate-api-openapi.yml",
     "nordpool-intraday-api-openapi.yml",
     "nordpool-powersystem-api-openapi.yml",
@@ -23,6 +17,19 @@
   "archived": [],
   "errors": [],
   "warnings": [],
-  "notes": [],
-  "skipped": []
+  "notes": [
+    "sourced from openapi/_original/ (2 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "nordpool-data-portal-openapi.yml: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
+    "nordpool-market-data-openapi.yml: upgraded openapi 3.0.4 -> OpenAPI 3.2.0"
+  ],
+  "skipped": [
+    "nordpool-auction-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "nordpool-balancemarket-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "nordpool-day-ahead-prices-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "nordpool-exchangerate-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "nordpool-intraday-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "nordpool-powersystem-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "nordpool-pricecurves-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "nordpool-system-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }

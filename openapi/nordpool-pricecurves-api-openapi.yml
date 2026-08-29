@@ -1,14 +1,16 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
-  title: Nord Pool Data Portal API (Public) Auction PriceCurves API
-  version: '1.0'
-  description: The unauthenticated JSON API behind the Nord Pool Data Portal (data.nordpoolgroup.com), where Nord Pool publishes day-ahead electricity prices for the Nordic, Baltic, CWE, and UK bidding areas. These endpoints return the same day-ahead auction results shown on the public website, in 15-minute Market Time Unit resolution, and are widely used by open-source integrations such as Home Assistant. IMPORTANT - this API is not part of Nord Pool's officially documented, subscription-backed developer offering. It is not covered by an SLA or the API General Terms, and Nord Pool may change or restrict it at any time. The two operations below were observed live and verified returning data on 2026-07-11; request and response shapes are modeled from those observed responses rather than from official reference documentation. For supported programmatic access, use the Nord Pool Market Data API (data-api.nordpoolgroup.com) with a Power Data Services subscription.
+  title: Nord Pool Market Data Price Curves API
+  description: 'Nord Pool''s Market Data API (v2) provides programmatic access to European power exchange market data: day-ahead auction prices, price indices, volumes, capacities, flows and aggregated bid curves; intraday continuous statistics, orders, trades and order books; balance market (mFRR) data; power system data (production, consumption, forecasts, hydro reservoir reserves); system price and turnover; and exchange rates. This document is the provider''s published OpenAPI definition, retrieved from https://data-api.nordpoolgroup.com/swagger/v2/swagger.json on 2026-07-11. Access to the data requires a paid Nord Pool Power Data Services subscription; authentication is OAuth 2.0 against https://sts.nordpoolgroup.com.'
+  version: v2
   contact:
-    name: Nord Pool
-    url: https://data.nordpoolgroup.com/
+    name: Nord Pool Power Data Services
+    url: https://www.nordpoolgroup.com/en/services/power-market-data-services/
 servers:
-- url: https://dataportal-api.nordpoolgroup.com
-  description: Nord Pool Data Portal backend (public, unauthenticated)
+- url: https://data-api.nordpoolgroup.com
+  description: Nord Pool Market Data API (production)
+security:
+- oauth2: []
 tags:
 - name: PriceCurves
 paths:
@@ -77,58 +79,23 @@ paths:
                 $ref: '#/components/schemas/ValidationProblemDetails'
 components:
   schemas:
-    ApiUkPriceCurve:
-      type: object
-      properties:
-        deliveryDateCET:
-          type: string
-          format: date
-        status:
-          $ref: '#/components/schemas/ApiAvailableStatus'
-        currencyUnit:
-          type: string
-          nullable: true
-          readOnly: true
-        volumeUnit:
-          type: string
-          nullable: true
-          readOnly: true
-        orderPositions:
-          type: array
-          items:
-            $ref: '#/components/schemas/ApiUkPeriod'
-          nullable: true
-        market:
-          $ref: '#/components/schemas/Market'
-        deliveryArea:
-          type: string
-          nullable: true
-          readOnly: true
-        blockOrders:
-          type: array
-          items:
-            $ref: '#/components/schemas/ApiUkBlockOrder'
-          nullable: true
-      additionalProperties: false
-    BlockOrderSide:
-      enum:
-      - Buy
-      - Sell
-      type: string
-    ApiPricePoint:
-      type: object
-      properties:
-        price:
-          type: number
-          format: double
-        volume:
-          type: number
-          format: double
-      additionalProperties: false
     ApiAvailableStatus:
       enum:
       - Missing
       - Available
+      type: string
+    Market:
+      enum:
+      - DayAhead
+      - GbHalfHour_DayAhead
+      - N2EX_DayAhead
+      - NP_IntradayAuction1
+      - NP_IntradayAuction2
+      - SemGb_IntradayAuction1
+      - SemGb_IntradayAuction2
+      - SIDC_IntradayAuction1
+      - SIDC_IntradayAuction2
+      - SIDC_IntradayAuction3
       type: string
     ApiUkPeriod:
       type: object
@@ -140,43 +107,69 @@ components:
           type: string
           format: date-time
         demandCurve:
-          type: array
+          type:
+          - array
+          - 'null'
           items:
             $ref: '#/components/schemas/ApiPricePoint'
-          nullable: true
         supplyCurve:
-          type: array
+          type:
+          - array
+          - 'null'
           items:
             $ref: '#/components/schemas/ApiPricePoint'
-          nullable: true
       additionalProperties: false
-    ValidationProblemDetails:
+    ApiPricePoint:
       type: object
       properties:
-        type:
-          type: string
-          nullable: true
-        title:
-          type: string
-          nullable: true
-        status:
+        price:
+          type: number
+          format: double
+        volume:
+          type: number
+          format: double
+      additionalProperties: false
+    ApiUkBlockOrder:
+      type: object
+      properties:
+        id:
           type: integer
           format: int32
-          nullable: true
-        detail:
-          type: string
-          nullable: true
-        instance:
-          type: string
-          nullable: true
-        errors:
-          type: object
-          additionalProperties:
-            type: array
-            items:
-              type: string
-          nullable: true
-      additionalProperties: {}
+        side:
+          $ref: '#/components/schemas/BlockOrderSide'
+        exclusiveGroupId:
+          type:
+          - integer
+          - 'null'
+          format: int32
+        minimumAcceptanceRatio:
+          type: number
+          format: double
+        linkedOrderId:
+          type:
+          - integer
+          - 'null'
+          format: int32
+        price:
+          type: number
+          format: double
+        paradoxicallyRejected:
+          type: boolean
+        actualAcceptanceRatio:
+          type: number
+          format: double
+        intervals:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiUkBlockOrderInterval'
+      additionalProperties: false
+    BlockOrderSide:
+      enum:
+      - Buy
+      - Sell
+      type: string
     ApiUkBlockOrderInterval:
       type: object
       properties:
@@ -193,52 +186,87 @@ components:
           type: number
           format: double
       additionalProperties: false
-    Market:
-      enum:
-      - DayAhead
-      - GbHalfHour_DayAhead
-      - N2EX_DayAhead
-      - NP_IntradayAuction1
-      - NP_IntradayAuction2
-      - SemGb_IntradayAuction1
-      - SemGb_IntradayAuction2
-      - SIDC_IntradayAuction1
-      - SIDC_IntradayAuction2
-      - SIDC_IntradayAuction3
-      type: string
-    ApiUkBlockOrder:
+    ValidationProblemDetails:
       type: object
       properties:
-        id:
-          type: integer
+        type:
+          type:
+          - string
+          - 'null'
+        title:
+          type:
+          - string
+          - 'null'
+        status:
+          type:
+          - integer
+          - 'null'
           format: int32
-        side:
-          $ref: '#/components/schemas/BlockOrderSide'
-        exclusiveGroupId:
-          type: integer
-          format: int32
-          nullable: true
-        minimumAcceptanceRatio:
-          type: number
-          format: double
-        linkedOrderId:
-          type: integer
-          format: int32
-          nullable: true
-        price:
-          type: number
-          format: double
-        paradoxicallyRejected:
-          type: boolean
-        actualAcceptanceRatio:
-          type: number
-          format: double
-        intervals:
-          type: array
+        detail:
+          type:
+          - string
+          - 'null'
+        instance:
+          type:
+          - string
+          - 'null'
+        errors:
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: array
+            items:
+              type: string
+      additionalProperties: {}
+    ApiUkPriceCurve:
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        currencyUnit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        volumeUnit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        orderPositions:
+          type:
+          - array
+          - 'null'
           items:
-            $ref: '#/components/schemas/ApiUkBlockOrderInterval'
-          nullable: true
+            $ref: '#/components/schemas/ApiUkPeriod'
+        market:
+          $ref: '#/components/schemas/Market'
+        deliveryArea:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        blockOrders:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiUkBlockOrder'
       additionalProperties: false
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      description: Oauth2 Authentication
+      flows:
+        authorizationCode:
+          authorizationUrl: https://sts.nordpoolgroup.com/connect/authorize
+          tokenUrl: https://sts.nordpoolgroup.com/connect/token
+          scopes:
+            marketdata_api: '...'
 externalDocs:
-  description: Nord Pool Data Portal (public day-ahead prices site)
-  url: https://data.nordpoolgroup.com/
+  description: Nord Pool Developer Portal
+  url: https://developers.nordpoolgroup.com/

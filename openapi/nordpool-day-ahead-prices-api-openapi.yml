@@ -1,6 +1,6 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
-  title: Nord Pool Data Portal API (Public) Auction Day-Ahead Prices API
+  title: Nord Pool Data Portal API (Public) Day-Ahead Prices API
   version: '1.0'
   description: The unauthenticated JSON API behind the Nord Pool Data Portal (data.nordpoolgroup.com), where Nord Pool publishes day-ahead electricity prices for the Nordic, Baltic, CWE, and UK bidding areas. These endpoints return the same day-ahead auction results shown on the public website, in 15-minute Market Time Unit resolution, and are widely used by open-source integrations such as Home Assistant. IMPORTANT - this API is not part of Nord Pool's officially documented, subscription-backed developer offering. It is not covered by an SLA or the API General Terms, and Nord Pool may change or restrict it at any time. The two operations below were observed live and verified returning data on 2026-07-11; request and response shapes are modeled from those observed responses rather than from official reference documentation. For supported programmatic access, use the Nord Pool Market Data API (data-api.nordpoolgroup.com) with a Power Data Services subscription.
   contact:

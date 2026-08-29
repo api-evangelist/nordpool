@@ -1,14 +1,16 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
-  title: Nord Pool Data Portal API (Public) Auction BalanceMarket API
-  version: '1.0'
-  description: The unauthenticated JSON API behind the Nord Pool Data Portal (data.nordpoolgroup.com), where Nord Pool publishes day-ahead electricity prices for the Nordic, Baltic, CWE, and UK bidding areas. These endpoints return the same day-ahead auction results shown on the public website, in 15-minute Market Time Unit resolution, and are widely used by open-source integrations such as Home Assistant. IMPORTANT - this API is not part of Nord Pool's officially documented, subscription-backed developer offering. It is not covered by an SLA or the API General Terms, and Nord Pool may change or restrict it at any time. The two operations below were observed live and verified returning data on 2026-07-11; request and response shapes are modeled from those observed responses rather than from official reference documentation. For supported programmatic access, use the Nord Pool Market Data API (data-api.nordpoolgroup.com) with a Power Data Services subscription.
+  title: Nord Pool Market Data Balance Market API
+  description: 'Nord Pool''s Market Data API (v2) provides programmatic access to European power exchange market data: day-ahead auction prices, price indices, volumes, capacities, flows and aggregated bid curves; intraday continuous statistics, orders, trades and order books; balance market (mFRR) data; power system data (production, consumption, forecasts, hydro reservoir reserves); system price and turnover; and exchange rates. This document is the provider''s published OpenAPI definition, retrieved from https://data-api.nordpoolgroup.com/swagger/v2/swagger.json on 2026-07-11. Access to the data requires a paid Nord Pool Power Data Services subscription; authentication is OAuth 2.0 against https://sts.nordpoolgroup.com.'
+  version: v2
   contact:
-    name: Nord Pool
-    url: https://data.nordpoolgroup.com/
+    name: Nord Pool Power Data Services
+    url: https://www.nordpoolgroup.com/en/services/power-market-data-services/
 servers:
-- url: https://dataportal-api.nordpoolgroup.com
-  description: Nord Pool Data Portal backend (public, unauthenticated)
+- url: https://data-api.nordpoolgroup.com
+  description: Nord Pool Market Data API (production)
+security:
+- oauth2: []
 tags:
 - name: BalanceMarket
 paths:
@@ -185,6 +187,56 @@ paths:
                 $ref: '#/components/schemas/ValidationProblemDetails'
 components:
   schemas:
+    MfrrMonthlySummary:
+      type: object
+      properties:
+        acceptedUpBidVolume:
+          type:
+          - number
+          - 'null'
+          format: double
+        acceptedDownBidVolume:
+          type:
+          - number
+          - 'null'
+          format: double
+        activatedUpVolume:
+          type:
+          - number
+          - 'null'
+          format: double
+        activatedDownVolume:
+          type:
+          - number
+          - 'null'
+          format: double
+        downPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        upPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        imbalancePrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        deliveryDateStartCET:
+          type: string
+          format: date
+        deliveryDateEndCET:
+          type: string
+          format: date
+      additionalProperties: false
+    ApiAvailableStatus:
+      enum:
+      - Missing
+      - Available
+      type: string
     ApiYearlyMfrr:
       required:
       - currency
@@ -195,140 +247,252 @@ components:
           type: integer
           format: int32
         deliveryArea:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         currency:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         status:
           $ref: '#/components/schemas/ApiAvailableStatus'
         updatedAt:
           type: string
           format: date-time
         unit:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
           readOnly: true
         totalVolumeUnit:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
           readOnly: true
         dailySummaries:
-          type: array
+          type:
+          - array
+          - 'null'
           items:
             $ref: '#/components/schemas/MfrrDailySummary'
-          nullable: true
         monthlySummaries:
-          type: array
+          type:
+          - array
+          - 'null'
           items:
             $ref: '#/components/schemas/MfrrMonthlySummary'
-          nullable: true
         yearlySummary:
           $ref: '#/components/schemas/MfrrEntry'
         content:
-          type: array
+          type:
+          - array
+          - 'null'
           items:
             $ref: '#/components/schemas/YearlyMfrrEntry'
-          nullable: true
       additionalProperties: false
-    ApiAvailableStatus:
-      enum:
-      - Missing
-      - Available
-      type: string
-    MfrrDailySummary:
+    ApiMfrrEntry:
       type: object
       properties:
-        acceptedUpBidVolume:
-          type: number
-          format: double
-          nullable: true
-        acceptedDownBidVolume:
-          type: number
-          format: double
-          nullable: true
-        activatedUpVolume:
-          type: number
-          format: double
-          nullable: true
-        activatedDownVolume:
-          type: number
-          format: double
-          nullable: true
-        downPrice:
-          type: number
-          format: double
-          nullable: true
-        upPrice:
-          type: number
-          format: double
-          nullable: true
-        imbalancePrice:
-          type: number
-          format: double
-          nullable: true
-        deliveryDateCET:
+        deliveryStart:
           type: string
-          format: date
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        acceptedUpBidVolume:
+          type:
+          - number
+          - 'null'
+          format: double
+        acceptedDownBidVolume:
+          type:
+          - number
+          - 'null'
+          format: double
+        activatedUpVolume:
+          type:
+          - number
+          - 'null'
+          format: double
+        activatedDownVolume:
+          type:
+          - number
+          - 'null'
+          format: double
+        downPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        upPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        imbalancePrice:
+          type:
+          - number
+          - 'null'
+          format: double
       additionalProperties: false
     ValidationProblemDetails:
       type: object
       properties:
         type:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         title:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         status:
-          type: integer
+          type:
+          - integer
+          - 'null'
           format: int32
-          nullable: true
         detail:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         instance:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         errors:
-          type: object
+          type:
+          - object
+          - 'null'
           additionalProperties:
             type: array
             items:
               type: string
-          nullable: true
       additionalProperties: {}
     MfrrEntry:
       type: object
       properties:
         acceptedUpBidVolume:
-          type: number
+          type:
+          - number
+          - 'null'
           format: double
-          nullable: true
         acceptedDownBidVolume:
-          type: number
+          type:
+          - number
+          - 'null'
           format: double
-          nullable: true
         activatedUpVolume:
-          type: number
+          type:
+          - number
+          - 'null'
           format: double
-          nullable: true
         activatedDownVolume:
-          type: number
+          type:
+          - number
+          - 'null'
           format: double
-          nullable: true
         downPrice:
-          type: number
+          type:
+          - number
+          - 'null'
           format: double
-          nullable: true
         upPrice:
-          type: number
+          type:
+          - number
+          - 'null'
           format: double
-          nullable: true
         imbalancePrice:
-          type: number
+          type:
+          - number
+          - 'null'
           format: double
-          nullable: true
+      additionalProperties: false
+    MfrrDailySummary:
+      type: object
+      properties:
+        acceptedUpBidVolume:
+          type:
+          - number
+          - 'null'
+          format: double
+        acceptedDownBidVolume:
+          type:
+          - number
+          - 'null'
+          format: double
+        activatedUpVolume:
+          type:
+          - number
+          - 'null'
+          format: double
+        activatedDownVolume:
+          type:
+          - number
+          - 'null'
+          format: double
+        downPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        upPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        imbalancePrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        deliveryDateCET:
+          type: string
+          format: date
+      additionalProperties: false
+    YearlyMfrrEntry:
+      type: object
+      properties:
+        acceptedUpBidVolume:
+          type:
+          - number
+          - 'null'
+          format: double
+        acceptedDownBidVolume:
+          type:
+          - number
+          - 'null'
+          format: double
+        activatedUpVolume:
+          type:
+          - number
+          - 'null'
+          format: double
+        activatedDownVolume:
+          type:
+          - number
+          - 'null'
+          format: double
+        downPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        upPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        imbalancePrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
       additionalProperties: false
     ApiMfrr:
       required:
@@ -342,137 +506,37 @@ components:
           type: string
           format: date-time
         deliveryArea:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         status:
           $ref: '#/components/schemas/ApiAvailableStatus'
         currency:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         exchangeRate:
-          type: number
+          type:
+          - number
+          - 'null'
           format: double
-          nullable: true
         manualFrequencyRestorationReserves:
-          type: array
+          type:
+          - array
+          - 'null'
           items:
             $ref: '#/components/schemas/ApiMfrrEntry'
-          nullable: true
       additionalProperties: false
-    YearlyMfrrEntry:
-      type: object
-      properties:
-        acceptedUpBidVolume:
-          type: number
-          format: double
-          nullable: true
-        acceptedDownBidVolume:
-          type: number
-          format: double
-          nullable: true
-        activatedUpVolume:
-          type: number
-          format: double
-          nullable: true
-        activatedDownVolume:
-          type: number
-          format: double
-          nullable: true
-        downPrice:
-          type: number
-          format: double
-          nullable: true
-        upPrice:
-          type: number
-          format: double
-          nullable: true
-        imbalancePrice:
-          type: number
-          format: double
-          nullable: true
-        deliveryStart:
-          type: string
-          format: date-time
-        deliveryEnd:
-          type: string
-          format: date-time
-      additionalProperties: false
-    MfrrMonthlySummary:
-      type: object
-      properties:
-        acceptedUpBidVolume:
-          type: number
-          format: double
-          nullable: true
-        acceptedDownBidVolume:
-          type: number
-          format: double
-          nullable: true
-        activatedUpVolume:
-          type: number
-          format: double
-          nullable: true
-        activatedDownVolume:
-          type: number
-          format: double
-          nullable: true
-        downPrice:
-          type: number
-          format: double
-          nullable: true
-        upPrice:
-          type: number
-          format: double
-          nullable: true
-        imbalancePrice:
-          type: number
-          format: double
-          nullable: true
-        deliveryDateStartCET:
-          type: string
-          format: date
-        deliveryDateEndCET:
-          type: string
-          format: date
-      additionalProperties: false
-    ApiMfrrEntry:
-      type: object
-      properties:
-        deliveryStart:
-          type: string
-          format: date-time
-        deliveryEnd:
-          type: string
-          format: date-time
-        acceptedUpBidVolume:
-          type: number
-          format: double
-          nullable: true
-        acceptedDownBidVolume:
-          type: number
-          format: double
-          nullable: true
-        activatedUpVolume:
-          type: number
-          format: double
-          nullable: true
-        activatedDownVolume:
-          type: number
-          format: double
-          nullable: true
-        downPrice:
-          type: number
-          format: double
-          nullable: true
-        upPrice:
-          type: number
-          format: double
-          nullable: true
-        imbalancePrice:
-          type: number
-          format: double
-          nullable: true
-      additionalProperties: false
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      description: Oauth2 Authentication
+      flows:
+        authorizationCode:
+          authorizationUrl: https://sts.nordpoolgroup.com/connect/authorize
+          tokenUrl: https://sts.nordpoolgroup.com/connect/token
+          scopes:
+            marketdata_api: '...'
 externalDocs:
-  description: Nord Pool Data Portal (public day-ahead prices site)
-  url: https://data.nordpoolgroup.com/
+  description: Nord Pool Developer Portal
+  url: https://developers.nordpoolgroup.com/

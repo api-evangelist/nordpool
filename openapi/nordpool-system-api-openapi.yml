@@ -1,14 +1,16 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
-  title: Nord Pool Data Portal API (Public) Auction System API
-  version: '1.0'
-  description: The unauthenticated JSON API behind the Nord Pool Data Portal (data.nordpoolgroup.com), where Nord Pool publishes day-ahead electricity prices for the Nordic, Baltic, CWE, and UK bidding areas. These endpoints return the same day-ahead auction results shown on the public website, in 15-minute Market Time Unit resolution, and are widely used by open-source integrations such as Home Assistant. IMPORTANT - this API is not part of Nord Pool's officially documented, subscription-backed developer offering. It is not covered by an SLA or the API General Terms, and Nord Pool may change or restrict it at any time. The two operations below were observed live and verified returning data on 2026-07-11; request and response shapes are modeled from those observed responses rather than from official reference documentation. For supported programmatic access, use the Nord Pool Market Data API (data-api.nordpoolgroup.com) with a Power Data Services subscription.
+  title: Nord Pool Market Data System API
+  description: 'Nord Pool''s Market Data API (v2) provides programmatic access to European power exchange market data: day-ahead auction prices, price indices, volumes, capacities, flows and aggregated bid curves; intraday continuous statistics, orders, trades and order books; balance market (mFRR) data; power system data (production, consumption, forecasts, hydro reservoir reserves); system price and turnover; and exchange rates. This document is the provider''s published OpenAPI definition, retrieved from https://data-api.nordpoolgroup.com/swagger/v2/swagger.json on 2026-07-11. Access to the data requires a paid Nord Pool Power Data Services subscription; authentication is OAuth 2.0 against https://sts.nordpoolgroup.com.'
+  version: v2
   contact:
-    name: Nord Pool
-    url: https://data.nordpoolgroup.com/
+    name: Nord Pool Power Data Services
+    url: https://www.nordpoolgroup.com/en/services/power-market-data-services/
 servers:
-- url: https://dataportal-api.nordpoolgroup.com
-  description: Nord Pool Data Portal backend (public, unauthenticated)
+- url: https://data-api.nordpoolgroup.com
+  description: Nord Pool Market Data API (production)
+security:
+- oauth2: []
 tags:
 - name: System
 paths:
@@ -288,6 +290,391 @@ paths:
                 $ref: '#/components/schemas/ValidationProblemDetails'
 components:
   schemas:
+    Summary:
+      type: object
+      properties:
+        averagePrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        minPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        maxPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+      additionalProperties: false
+    ApiSystemYearlyTurnover:
+      type: object
+      properties:
+        year:
+          type: integer
+          format: int32
+        status:
+          $ref: '#/components/schemas/ApiAuctionStatus'
+        updatedAt:
+          type: string
+          format: date-time
+        unit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        totalTurnoverUnit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        blockTurnoverUnit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        dailySummaries:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/SystemVolumeDailySummary'
+        monthlySummaries:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/SystemVolumeMonthlySummary'
+        yearlySummary:
+          $ref: '#/components/schemas/SystemVolumeSummary'
+        blockSummaries:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/SystemVolumeBlockAggregate'
+        volumes:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/SystemVolumeEntry'
+      additionalProperties: false
+    SystemVolumeEntry:
+      type: object
+      properties:
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        turnover:
+          type: number
+          format: double
+      additionalProperties: false
+    MonthlyPriceSummary:
+      type: object
+      properties:
+        averagePrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        minPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        maxPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        deliveryDateStartCET:
+          type: string
+          format: date
+        deliveryDateEndCET:
+          type: string
+          format: date
+      additionalProperties: false
+    ApiSystemPrice:
+      required:
+      - currency
+      - marketMainCurrency
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        updatedAt:
+          type: string
+          format: date-time
+        status:
+          $ref: '#/components/schemas/ApiAuctionStatus'
+        unit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        currency:
+          type:
+          - string
+          - 'null'
+        exchangeRate:
+          type:
+          - number
+          - 'null'
+          format: double
+        marketMainCurrency:
+          type:
+          - string
+          - 'null'
+        averagePrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        minPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        maxPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        prices:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/PriceEntry'
+        blockPrices:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/BlockPriceAggregate'
+      additionalProperties: false
+    SummaryPrice:
+      type: object
+      properties:
+        averagePrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        minPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        maxPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        deliveryDateCET:
+          type: string
+          format: date
+      additionalProperties: false
+    SystemVolumeDailySummary:
+      type: object
+      properties:
+        totalTurnover:
+          type: number
+          format: double
+        averageTurnover:
+          type: number
+          format: double
+        minTurnover:
+          type: number
+          format: double
+        maxTurnover:
+          type: number
+          format: double
+        deliveryDateCET:
+          type: string
+          format: date
+      additionalProperties: false
+    BlockPriceAggregate:
+      type: object
+      properties:
+        blockName:
+          type:
+          - string
+          - 'null'
+        blockStart:
+          type: string
+          format: date-time
+        blockEnd:
+          type: string
+          format: date-time
+        minPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        maxPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        averagePrice:
+          type:
+          - number
+          - 'null'
+          format: double
+      additionalProperties: false
+    ApiSystemYearlyPrice:
+      required:
+      - currency
+      - marketMainCurrency
+      - unit
+      type: object
+      properties:
+        year:
+          type: integer
+          format: int32
+        status:
+          $ref: '#/components/schemas/ApiAuctionStatus'
+        unit:
+          type:
+          - string
+          - 'null'
+        currency:
+          type:
+          - string
+          - 'null'
+        marketMainCurrency:
+          type:
+          - string
+          - 'null'
+        blockPrices:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/BlockPriceAggregate'
+        prices:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/PriceEntry'
+        yearlySummary:
+          $ref: '#/components/schemas/Summary'
+        dailySummaries:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/SummaryPrice'
+        weeklySummaries:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/WeeklyPriceSummary'
+        monthlySummaries:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/MonthlyPriceSummary'
+        updatedAt:
+          type: string
+          format: date-time
+      additionalProperties: false
+    SystemVolumeSummary:
+      type: object
+      properties:
+        totalTurnover:
+          type: number
+          format: double
+        averageTurnover:
+          type: number
+          format: double
+        minTurnover:
+          type: number
+          format: double
+        maxTurnover:
+          type: number
+          format: double
+      additionalProperties: false
+    SystemVolumeBlockAggregate:
+      type: object
+      properties:
+        blockName:
+          type:
+          - string
+          - 'null'
+        blockStart:
+          type: string
+          format: date-time
+        blockEnd:
+          type: string
+          format: date-time
+        turnover:
+          type:
+          - number
+          - 'null'
+          format: double
+      additionalProperties: false
+    ApiAuctionStatus:
+      enum:
+      - Missing
+      - Preliminary
+      - Final
+      - Cancelled
+      type: string
+    WeeklyPriceSummary:
+      type: object
+      properties:
+        averagePrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        minPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        maxPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        isoWeekNumber:
+          type: integer
+          format: int32
+        deliveryDateStartCET:
+          type: string
+          format: date
+        deliveryDateEndCET:
+          type: string
+          format: date
+      additionalProperties: false
+    PriceEntry:
+      type: object
+      properties:
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        price:
+          type:
+          - number
+          - 'null'
+          format: double
+      additionalProperties: false
     SystemVolumeMonthlySummary:
       type: object
       properties:
@@ -310,229 +697,38 @@ components:
           type: string
           format: date
       additionalProperties: false
-    MonthlyPriceSummary:
-      type: object
-      properties:
-        averagePrice:
-          type: number
-          format: double
-          nullable: true
-        minPrice:
-          type: number
-          format: double
-          nullable: true
-        maxPrice:
-          type: number
-          format: double
-          nullable: true
-        deliveryDateStartCET:
-          type: string
-          format: date
-        deliveryDateEndCET:
-          type: string
-          format: date
-      additionalProperties: false
-    SystemVolumeSummary:
-      type: object
-      properties:
-        totalTurnover:
-          type: number
-          format: double
-        averageTurnover:
-          type: number
-          format: double
-        minTurnover:
-          type: number
-          format: double
-        maxTurnover:
-          type: number
-          format: double
-      additionalProperties: false
-    ApiSystemYearlyPrice:
-      required:
-      - currency
-      - marketMainCurrency
-      - unit
-      type: object
-      properties:
-        year:
-          type: integer
-          format: int32
-        status:
-          $ref: '#/components/schemas/ApiAuctionStatus'
-        unit:
-          type: string
-          nullable: true
-        currency:
-          type: string
-          nullable: true
-        marketMainCurrency:
-          type: string
-          nullable: true
-        blockPrices:
-          type: array
-          items:
-            $ref: '#/components/schemas/BlockPriceAggregate'
-          nullable: true
-        prices:
-          type: array
-          items:
-            $ref: '#/components/schemas/PriceEntry'
-          nullable: true
-        yearlySummary:
-          $ref: '#/components/schemas/Summary'
-        dailySummaries:
-          type: array
-          items:
-            $ref: '#/components/schemas/SummaryPrice'
-          nullable: true
-        weeklySummaries:
-          type: array
-          items:
-            $ref: '#/components/schemas/WeeklyPriceSummary'
-          nullable: true
-        monthlySummaries:
-          type: array
-          items:
-            $ref: '#/components/schemas/MonthlyPriceSummary'
-          nullable: true
-        updatedAt:
-          type: string
-          format: date-time
-      additionalProperties: false
-    SystemVolumeEntry:
-      type: object
-      properties:
-        deliveryStart:
-          type: string
-          format: date-time
-        deliveryEnd:
-          type: string
-          format: date-time
-        turnover:
-          type: number
-          format: double
-      additionalProperties: false
-    ApiSystemPrice:
-      required:
-      - currency
-      - marketMainCurrency
-      type: object
-      properties:
-        deliveryDateCET:
-          type: string
-          format: date
-        updatedAt:
-          type: string
-          format: date-time
-        status:
-          $ref: '#/components/schemas/ApiAuctionStatus'
-        unit:
-          type: string
-          nullable: true
-          readOnly: true
-        currency:
-          type: string
-          nullable: true
-        exchangeRate:
-          type: number
-          format: double
-          nullable: true
-        marketMainCurrency:
-          type: string
-          nullable: true
-        averagePrice:
-          type: number
-          format: double
-          nullable: true
-        minPrice:
-          type: number
-          format: double
-          nullable: true
-        maxPrice:
-          type: number
-          format: double
-          nullable: true
-        prices:
-          type: array
-          items:
-            $ref: '#/components/schemas/PriceEntry'
-          nullable: true
-        blockPrices:
-          type: array
-          items:
-            $ref: '#/components/schemas/BlockPriceAggregate'
-          nullable: true
-      additionalProperties: false
-    ApiAuctionStatus:
-      enum:
-      - Missing
-      - Preliminary
-      - Final
-      - Cancelled
-      type: string
-    SummaryPrice:
-      type: object
-      properties:
-        averagePrice:
-          type: number
-          format: double
-          nullable: true
-        minPrice:
-          type: number
-          format: double
-          nullable: true
-        maxPrice:
-          type: number
-          format: double
-          nullable: true
-        deliveryDateCET:
-          type: string
-          format: date
-      additionalProperties: false
-    SystemVolumeBlockAggregate:
-      type: object
-      properties:
-        blockName:
-          type: string
-          nullable: true
-        blockStart:
-          type: string
-          format: date-time
-        blockEnd:
-          type: string
-          format: date-time
-        turnover:
-          type: number
-          format: double
-          nullable: true
-      additionalProperties: false
     ValidationProblemDetails:
       type: object
       properties:
         type:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         title:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         status:
-          type: integer
+          type:
+          - integer
+          - 'null'
           format: int32
-          nullable: true
         detail:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         instance:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         errors:
-          type: object
+          type:
+          - object
+          - 'null'
           additionalProperties:
             type: array
             items:
               type: string
-          nullable: true
       additionalProperties: {}
     ApiSystemTurnover:
       type: object
@@ -546,189 +742,63 @@ components:
         status:
           $ref: '#/components/schemas/ApiAuctionStatus'
         unit:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
           readOnly: true
         totalTurnoverUnit:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
           readOnly: true
         totalTurnover:
-          type: number
+          type:
+          - number
+          - 'null'
           format: double
-          nullable: true
         averageTurnover:
-          type: number
+          type:
+          - number
+          - 'null'
           format: double
-          nullable: true
         minTurnover:
-          type: number
+          type:
+          - number
+          - 'null'
           format: double
-          nullable: true
         maxTurnover:
-          type: number
+          type:
+          - number
+          - 'null'
           format: double
-          nullable: true
         blockVolumesUnit:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
           readOnly: true
         blockVolumes:
-          type: array
+          type:
+          - array
+          - 'null'
           items:
             $ref: '#/components/schemas/SystemVolumeBlockAggregate'
-          nullable: true
         volumes:
-          type: array
+          type:
+          - array
+          - 'null'
           items:
             $ref: '#/components/schemas/SystemVolumeEntry'
-          nullable: true
       additionalProperties: false
-    ApiSystemYearlyTurnover:
-      type: object
-      properties:
-        year:
-          type: integer
-          format: int32
-        status:
-          $ref: '#/components/schemas/ApiAuctionStatus'
-        updatedAt:
-          type: string
-          format: date-time
-        unit:
-          type: string
-          nullable: true
-          readOnly: true
-        totalTurnoverUnit:
-          type: string
-          nullable: true
-          readOnly: true
-        blockTurnoverUnit:
-          type: string
-          nullable: true
-          readOnly: true
-        dailySummaries:
-          type: array
-          items:
-            $ref: '#/components/schemas/SystemVolumeDailySummary'
-          nullable: true
-        monthlySummaries:
-          type: array
-          items:
-            $ref: '#/components/schemas/SystemVolumeMonthlySummary'
-          nullable: true
-        yearlySummary:
-          $ref: '#/components/schemas/SystemVolumeSummary'
-        blockSummaries:
-          type: array
-          items:
-            $ref: '#/components/schemas/SystemVolumeBlockAggregate'
-          nullable: true
-        volumes:
-          type: array
-          items:
-            $ref: '#/components/schemas/SystemVolumeEntry'
-          nullable: true
-      additionalProperties: false
-    SystemVolumeDailySummary:
-      type: object
-      properties:
-        totalTurnover:
-          type: number
-          format: double
-        averageTurnover:
-          type: number
-          format: double
-        minTurnover:
-          type: number
-          format: double
-        maxTurnover:
-          type: number
-          format: double
-        deliveryDateCET:
-          type: string
-          format: date
-      additionalProperties: false
-    WeeklyPriceSummary:
-      type: object
-      properties:
-        averagePrice:
-          type: number
-          format: double
-          nullable: true
-        minPrice:
-          type: number
-          format: double
-          nullable: true
-        maxPrice:
-          type: number
-          format: double
-          nullable: true
-        isoWeekNumber:
-          type: integer
-          format: int32
-        deliveryDateStartCET:
-          type: string
-          format: date
-        deliveryDateEndCET:
-          type: string
-          format: date
-      additionalProperties: false
-    Summary:
-      type: object
-      properties:
-        averagePrice:
-          type: number
-          format: double
-          nullable: true
-        minPrice:
-          type: number
-          format: double
-          nullable: true
-        maxPrice:
-          type: number
-          format: double
-          nullable: true
-      additionalProperties: false
-    BlockPriceAggregate:
-      type: object
-      properties:
-        blockName:
-          type: string
-          nullable: true
-        blockStart:
-          type: string
-          format: date-time
-        blockEnd:
-          type: string
-          format: date-time
-        minPrice:
-          type: number
-          format: double
-          nullable: true
-        maxPrice:
-          type: number
-          format: double
-          nullable: true
-        averagePrice:
-          type: number
-          format: double
-          nullable: true
-      additionalProperties: false
-    PriceEntry:
-      type: object
-      properties:
-        deliveryStart:
-          type: string
-          format: date-time
-        deliveryEnd:
-          type: string
-          format: date-time
-        price:
-          type: number
-          format: double
-          nullable: true
-      additionalProperties: false
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      description: Oauth2 Authentication
+      flows:
+        authorizationCode:
+          authorizationUrl: https://sts.nordpoolgroup.com/connect/authorize
+          tokenUrl: https://sts.nordpoolgroup.com/connect/token
+          scopes:
+            marketdata_api: '...'
 externalDocs:
-  description: Nord Pool Data Portal (public day-ahead prices site)
-  url: https://data.nordpoolgroup.com/
+  description: Nord Pool Developer Portal
+  url: https://developers.nordpoolgroup.com/

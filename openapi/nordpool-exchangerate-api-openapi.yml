@@ -1,14 +1,16 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
-  title: Nord Pool Data Portal API (Public) Auction ExchangeRate API
-  version: '1.0'
-  description: The unauthenticated JSON API behind the Nord Pool Data Portal (data.nordpoolgroup.com), where Nord Pool publishes day-ahead electricity prices for the Nordic, Baltic, CWE, and UK bidding areas. These endpoints return the same day-ahead auction results shown on the public website, in 15-minute Market Time Unit resolution, and are widely used by open-source integrations such as Home Assistant. IMPORTANT - this API is not part of Nord Pool's officially documented, subscription-backed developer offering. It is not covered by an SLA or the API General Terms, and Nord Pool may change or restrict it at any time. The two operations below were observed live and verified returning data on 2026-07-11; request and response shapes are modeled from those observed responses rather than from official reference documentation. For supported programmatic access, use the Nord Pool Market Data API (data-api.nordpoolgroup.com) with a Power Data Services subscription.
+  title: Nord Pool Market Data Exchange Rate API
+  description: 'Nord Pool''s Market Data API (v2) provides programmatic access to European power exchange market data: day-ahead auction prices, price indices, volumes, capacities, flows and aggregated bid curves; intraday continuous statistics, orders, trades and order books; balance market (mFRR) data; power system data (production, consumption, forecasts, hydro reservoir reserves); system price and turnover; and exchange rates. This document is the provider''s published OpenAPI definition, retrieved from https://data-api.nordpoolgroup.com/swagger/v2/swagger.json on 2026-07-11. Access to the data requires a paid Nord Pool Power Data Services subscription; authentication is OAuth 2.0 against https://sts.nordpoolgroup.com.'
+  version: v2
   contact:
-    name: Nord Pool
-    url: https://data.nordpoolgroup.com/
+    name: Nord Pool Power Data Services
+    url: https://www.nordpoolgroup.com/en/services/power-market-data-services/
 servers:
-- url: https://dataportal-api.nordpoolgroup.com
-  description: Nord Pool Data Portal backend (public, unauthenticated)
+- url: https://data-api.nordpoolgroup.com
+  description: Nord Pool Market Data API (production)
+security:
+- oauth2: []
 tags:
 - name: ExchangeRate
 paths:
@@ -144,10 +146,11 @@ components:
       type: object
       properties:
         rates:
-          type: array
+          type:
+          - array
+          - 'null'
           items:
             $ref: '#/components/schemas/ExchangeRates'
-          nullable: true
         dateCET:
           type: string
           format: date
@@ -155,43 +158,36 @@ components:
           type: string
           format: date-time
       additionalProperties: false
-    ApiAvailableStatus:
-      enum:
-      - Missing
-      - Available
-      type: string
-    ValidationProblemDetails:
-      type: object
-      properties:
-        type:
-          type: string
-          nullable: true
-        title:
-          type: string
-          nullable: true
-        status:
-          type: integer
-          format: int32
-          nullable: true
-        detail:
-          type: string
-          nullable: true
-        instance:
-          type: string
-          nullable: true
-        errors:
-          type: object
-          additionalProperties:
-            type: array
-            items:
-              type: string
-          nullable: true
-      additionalProperties: {}
     ExchangeRateStatus:
       enum:
       - Preliminary
       - Final
       type: string
+    ApiAvailableStatus:
+      enum:
+      - Missing
+      - Available
+      type: string
+    ExchangeRates:
+      type: object
+      properties:
+        fromCurrency:
+          type:
+          - string
+          - 'null'
+        toCurrency:
+          type:
+          - string
+          - 'null'
+        rate:
+          type: number
+          format: double
+        status:
+          $ref: '#/components/schemas/ExchangeRateStatus'
+        modified:
+          type: string
+          format: date-time
+      additionalProperties: false
     ApiYearlyExchangeRate:
       type: object
       properties:
@@ -201,14 +197,48 @@ components:
         status:
           $ref: '#/components/schemas/ApiAvailableStatus'
         dailyExchangeRates:
-          type: array
+          type:
+          - array
+          - 'null'
           items:
             $ref: '#/components/schemas/ExchangeRateDataLake'
-          nullable: true
         updatedAt:
           type: string
           format: date-time
       additionalProperties: false
+    ValidationProblemDetails:
+      type: object
+      properties:
+        type:
+          type:
+          - string
+          - 'null'
+        title:
+          type:
+          - string
+          - 'null'
+        status:
+          type:
+          - integer
+          - 'null'
+          format: int32
+        detail:
+          type:
+          - string
+          - 'null'
+        instance:
+          type:
+          - string
+          - 'null'
+        errors:
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: array
+            items:
+              type: string
+      additionalProperties: {}
     ApiExchangeRate:
       required:
       - rates
@@ -223,29 +253,22 @@ components:
           type: string
           format: date-time
         rates:
-          type: array
+          type:
+          - array
+          - 'null'
           items:
             $ref: '#/components/schemas/ExchangeRates'
-          nullable: true
       additionalProperties: false
-    ExchangeRates:
-      type: object
-      properties:
-        fromCurrency:
-          type: string
-          nullable: true
-        toCurrency:
-          type: string
-          nullable: true
-        rate:
-          type: number
-          format: double
-        status:
-          $ref: '#/components/schemas/ExchangeRateStatus'
-        modified:
-          type: string
-          format: date-time
-      additionalProperties: false
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      description: Oauth2 Authentication
+      flows:
+        authorizationCode:
+          authorizationUrl: https://sts.nordpoolgroup.com/connect/authorize
+          tokenUrl: https://sts.nordpoolgroup.com/connect/token
+          scopes:
+            marketdata_api: '...'
 externalDocs:
-  description: Nord Pool Data Portal (public day-ahead prices site)
-  url: https://data.nordpoolgroup.com/
+  description: Nord Pool Developer Portal
+  url: https://developers.nordpoolgroup.com/
