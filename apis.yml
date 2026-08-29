@@ -8,6 +8,19 @@ description: Nord Pool, part of the Euronext group, operates Europe's leading po
   API delivers day-ahead prices, kWh-level electricity rates by bidding area, volumes,
   capacities, flows, and power system data, while WebSocket and REST trading APIs
   serve exchange members.
+deliveryModel:
+  model: unknown
+  open_source: unknown
+  commercial: true
+  callable_host: true
+  label: Delivery model not determined — needs a product licence on record
+  confidence: low
+  source:
+  - openapi
+  - pricing
+  - repository-unlicensed
+  generated: '2026-08-28'
+  method: derived
 accessModel:
   pricing: paid
   onboarding: self-serve
