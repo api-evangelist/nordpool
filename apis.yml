@@ -161,31 +161,6 @@ apis:
     url: https://www.nordpoolgroup.com/en/services/power-market-data-services/
   - type: Portal
     url: https://data.nordpoolgroup.com/
-- aid: nordpool:nordpool-exchangerate-api
-  name: Nord Pool ExchangeRate API
-  description: The ExchangeRate API from Nord Pool — 2 operation(s) for exchangerate.
-  humanURL: >-
-    https://www.nordpoolgroup.com/en/services/power-market-data-services/day-ahead-market-data/
-  baseURL: https://data-api.nordpoolgroup.com
-  tags:
-  - Exchange Rate
-  tags_raw:
-  - ExchangeRate
-  properties:
-  - type: OpenAPI
-    url: openapi/nordpool-exchangerate-api-openapi.yml
-  - type: Documentation
-    url: >-
-      https://www.nordpoolgroup.com/en/services/power-market-data-services/day-ahead-market-data/
-  - type: APIReference
-    url: https://data-api.nordpoolgroup.com/index.html
-  - type: Documentation
-    url: >-
-      https://www.nordpoolgroup.com/en/services/power-market-data-services/intraday-market-data/
-  - type: Documentation
-    url: https://www.nordpoolgroup.com/en/services/power-market-data-services/
-  - type: Portal
-    url: https://data.nordpoolgroup.com/
 - aid: nordpool:nordpool-intraday-api
   name: Nord Pool Intraday API
   description: The Intraday API from Nord Pool — 17 operation(s) for intraday.
@@ -197,29 +172,6 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/nordpool-intraday-api-openapi.yml
-  - type: Documentation
-    url: >-
-      https://www.nordpoolgroup.com/en/services/power-market-data-services/day-ahead-market-data/
-  - type: APIReference
-    url: https://data-api.nordpoolgroup.com/index.html
-  - type: Documentation
-    url: >-
-      https://www.nordpoolgroup.com/en/services/power-market-data-services/intraday-market-data/
-  - type: Documentation
-    url: https://www.nordpoolgroup.com/en/services/power-market-data-services/
-  - type: Portal
-    url: https://data.nordpoolgroup.com/
-- aid: nordpool:nordpool-powersystem-api
-  name: Nord Pool PowerSystem API
-  description: The PowerSystem API from Nord Pool — 17 operation(s) for powersystem.
-  humanURL: >-
-    https://www.nordpoolgroup.com/en/services/power-market-data-services/day-ahead-market-data/
-  baseURL: https://data-api.nordpoolgroup.com
-  tags:
-  - PowerSystem
-  properties:
-  - type: OpenAPI
-    url: openapi/nordpool-powersystem-api-openapi.yml
   - type: Documentation
     url: >-
       https://www.nordpoolgroup.com/en/services/power-market-data-services/day-ahead-market-data/
@@ -266,6 +218,50 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/nordpool-system-api-openapi.yml
+  - type: Documentation
+    url: >-
+      https://www.nordpoolgroup.com/en/services/power-market-data-services/day-ahead-market-data/
+  - type: APIReference
+    url: https://data-api.nordpoolgroup.com/index.html
+  - type: Documentation
+    url: >-
+      https://www.nordpoolgroup.com/en/services/power-market-data-services/intraday-market-data/
+  - type: Documentation
+    url: https://www.nordpoolgroup.com/en/services/power-market-data-services/
+  - type: Portal
+    url: https://data.nordpoolgroup.com/
+- aid: nordpool:nordpool-exchange-rate-api
+  name: Nord Pool Exchange Rate API
+  description: The Exchange Rate API from Nord Pool — 2 operation(s) for exchange rate.
+  humanURL: https://developers.nordpoolgroup.com/v1.0/docs/id-introduction
+  baseURL: https://www.nordpoolgroup.com/en/trading/api/
+  tags:
+  - Exchange Rate
+  properties:
+  - type: OpenAPI
+    url: openapi/nordpool-exchange-rate-api-openapi.yml
+  - type: Documentation
+    url: >-
+      https://www.nordpoolgroup.com/en/services/power-market-data-services/day-ahead-market-data/
+  - type: APIReference
+    url: https://data-api.nordpoolgroup.com/index.html
+  - type: Documentation
+    url: >-
+      https://www.nordpoolgroup.com/en/services/power-market-data-services/intraday-market-data/
+  - type: Documentation
+    url: https://www.nordpoolgroup.com/en/services/power-market-data-services/
+  - type: Portal
+    url: https://data.nordpoolgroup.com/
+- aid: nordpool:nordpool-power-system-api
+  name: Nord Pool Power System API
+  description: The Power System API from Nord Pool — 17 operation(s) for power system.
+  humanURL: https://developers.nordpoolgroup.com/v1.0/docs/id-introduction
+  baseURL: https://www.nordpoolgroup.com/en/trading/api/
+  tags:
+  - Power System
+  properties:
+  - type: OpenAPI
+    url: openapi/nordpool-power-system-api-openapi.yml
   - type: Documentation
     url: >-
       https://www.nordpoolgroup.com/en/services/power-market-data-services/day-ahead-market-data/
