@@ -99,6 +99,8 @@ apis:
     https://www.nordpoolgroup.com/en/services/power-market-data-services/day-ahead-market-data/
   baseURL: https://data-api.nordpoolgroup.com
   tags:
+  - Auctions
+  tags_raw:
   - Auction
   properties:
   - type: OpenAPI
