@@ -1,7 +1,7 @@
 openapi: 3.2.0
 info:
   title: Nord Pool Market Data Price Curves API
-  description: 'Nord Pool''s Market Data API (v2) provides programmatic access to European power exchange market data: day-ahead auction prices, price indices, volumes, capacities, flows and aggregated bid curves; intraday continuous statistics, orders, trades and order books; balance market (mFRR) data; power system data (production, consumption, forecasts, hydro reservoir reserves); system price and turnover; and exchange rates. This document is the provider''s published OpenAPI definition, retrieved from https://data-api.nordpoolgroup.com/swagger/v2/swagger.json on 2026-07-11. Access to the data requires a paid Nord Pool Power Data Services subscription; authentication is OAuth 2.0 against https://sts.nordpoolgroup.com.'
+  description: 'Nord Pool''s Market Data API (v2) provides programmatic access to European power exchange market data: day-ahead auction prices, price indices, volumes, capacities, flows and aggregated bid curves; intraday continuous statistics, orders, trades and order books; balance market (mFRR) data; power system data (production, consumption, forecasts, hydro reservoir reserves); system price and turnover; and exchange rates.'
   version: v2
   contact:
     name: Nord Pool Power Data Services
@@ -19,7 +19,49 @@ paths:
       tags:
       - PriceCurves
       summary: N2EX Price Curves
-      description: "Returns the N2EX UK price curve data for a given date.\n            \nThese price curves only contain order information for what is happening in the UK delivery area. No price curve information is available for the coupled NO2 area, since the trading activity in NO2 is small. \n            \n### Response field descriptions\n            \n**status**: Missing if no data exists for the requested date. Available if data is present\n\n#### orderPositions: a list of delivery period, and associated aggregated demand and supply curve orders\n- **demandCurve**: list of aggregated demand (=buy) curve order volume for price points\n- **supplyCurve**: list of aggregated supply (=sell) curve order volume for price points\n- **deliveryStart**: start of delivery period\n- **deliveryEnd**: end of delivery period\n            \n#### blockOrders: a list of block orders\n- **side**: Buy or Sell\n- **exclusiveGroupId**: if not null, then this block is part of an exclusive group. Group all blocks by exclusive group id to see the exclusive group.\n- **minimumAcceptanceRatio**: the minimum acceptance ratio needed for the block to activate. Typically in the 0.5-1 range, where 0.5 = 50% of the volume needs to be filled to activate\n- **linkedOrderId**: if not null, then this block will only activate if the linked block order with this id activates. To find the parent, find the block order with the corresponding id.\n- **price**: the average price for the block order to activate\n- **paradoxicallyRejected**: if true, then the block restrictions are within the correct price and volume limits, but activating the block would cause price and volume to shift enough to disqualify the block from activation.\n- **actualAcceptanceRatio**: the ratio of the block that was accepted, in a range of 0-1. 1 = 100% of volume accepted.\n- **intervals**: periods for the block, with corresponding volumes and accepted volumes.\n            \nNote that the intersection of the supply and demand curve positions will not add up to the realized price - for that, block order activations as well as import and export flows needs to be taken into account as well."
+      description: 'Returns the N2EX UK price curve data for a given date.
+
+
+        These price curves only contain order information for what is happening in the UK delivery area. No price curve information is available for the coupled NO2 area, since the trading activity in NO2 is small.
+
+
+        ### Response field descriptions
+
+
+        **status**: Missing if no data exists for the requested date. Available if data is present
+
+
+        #### orderPositions: a list of delivery period, and associated aggregated demand and supply curve orders
+
+        - **demandCurve**: list of aggregated demand (=buy) curve order volume for price points
+
+        - **supplyCurve**: list of aggregated supply (=sell) curve order volume for price points
+
+        - **deliveryStart**: start of delivery period
+
+        - **deliveryEnd**: end of delivery period
+
+
+        #### blockOrders: a list of block orders
+
+        - **side**: Buy or Sell
+
+        - **exclusiveGroupId**: if not null, then this block is part of an exclusive group. Group all blocks by exclusive group id to see the exclusive group.
+
+        - **minimumAcceptanceRatio**: the minimum acceptance ratio needed for the block to activate. Typically in the 0.5-1 range, where 0.5 = 50% of the volume needs to be filled to activate
+
+        - **linkedOrderId**: if not null, then this block will only activate if the linked block order with this id activates. To find the parent, find the block order with the corresponding id.
+
+        - **price**: the average price for the block order to activate
+
+        - **paradoxicallyRejected**: if true, then the block restrictions are within the correct price and volume limits, but activating the block would cause price and volume to shift enough to disqualify the block from activation.
+
+        - **actualAcceptanceRatio**: the ratio of the block that was accepted, in a range of 0-1. 1 = 100% of volume accepted.
+
+        - **intervals**: periods for the block, with corresponding volumes and accepted volumes.
+
+
+        Note that the intersection of the supply and demand curve positions will not add up to the realized price - for that, block order activations as well as import and export flows needs to be taken into account as well.'
       parameters:
       - name: date
         in: query
@@ -77,148 +119,10 @@ paths:
             text/json:
               schema:
                 $ref: '#/components/schemas/ValidationProblemDetails'
+      operationId: getApiV2AuctionN2EXDayAheadPriceCurvesUK
+      x-operation-id-source: derived
 components:
   schemas:
-    ApiAvailableStatus:
-      enum:
-      - Missing
-      - Available
-      type: string
-    Market:
-      enum:
-      - DayAhead
-      - GbHalfHour_DayAhead
-      - N2EX_DayAhead
-      - NP_IntradayAuction1
-      - NP_IntradayAuction2
-      - SemGb_IntradayAuction1
-      - SemGb_IntradayAuction2
-      - SIDC_IntradayAuction1
-      - SIDC_IntradayAuction2
-      - SIDC_IntradayAuction3
-      type: string
-    ApiUkPeriod:
-      type: object
-      properties:
-        deliveryStart:
-          type: string
-          format: date-time
-        deliveryEnd:
-          type: string
-          format: date-time
-        demandCurve:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiPricePoint'
-        supplyCurve:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiPricePoint'
-      additionalProperties: false
-    ApiPricePoint:
-      type: object
-      properties:
-        price:
-          type: number
-          format: double
-        volume:
-          type: number
-          format: double
-      additionalProperties: false
-    ApiUkBlockOrder:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int32
-        side:
-          $ref: '#/components/schemas/BlockOrderSide'
-        exclusiveGroupId:
-          type:
-          - integer
-          - 'null'
-          format: int32
-        minimumAcceptanceRatio:
-          type: number
-          format: double
-        linkedOrderId:
-          type:
-          - integer
-          - 'null'
-          format: int32
-        price:
-          type: number
-          format: double
-        paradoxicallyRejected:
-          type: boolean
-        actualAcceptanceRatio:
-          type: number
-          format: double
-        intervals:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiUkBlockOrderInterval'
-      additionalProperties: false
-    BlockOrderSide:
-      enum:
-      - Buy
-      - Sell
-      type: string
-    ApiUkBlockOrderInterval:
-      type: object
-      properties:
-        deliveryStart:
-          type: string
-          format: date-time
-        deliveryEnd:
-          type: string
-          format: date-time
-        volume:
-          type: number
-          format: double
-        acceptedVolume:
-          type: number
-          format: double
-      additionalProperties: false
-    ValidationProblemDetails:
-      type: object
-      properties:
-        type:
-          type:
-          - string
-          - 'null'
-        title:
-          type:
-          - string
-          - 'null'
-        status:
-          type:
-          - integer
-          - 'null'
-          format: int32
-        detail:
-          type:
-          - string
-          - 'null'
-        instance:
-          type:
-          - string
-          - 'null'
-        errors:
-          type:
-          - object
-          - 'null'
-          additionalProperties:
-            type: array
-            items:
-              type: string
-      additionalProperties: {}
     ApiUkPriceCurve:
       type: object
       properties:
@@ -257,6 +161,146 @@ components:
           items:
             $ref: '#/components/schemas/ApiUkBlockOrder'
       additionalProperties: false
+    ApiUkBlockOrder:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        side:
+          $ref: '#/components/schemas/BlockOrderSide'
+        exclusiveGroupId:
+          type:
+          - integer
+          - 'null'
+          format: int32
+        minimumAcceptanceRatio:
+          type: number
+          format: double
+        linkedOrderId:
+          type:
+          - integer
+          - 'null'
+          format: int32
+        price:
+          type: number
+          format: double
+        paradoxicallyRejected:
+          type: boolean
+        actualAcceptanceRatio:
+          type: number
+          format: double
+        intervals:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiUkBlockOrderInterval'
+      additionalProperties: false
+    Market:
+      enum:
+      - DayAhead
+      - GbHalfHour_DayAhead
+      - N2EX_DayAhead
+      - NP_IntradayAuction1
+      - NP_IntradayAuction2
+      - SemGb_IntradayAuction1
+      - SemGb_IntradayAuction2
+      - SIDC_IntradayAuction1
+      - SIDC_IntradayAuction2
+      - SIDC_IntradayAuction3
+      type: string
+    ApiUkPeriod:
+      type: object
+      properties:
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        demandCurve:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiPricePoint'
+        supplyCurve:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiPricePoint'
+      additionalProperties: false
+    ValidationProblemDetails:
+      type: object
+      properties:
+        type:
+          type:
+          - string
+          - 'null'
+        title:
+          type:
+          - string
+          - 'null'
+        status:
+          type:
+          - integer
+          - 'null'
+          format: int32
+        detail:
+          type:
+          - string
+          - 'null'
+        instance:
+          type:
+          - string
+          - 'null'
+        errors:
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: array
+            items:
+              type: string
+      additionalProperties: {}
+    BlockOrderSide:
+      enum:
+      - Buy
+      - Sell
+      type: string
+    ApiPricePoint:
+      type: object
+      properties:
+        price:
+          type: number
+          format: double
+        volume:
+          type: number
+          format: double
+      additionalProperties: false
+    ApiUkBlockOrderInterval:
+      type: object
+      properties:
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        volume:
+          type: number
+          format: double
+        acceptedVolume:
+          type: number
+          format: double
+      additionalProperties: false
+    ApiAvailableStatus:
+      enum:
+      - Missing
+      - Available
+      type: string
   securitySchemes:
     oauth2:
       type: oauth2

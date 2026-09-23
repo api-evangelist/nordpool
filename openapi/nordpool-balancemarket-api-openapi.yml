@@ -1,7 +1,7 @@
 openapi: 3.2.0
 info:
   title: Nord Pool Market Data Balance Market API
-  description: 'Nord Pool''s Market Data API (v2) provides programmatic access to European power exchange market data: day-ahead auction prices, price indices, volumes, capacities, flows and aggregated bid curves; intraday continuous statistics, orders, trades and order books; balance market (mFRR) data; power system data (production, consumption, forecasts, hydro reservoir reserves); system price and turnover; and exchange rates. This document is the provider''s published OpenAPI definition, retrieved from https://data-api.nordpoolgroup.com/swagger/v2/swagger.json on 2026-07-11. Access to the data requires a paid Nord Pool Power Data Services subscription; authentication is OAuth 2.0 against https://sts.nordpoolgroup.com.'
+  description: 'Nord Pool''s Market Data API (v2) provides programmatic access to European power exchange market data: day-ahead auction prices, price indices, volumes, capacities, flows and aggregated bid curves; intraday continuous statistics, orders, trades and order books; balance market (mFRR) data; power system data (production, consumption, forecasts, hydro reservoir reserves); system price and turnover; and exchange rates.'
   version: v2
   contact:
     name: Nord Pool Power Data Services
@@ -19,7 +19,41 @@ paths:
       tags:
       - BalanceMarket
       summary: Manual Frequency Restoration Reserves
-      description: "Returns a list of Manual Frequency Restoration Reserves (mFRR) for a date, currency and a list of areas. \n\n### Response field descriptions\n- **status**: Missing if no data exists. Available if data is present\n- **exchangeRate**: exchange rate used to calculate values from EUR. If the currency is EUR, then the exchange rate is 1\n            \n**manualFrequencyRestorationReserves**: a list of delivery periods for the day, containing\n - **deliveryStart**: start of delivery period\n - **deliveryEnd**: end of delivery period\n - **acceptedUpBidVolume**: the total volume of orders available for up activation, given in MW\n - **activatedUpVolume**: the volume of activated up regulation, given in MW\n - **acceptedDownBidVolume**: the total volume of orders available for down activation, given in MW\n - **activatedDownBidVolume**: the volume of activated down regulation, given in MW\n - **downPrice**: the price for down regulation. Given in currency/MWh \n - **upPrice**: the price for up regulation. Given in currency/MWh\n - **imbalancePrice**: the overall imbalance price. Usually equal to either upPrice or downPrice depending on what activations are done.\n            \nNote that non-EUR prices are just estimates - we do not guarantee (or expect) that TSOs are using the same exchange rates as we do.\n            \nData source: **Entso-e Transparency platform. Update frequency and data availability depends on data being reported to Entso-e.**"
+      description: 'Returns a list of Manual Frequency Restoration Reserves (mFRR) for a date, currency and a list of areas.
+
+
+        ### Response field descriptions
+
+        - **status**: Missing if no data exists. Available if data is present
+
+        - **exchangeRate**: exchange rate used to calculate values from EUR. If the currency is EUR, then the exchange rate is 1
+
+
+        **manualFrequencyRestorationReserves**: a list of delivery periods for the day, containing
+
+        - **deliveryStart**: start of delivery period
+
+        - **deliveryEnd**: end of delivery period
+
+        - **acceptedUpBidVolume**: the total volume of orders available for up activation, given in MW
+
+        - **activatedUpVolume**: the volume of activated up regulation, given in MW
+
+        - **acceptedDownBidVolume**: the total volume of orders available for down activation, given in MW
+
+        - **activatedDownBidVolume**: the volume of activated down regulation, given in MW
+
+        - **downPrice**: the price for down regulation. Given in currency/MWh
+
+        - **upPrice**: the price for up regulation. Given in currency/MWh
+
+        - **imbalancePrice**: the overall imbalance price. Usually equal to either upPrice or downPrice depending on what activations are done.
+
+
+        Note that non-EUR prices are just estimates - we do not guarantee (or expect) that TSOs are using the same exchange rates as we do.
+
+
+        Data source: **Entso-e Transparency platform. Update frequency and data availability depends on data being reported to Entso-e.**'
       externalDocs:
         description: Data portal link
         url: https://data.nordpoolgroup.com/power-system/manual-frequency-restoration-reserve?deliveryDate=latest&deliveryAreas=NO1&viewMode=All
@@ -105,12 +139,104 @@ paths:
             text/json:
               schema:
                 $ref: '#/components/schemas/ValidationProblemDetails'
+      operationId: getApiV2BalanceMarketManualFrequencyRestorationReservesByAreas
+      x-operation-id-source: derived
   /api/v2/BalanceMarket/ManualFrequencyRestorationReserves/Yearly/ByArea:
     get:
       tags:
       - BalanceMarket
       summary: Yearly Manual Frequency Restoration Reserves
-      description: " Returns an annual summary of Manual Frequency Restoration Reserves (mFRR) for a year, currency and one area.\n            \n This yearly summary is updated in a rolling manner, and is updated daily.\n            \n### Response field descriptions\n            \n**yearlySummary**:\n- **acceptedUpBidVolume**: total volume of accepted orders for up regulation for the year, in MWh\n- **activatedUpBidVolume**: total volume of activated up regulation bids for the year, in MWh\n- **acceptedDownBidVolume**: total volume of accepted orders for down regulation for the year, in MWh\n- **activatedDownBidVolume**: total volume of activated down regulation bids for the year, in MWh\n- **downPrice**: average down price for the year, in currency / MWh\n- **upPrice**: average up price for the year, in currency / MWh\n- **imbalancePrice**: average imbalance price for the year, in currency / MWh\n\n**monthlySummaries**: \n- **acceptedUpBidVolume**: total volume of accepted orders for up regulation for the month, in MWh\n- **activatedUpBidVolume**: total volume of activated up regulation bids for the month, in MWh\n- **acceptedDownBidVolume**: total volume of accepted orders for down regulation for the month, in MWh\n- **activatedDownBidVolume**: total volume of activated down regulation bids for the month, in MWh\n- **downPrice**: average down price for the month, in currency / MWh\n- **upPrice**: average up price for the month, in currency / MWh\n- **imbalancePrice**: average imbalance price for the month, in currency / MWh\n- **deliveryDateStartCET**: the earliest date taken into account in this monthly summary\n- **deliveryDateEndCET**: the latest date taken into account in this monthly summary \n\n**dailySummaries**: a list of average values for the day\n- **acceptedUpBidVolume**: total volume of accepted orders for up regulation for the day, in MWh\n- **activatedUpBidVolume**: total volume of activated up regulation bids for the day, in MWh\n- **acceptedDownBidVolume**: total volume of accepted orders for down regulation for the day, in MWh\n- **activatedDownBidVolume**: total volume of activated down regulation bids for the day, in MWh\n- **downPrice**: average down price for the day, in currency / MWh\n- **upPrice**: average up price for the day, in currency / MWh\n- **imbalancePrice**: average imbalance price for the day, in currency / MWh\n- **deliveryDateCET**: the CET delivery date for this summary \n\n**content**: a list of delivery periods, containing\n - **deliveryStart**: start of delivery period\n - **deliveryEnd**: end of delivery period\n - **acceptedUpBidVolume**: the total volume of orders available for up activation, given in MW\n - **activatedUpVolume**: the volume of activated up regulation, given in MW\n - **acceptedDownBidVolume**: the total volume of orders available for down activation, given in MW\n - **activatedDownBidVolume**: the volume of activated down regulation, given in MW\n - **downPrice**: the price for down regulation. Given in currency/MWh \n - **upPrice**: the price for up regulation. Given in currency/MWh\n - **imbalancePrice**: the overall imbalance price. Usually equal to either upPrice or downPrice depending on what activations are done.\n            \nNote that non-EUR prices are just estimates - we do not guarantee (or expect) that TSOs are using the same exchange rates as we do.\n            \nData source: **Entso-e Transparency platform. Update frequency and data availability depends on data being reported to Entso-e.**"
+      description: 'Returns an annual summary of Manual Frequency Restoration Reserves (mFRR) for a year, currency and one area.
+
+
+        This yearly summary is updated in a rolling manner, and is updated daily.
+
+
+        ### Response field descriptions
+
+
+        **yearlySummary**:
+
+        - **acceptedUpBidVolume**: total volume of accepted orders for up regulation for the year, in MWh
+
+        - **activatedUpBidVolume**: total volume of activated up regulation bids for the year, in MWh
+
+        - **acceptedDownBidVolume**: total volume of accepted orders for down regulation for the year, in MWh
+
+        - **activatedDownBidVolume**: total volume of activated down regulation bids for the year, in MWh
+
+        - **downPrice**: average down price for the year, in currency / MWh
+
+        - **upPrice**: average up price for the year, in currency / MWh
+
+        - **imbalancePrice**: average imbalance price for the year, in currency / MWh
+
+
+        **monthlySummaries**:
+
+        - **acceptedUpBidVolume**: total volume of accepted orders for up regulation for the month, in MWh
+
+        - **activatedUpBidVolume**: total volume of activated up regulation bids for the month, in MWh
+
+        - **acceptedDownBidVolume**: total volume of accepted orders for down regulation for the month, in MWh
+
+        - **activatedDownBidVolume**: total volume of activated down regulation bids for the month, in MWh
+
+        - **downPrice**: average down price for the month, in currency / MWh
+
+        - **upPrice**: average up price for the month, in currency / MWh
+
+        - **imbalancePrice**: average imbalance price for the month, in currency / MWh
+
+        - **deliveryDateStartCET**: the earliest date taken into account in this monthly summary
+
+        - **deliveryDateEndCET**: the latest date taken into account in this monthly summary
+
+
+        **dailySummaries**: a list of average values for the day
+
+        - **acceptedUpBidVolume**: total volume of accepted orders for up regulation for the day, in MWh
+
+        - **activatedUpBidVolume**: total volume of activated up regulation bids for the day, in MWh
+
+        - **acceptedDownBidVolume**: total volume of accepted orders for down regulation for the day, in MWh
+
+        - **activatedDownBidVolume**: total volume of activated down regulation bids for the day, in MWh
+
+        - **downPrice**: average down price for the day, in currency / MWh
+
+        - **upPrice**: average up price for the day, in currency / MWh
+
+        - **imbalancePrice**: average imbalance price for the day, in currency / MWh
+
+        - **deliveryDateCET**: the CET delivery date for this summary
+
+
+        **content**: a list of delivery periods, containing
+
+        - **deliveryStart**: start of delivery period
+
+        - **deliveryEnd**: end of delivery period
+
+        - **acceptedUpBidVolume**: the total volume of orders available for up activation, given in MW
+
+        - **activatedUpVolume**: the volume of activated up regulation, given in MW
+
+        - **acceptedDownBidVolume**: the total volume of orders available for down activation, given in MW
+
+        - **activatedDownBidVolume**: the volume of activated down regulation, given in MW
+
+        - **downPrice**: the price for down regulation. Given in currency/MWh
+
+        - **upPrice**: the price for up regulation. Given in currency/MWh
+
+        - **imbalancePrice**: the overall imbalance price. Usually equal to either upPrice or downPrice depending on what activations are done.
+
+
+        Note that non-EUR prices are just estimates - we do not guarantee (or expect) that TSOs are using the same exchange rates as we do.
+
+
+        Data source: **Entso-e Transparency platform. Update frequency and data availability depends on data being reported to Entso-e.**'
       parameters:
       - name: area
         in: query
@@ -185,110 +311,42 @@ paths:
             text/json:
               schema:
                 $ref: '#/components/schemas/ValidationProblemDetails'
+      operationId: getApiV2BalanceMarketManualFrequencyRestorationReservesYearlyByArea
+      x-operation-id-source: derived
 components:
   schemas:
-    MfrrMonthlySummary:
-      type: object
-      properties:
-        acceptedUpBidVolume:
-          type:
-          - number
-          - 'null'
-          format: double
-        acceptedDownBidVolume:
-          type:
-          - number
-          - 'null'
-          format: double
-        activatedUpVolume:
-          type:
-          - number
-          - 'null'
-          format: double
-        activatedDownVolume:
-          type:
-          - number
-          - 'null'
-          format: double
-        downPrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        upPrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        imbalancePrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        deliveryDateStartCET:
-          type: string
-          format: date
-        deliveryDateEndCET:
-          type: string
-          format: date
-      additionalProperties: false
-    ApiAvailableStatus:
-      enum:
-      - Missing
-      - Available
-      type: string
-    ApiYearlyMfrr:
+    ApiMfrr:
       required:
       - currency
-      - deliveryArea
       type: object
       properties:
-        year:
-          type: integer
-          format: int32
+        deliveryDateCET:
+          type: string
+          format: date
+        updatedAt:
+          type: string
+          format: date-time
         deliveryArea:
-          type:
-          - string
-          - 'null'
-        currency:
           type:
           - string
           - 'null'
         status:
           $ref: '#/components/schemas/ApiAvailableStatus'
-        updatedAt:
-          type: string
-          format: date-time
-        unit:
+        currency:
           type:
           - string
           - 'null'
-          readOnly: true
-        totalVolumeUnit:
+        exchangeRate:
           type:
-          - string
+          - number
           - 'null'
-          readOnly: true
-        dailySummaries:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/MfrrDailySummary'
-        monthlySummaries:
+          format: double
+        manualFrequencyRestorationReserves:
           type:
           - array
           - 'null'
           items:
-            $ref: '#/components/schemas/MfrrMonthlySummary'
-        yearlySummary:
-          $ref: '#/components/schemas/MfrrEntry'
-        content:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/YearlyMfrrEntry'
+            $ref: '#/components/schemas/ApiMfrrEntry'
       additionalProperties: false
     ApiMfrrEntry:
       type: object
@@ -368,6 +426,104 @@ components:
             items:
               type: string
       additionalProperties: {}
+    MfrrMonthlySummary:
+      type: object
+      properties:
+        acceptedUpBidVolume:
+          type:
+          - number
+          - 'null'
+          format: double
+        acceptedDownBidVolume:
+          type:
+          - number
+          - 'null'
+          format: double
+        activatedUpVolume:
+          type:
+          - number
+          - 'null'
+          format: double
+        activatedDownVolume:
+          type:
+          - number
+          - 'null'
+          format: double
+        downPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        upPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        imbalancePrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        deliveryDateStartCET:
+          type: string
+          format: date
+        deliveryDateEndCET:
+          type: string
+          format: date
+      additionalProperties: false
+    ApiYearlyMfrr:
+      required:
+      - currency
+      - deliveryArea
+      type: object
+      properties:
+        year:
+          type: integer
+          format: int32
+        deliveryArea:
+          type:
+          - string
+          - 'null'
+        currency:
+          type:
+          - string
+          - 'null'
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        updatedAt:
+          type: string
+          format: date-time
+        unit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        totalVolumeUnit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        dailySummaries:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/MfrrDailySummary'
+        monthlySummaries:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/MfrrMonthlySummary'
+        yearlySummary:
+          $ref: '#/components/schemas/MfrrEntry'
+        content:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/YearlyMfrrEntry'
+      additionalProperties: false
     MfrrEntry:
       type: object
       properties:
@@ -494,39 +650,11 @@ components:
           type: string
           format: date-time
       additionalProperties: false
-    ApiMfrr:
-      required:
-      - currency
-      type: object
-      properties:
-        deliveryDateCET:
-          type: string
-          format: date
-        updatedAt:
-          type: string
-          format: date-time
-        deliveryArea:
-          type:
-          - string
-          - 'null'
-        status:
-          $ref: '#/components/schemas/ApiAvailableStatus'
-        currency:
-          type:
-          - string
-          - 'null'
-        exchangeRate:
-          type:
-          - number
-          - 'null'
-          format: double
-        manualFrequencyRestorationReserves:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiMfrrEntry'
-      additionalProperties: false
+    ApiAvailableStatus:
+      enum:
+      - Missing
+      - Available
+      type: string
   securitySchemes:
     oauth2:
       type: oauth2

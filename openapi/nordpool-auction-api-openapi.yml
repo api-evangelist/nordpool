@@ -1,7 +1,7 @@
 openapi: 3.2.0
 info:
   title: Nord Pool Market Data Auction API
-  description: 'Nord Pool''s Market Data API (v2) provides programmatic access to European power exchange market data: day-ahead auction prices, price indices, volumes, capacities, flows and aggregated bid curves; intraday continuous statistics, orders, trades and order books; balance market (mFRR) data; power system data (production, consumption, forecasts, hydro reservoir reserves); system price and turnover; and exchange rates. This document is the provider''s published OpenAPI definition, retrieved from https://data-api.nordpoolgroup.com/swagger/v2/swagger.json on 2026-07-11. Access to the data requires a paid Nord Pool Power Data Services subscription; authentication is OAuth 2.0 against https://sts.nordpoolgroup.com.'
+  description: 'Nord Pool''s Market Data API (v2) provides programmatic access to European power exchange market data: day-ahead auction prices, price indices, volumes, capacities, flows and aggregated bid curves; intraday continuous statistics, orders, trades and order books; balance market (mFRR) data; power system data (production, consumption, forecasts, hydro reservoir reserves); system price and turnover; and exchange rates.'
   version: v2
   contact:
     name: Nord Pool Power Data Services
@@ -19,7 +19,61 @@ paths:
       tags:
       - Auction
       summary: Aggregated bidding curves
-      description: "Returns aggregated bid curves for a date and region.\n \nAggregated bidding curves explains why the price forms as it does in a region for a market. If we plot aggregated supply and demand curves in the same chart, then the intersection of these two curves should happen on the realized price point.\n            \nSome regions contain multiple delivery areas. In this case, the intersection point will explain what the price would have been if no capacity constraint existed in between the sub-areas. Usually regions consisting of multiple delivery areas are aggregated if the amount of trading activity in the sub-areas is  small enough that it would reveal the trading strategy of the few traders active in the area. \n            \nThis endpoint returns aggregated bidding curve data for each delivery period for the queried CET date. \n\n### Response field descriptions\n\n#### aggregatedOrderPositions\n- **exportVolume**: volume exported from the region and period\n- **importVolume**: volume imported to the region and period\n- **realizedCurveDemandVolume**: volume of activated demand curve orders for the region, period, and resolution\n- **realizedCurveSupplyVolume**: volume of activated sell curve orders for the region, period, and resolution\n- **realizedNonCurveDemandVolume**: volume of activated buy blocks for the region, period, and resolution\n- **realizedNonCurveSupplyVolume**: volume of activated sell blocks for the region, period, and resolution\n- **demandCurve**: list of aggregated demand (=buy) curve order volume for price points\n- **supplyCurve**: list of aggregated supply (=sell) curve order volume for price points\n- **aggregatedDemandCurve**: list of aggregated demand price points. Consist of adjusted demand curve plus net export if net export > 0, plus realized non curve demand volume for the resolution as well as demand curve volume and demand non curve volume from other resolutions. Only generated for the smallest resolution period\n- **aggregatedSupplyCurve**: list of aggregated supply price points. Consist of adjusted supply curve plus net import if net import > 0, plus realized non curve supply volume for the resolution as well as supply curve volume and supply non curve volume from other resolutions. Only generated for the smallest resolution period\n            \n#### blockOrders\n- **side**: Buy or Sell\n- **exclusiveGroupId**: if not null, then this block is part of an exclusive group. Group all blocks by exclusive group id to see the exclusive group.\n- **minimumAcceptanceRatio**: the minimum acceptance ratio needed for the block to activate. Typically in the 0.5-1 range, where 0.5 = 50% of the volume needs to be filled to activate\n- **linkedOrderId**: if not null, then this block will only activate if the linked block order with this id activates. To find the parent, find the block order with the corresponding id.\n- **price**: the average price for the block order to activate\n- **paradoxicallyRejected**: if true, then the block restrictions are within the correct price and volume limits, but activating the block would cause price and volume to shift enough to disqualify the block from activation.\n- **actualAcceptanceRatio**: the ratio of the block that was accepted, in a range of 0 - 1. 1 = 100% of volume accepted.\n- **intervals**: periods for the block, with corresponding volumes and accepted volumes."
+      description: 'Returns aggregated bid curves for a date and region.
+
+
+        Aggregated bidding curves explains why the price forms as it does in a region for a market. If we plot aggregated supply and demand curves in the same chart, then the intersection of these two curves should happen on the realized price point.
+
+
+        Some regions contain multiple delivery areas. In this case, the intersection point will explain what the price would have been if no capacity constraint existed in between the sub-areas. Usually regions consisting of multiple delivery areas are aggregated if the amount of trading activity in the sub-areas is small enough that it would reveal the trading strategy of the few traders active in the area.
+
+
+        This endpoint returns aggregated bidding curve data for each delivery period for the queried CET date.
+
+
+        ### Response field descriptions
+
+
+        #### aggregatedOrderPositions
+
+        - **exportVolume**: volume exported from the region and period
+
+        - **importVolume**: volume imported to the region and period
+
+        - **realizedCurveDemandVolume**: volume of activated demand curve orders for the region, period, and resolution
+
+        - **realizedCurveSupplyVolume**: volume of activated sell curve orders for the region, period, and resolution
+
+        - **realizedNonCurveDemandVolume**: volume of activated buy blocks for the region, period, and resolution
+
+        - **realizedNonCurveSupplyVolume**: volume of activated sell blocks for the region, period, and resolution
+
+        - **demandCurve**: list of aggregated demand (=buy) curve order volume for price points
+
+        - **supplyCurve**: list of aggregated supply (=sell) curve order volume for price points
+
+        - **aggregatedDemandCurve**: list of aggregated demand price points. Consist of adjusted demand curve plus net export if net export > 0, plus realized non curve demand volume for the resolution as well as demand curve volume and demand non curve volume from other resolutions. Only generated for the smallest resolution period
+
+        - **aggregatedSupplyCurve**: list of aggregated supply price points. Consist of adjusted supply curve plus net import if net import > 0, plus realized non curve supply volume for the resolution as well as supply curve volume and supply non curve volume from other resolutions. Only generated for the smallest resolution period
+
+
+        #### blockOrders
+
+        - **side**: Buy or Sell
+
+        - **exclusiveGroupId**: if not null, then this block is part of an exclusive group. Group all blocks by exclusive group id to see the exclusive group.
+
+        - **minimumAcceptanceRatio**: the minimum acceptance ratio needed for the block to activate. Typically in the 0.5-1 range, where 0.5 = 50% of the volume needs to be filled to activate
+
+        - **linkedOrderId**: if not null, then this block will only activate if the linked block order with this id activates. To find the parent, find the block order with the corresponding id.
+
+        - **price**: the average price for the block order to activate
+
+        - **paradoxicallyRejected**: if true, then the block restrictions are within the correct price and volume limits, but activating the block would cause price and volume to shift enough to disqualify the block from activation.
+
+        - **actualAcceptanceRatio**: the ratio of the block that was accepted, in a range of 0 - 1. 1 = 100% of volume accepted.
+
+        - **intervals**: periods for the block, with corresponding volumes and accepted volumes.'
       externalDocs:
         description: Data portal link
         url: https://data.nordpoolgroup.com/auction/day-ahead/aggregated-bid-curves?deliveryDate=latest&bidCurveArea=SE
@@ -90,12 +144,14 @@ paths:
             text/json:
               schema:
                 $ref: '#/components/schemas/ValidationProblemDetails'
+      operationId: getApiV2AuctionByMarketBidCurvesByRegion
+      x-operation-id-source: derived
   /api/v2/Auction/Capacities/ByAreas:
     get:
       tags:
       - Auction
       summary: ATC Capacities
-      description: "ATC capacities constrains how much power can flow in between two areas. The matching algorithm takes these capacities into account when optimizing power flow from low price to high price areas. Note that for some regions in some markets, flow based capacity constraints are used instead or in combination with ATC capacities.\n            \nCapacities are given for each delivery period for the delivery date in question, and are separated into import and export capacities.\n            \n### Response field descriptions\n            \n**importsByConnection**\n- **area**: the area imported from\n- **connection**: the named connection to the import area. In some cases, multiple capacity values exist in between two areas - if that's the case, then connection will be used to distinguish the values.\n- **capacity**: the max MW that can be imported on this connection\n- **lossFactor**: in case there is a loss on the cable, then the loss factor tells how much power will be lost. Given a loss factor of 0.02 then 2% of the power gets lost in transit. If we put in 100 MW on the exporting side then 98MW arrives in the import area.  \n- **rampingRestriction**: some connections can't change the power flow too quickly. In these cases, a ramping restriction will be present. Ramping restrictions are given in MW, telling how much capacity can change from the previous period. If we have a ramping value of 100 MW, then going from delivery period 01:00 to 02:00, then the flow value can only change +/- the ramping value from the previous period.\n- **alreadyAllocatedCapacity**: capacity which is already in use. If ramping restrictions exist, then the already allocated capacity needs to be taken into account. This is mostly relevant for intraday auctions where there is planned flows already in place.\n            \n**exportsByConnection**\n- **area**: the area exported to\n- **connection**: the named connection to the export area. In some cases, multiple capacity values exist in between two areas - if that's the case, then connection will be used to distinguish the values.\n- **capacity**: the max MW that can be exported on this connection\n- **lossFactor**: in case there is a loss on the cable, then the loss factor tells how much power will be lost. Given a loss factor of 0.02 then 2% of the power gets lost in transit. If we put in 100 MW on the exporting side then 98MW arrives in the import area.  \n- **rampingRestriction**: some connections can't change the power flow too quickly. In these cases, a ramping restriction will be present. Ramping restrictions are given in MW, telling how much capacity can change from the previous period. If we have a ramping value of 100 MW, then going from delivery period 01:00 to 02:00, then the flow value can only change +/- the ramping value from the previous period.\n- **alreadyAllocatedCapacity**: capacity which is already in use. If ramping restrictions exist, then the already allocated capacity needs to be taken into account. This is mostly relevant for intraday auctions where there is planned flows already in place.\n            \n**importGroupRestriction**\n- **areas**: the areas affected by this restriction\n- **capacity**: the total import capacity that is possible when summing together all area capacities. This is generally larger than a single area capacity, but smaller than the sum of areas.\n\n**exportGroupRestriction**\n- **areas**: the areas affected by this restriction\n- **capacity**: the total import capacity that is possible when summing together all area capacities. This is generally larger than a single area capacity, but smaller than the sum of areas.\n\n**externalImportConstraint**: external import constraints limit the bidding zone net position which represents the total net exchange of the BZ with its neighbors both in FlowBased and ATC network models. The net position is defined as sum \\(export flow\\) - sum \\(import flow\\), and must be higher or equal to -\\(external import constraint\\).\n            \n**externalExportConstraint**: external export constraints limit the bidding zone net position which represents the total net exchange of the BZ with its neighbors both in FlowBased and ATC network models. The net position is defined as sum \\(export flow\\) - sum \\(import flow\\), and must be less or equal to \\(external export constraint\\).\n            \n**totalImport**: the total available import capacity, taking into account import group restrictions if any exist.\n            \n**totalExport**: the total available export capacity, taking into account export group restrictions if any exist.\n            \n**maxNtcValues**: a list of the maximum capacity value possible for certain connections. \n- **areaFrom**: area which electricity is flowing from\n- **areaTo**: area which electricity is flowing to \n- **connection**: name of connection, if multiple connections exists in between two areas\n- **maxNtc**: the net transfer capacity max value for this connection"
+      description: ATC capacities constrains how much power can flow in between two areas.
       externalDocs:
         description: Data portal link
         url: https://data.nordpoolgroup.com/auction/day-ahead/capacities?deliveryDate=latest&deliveryArea=EE
@@ -176,12 +232,14 @@ paths:
             text/json:
               schema:
                 $ref: '#/components/schemas/ValidationProblemDetails'
+      operationId: getApiV2AuctionCapacitiesByAreas
+      x-operation-id-source: derived
   /api/v2/Auction/Capacities/Yearly/ByArea:
     get:
       tags:
       - Auction
       summary: Yearly ATC capacities
-      description: "Returns a list of auction capacities for a market, year and one area.\n            \n### Response field descriptions\n            \n**importsByConnection**\n- **area**: the area imported from\n- **connection**: the named connection to the import area. In some cases, multiple capacity values exist in between two areas - if that's the case, then connection will be used to distinguish the values.\n- **capacity**: the max MW that can be imported on this connection\n- **lossFactor**: in case there is a loss on the cable, then the loss factor tells how much power will be lost. Given a loss factor of 0.02 then 2% of the power gets lost in transit. If we put in 100 MW on the exporting side then 98MW arrives in the import area.  \n- **rampingRestriction**: some connections can't change the power flow too quickly. In these cases, a ramping restriction will be present. Ramping restrictions are given in MW, telling how much capacity can change from the previous period. If we have a ramping value of 100 MW, then going from delivery period 01:00 to 02:00, then the flow value can only change +/- the ramping value from the previous period.\n- **alreadyAllocatedCapacity**: capacity which is already in use. If ramping restrictions exist, then the already allocated capacity needs to be taken into account. This is mostly relevant for intraday auctions where there is planned flows already in place.\n            \n**exportsByConnection**\n- **area**: the area exported to\n- **connection**: the named connection to the export area. In some cases, multiple capacity values exist in between two areas - if that's the case, then connection will be used to distinguish the values.\n- **capacity**: the max MW that can be exported on this connection\n- **lossFactor**: in case there is a loss on the cable, then the loss factor tells how much power will be lost. Given a loss factor of 0.02 then 2% of the power gets lost in transit. If we put in 100 MW on the exporting side then 98MW arrives in the import area.  \n- **rampingRestriction**: some connections can't change the power flow too quickly. In these cases, a ramping restriction will be present. Ramping restrictions are given in MW, telling how much capacity can change from the previous period. If we have a ramping value of 100 MW, then going from delivery period 01:00 to 02:00, then the flow value can only change +/- the ramping value from the previous period.\n- **alreadyAllocatedCapacity**: capacity which is already in use. If ramping restrictions exist, then the already allocated capacity needs to be taken into account. This is mostly relevant for intraday auctions where there is planned flows already in place.\n            \n**importGroupRestriction**\n- **areas**: the areas affected by this restriction\n- **capacity**: the total import capacity that is possible when summing together all area capacities. This is generally larger than a single area capacity, but smaller than the sum of areas.\n\n**exportGroupRestriction**\n- **areas**: the areas affected by this restriction\n- **capacity**: the total import capacity that is possible when summing together all area capacities. This is generally larger than a single area capacity, but smaller than the sum of areas.\n\n**externalImportConstraint**: external import constraints limit the bidding zone net position which represents the total net exchange of the BZ with its neighbors both in FlowBased and ATC network models. The net position is defined as sum \\(export flow\\) - sum \\(import flow\\), and must be higher or equal to -\\(external import constraint\\).\n            \n**externalExportConstraint**: external export constraints limit the bidding zone net position which represents the total net exchange of the BZ with its neighbors both in FlowBased and ATC network models. The net position is defined as sum \\(export flow\\) - sum \\(import flow\\), and must be less or equal to \\(external export constraint\\).\n            \n**totalImport**: the total available import capacity, taking into account import group restrictions if any exist.\n            \n**totalExport**: the total available export capacity, taking into account export group restrictions if any exist.\n            \n**dailySummaries**: daily summary value of total import and export capacity, in MWh\n- **totalImport**: total daily MWh import capacity, taking into account import group restrictions if any exists\n- **totalExport**: total daily MWh export capacity, taking account export group restrictions if any exists"
+      description: Returns a list of auction capacities for a market, year and one area.
       parameters:
       - name: market
         in: query
@@ -251,12 +309,61 @@ paths:
             text/json:
               schema:
                 $ref: '#/components/schemas/ValidationProblemDetails'
+      operationId: getApiV2AuctionCapacitiesYearlyByArea
+      x-operation-id-source: derived
   /api/v2/Auction/FlowBasedConstraints/ByDomain:
     get:
       tags:
       - Auction
       summary: Flow-based Constraints
-      description: "Returns a list of flow-based constraints per market, date and one domain\n            \nFlow-based capacity constraints represent limits on critical network elements in the power grid. Flow-based constraints are used in combination with ATC capacities to calculate flows inside of flow-based regions.\n            \nFlow-based capacity constraints are given per delivery period. Each period contains multiple constraints, and each constraint consists of:\n- **RAM (Remaining Available Margin)** - the available margin for the critical network element, which serves as an upper bound on the total consumption of this element by different bidding areas.\n - A list of **PTDFs (Power Transfer Distribution Factors**) for each Bidding Zone in the corresponding Flow-Based region. A PTDF indicates how much a bidding zone's Net-Position contributes to the load of the critical network element (limited by RAM).\n            \nTo see if a constraint is binding (or how close it is to being reached), multiply the Net-Position (NP) for each Bidding Zone by its respective PTDF. Then, sum the results of each multiplication. This must result in a value that is lower or equal to the RAM.\n            \nWhen the sum equals the RAM, the corresponding constraint (CNEC) is binding. This can be exemplified by the following formula:\n            \n`PTDF1 * NP1 + PTDF2 * NP2 + ... + PTDFn * NPn ≤ RAM`\n            \nEuphemia ensures that these constraints will always be respected.\n            \nThe Net-Position of a Bidding Zone is defined as Total Export - Total Import for a Bidding Zone. In our data model, this is easiest gotten from the Flow model, and refers to -(totalNetPosition) for each delivery period and area.\n            \n### Response field descriptions\n**periods**: a list of delivery periods. Each period has\n- **deliveryStart**: the start time of the delivery period\n- **deliveryEnd**: the end time of the delivery period\n- **constraints**: a list of constraints.\n            \nEach constraint consist of:\n- **id**: an identifier for the unit. Note that this id is only to identify the constraint within this market coupling session\n- **name**: an optional name for the unit, not always present\n- **remainingAvailableMargin**: the RAM value, described above\n- **powerTransferDistributionFactors**: a list of Power Transfer Distribution factors for each area, described above"
+      description: 'Returns a list of flow-based constraints per market, date and one domain
+
+
+        Flow-based capacity constraints represent limits on critical network elements in the power grid. Flow-based constraints are used in combination with ATC capacities to calculate flows inside of flow-based regions.
+
+
+        Flow-based capacity constraints are given per delivery period. Each period contains multiple constraints, and each constraint consists of:
+
+        - **RAM (Remaining Available Margin)** - the available margin for the critical network element, which serves as an upper bound on the total consumption of this element by different bidding areas.
+
+        - A list of **PTDFs (Power Transfer Distribution Factors**) for each Bidding Zone in the corresponding Flow-Based region. A PTDF indicates how much a bidding zone''s Net-Position contributes to the load of the critical network element (limited by RAM).
+
+
+        To see if a constraint is binding (or how close it is to being reached), multiply the Net-Position (NP) for each Bidding Zone by its respective PTDF. Then, sum the results of each multiplication. This must result in a value that is lower or equal to the RAM.
+
+
+        When the sum equals the RAM, the corresponding constraint (CNEC) is binding. This can be exemplified by the following formula:
+
+
+        `PTDF1 * NP1 + PTDF2 * NP2 + ... + PTDFn * NPn ≤ RAM`
+
+
+        Euphemia ensures that these constraints will always be respected.
+
+
+        The Net-Position of a Bidding Zone is defined as Total Export - Total Import for a Bidding Zone. In our data model, this is easiest gotten from the Flow model, and refers to -(totalNetPosition) for each delivery period and area.
+
+
+        ### Response field descriptions
+
+        **periods**: a list of delivery periods. Each period has
+
+        - **deliveryStart**: the start time of the delivery period
+
+        - **deliveryEnd**: the end time of the delivery period
+
+        - **constraints**: a list of constraints.
+
+
+        Each constraint consist of:
+
+        - **id**: an identifier for the unit. Note that this id is only to identify the constraint within this market coupling session
+
+        - **name**: an optional name for the unit, not always present
+
+        - **remainingAvailableMargin**: the RAM value, described above
+
+        - **powerTransferDistributionFactors**: a list of Power Transfer Distribution factors for each area, described above'
       externalDocs:
         description: Flow based description
         url: https://developers.nordpoolgroup.com/reference/auction-flow-based-constraints-data
@@ -333,12 +440,45 @@ paths:
             text/json:
               schema:
                 $ref: '#/components/schemas/ValidationProblemDetails'
+      operationId: getApiV2AuctionFlowBasedConstraintsByDomain
+      x-operation-id-source: derived
   /api/v2/Auction/Flows/ByAreas:
     get:
       tags:
       - Auction
       summary: Auction Flows
-      description: "Returns a list of auction flows per area for a market, date and list of areas.\n            \nFlows are describing how much power are exchanged in between areas.\n            \nThis is the flow coming from Euphemia - note that in the Nordic region a post coupling calculation is done to adjust this flow. See Scheduled Physical Flows for Nordic Day-ahead flows after 30th of October 2024.\n            \nFlows are always described from an area point of view. Some flows will have a loss on the cable - imports in an area is always after losses, and exports are before losses.\n            \n### Response field descriptions\n- **status**: Missing if data does not exist. Preliminary if the market coupling session is not complete. Final once the market coupling session is complete. Cancelled if the auction is cancelled.\n- **dailyTotalImport**: total MWh imported volume\n- **dailyTotalExport**: total MWh exported volume\n- **dailyTotalNetPosition**: total net position in MWh (total import - total export).\n            \n**flows**: a list of delivery periods, containing all flows for that period\n- **byConnection**: a list of all connections that has a flow for the period. Each connection is identified by an area and optionally by a connection name. The Connection name is only present if multiple connections exists on the same border. **import** gives the import volume in MW, **export** the export volume in MW and **netPosition** describes import-export\n- **totalImport**: sum of all connection import volumes given in MW\n- **totalExport**: sum of all connection export volumes given in MW\n- **totalNetPosition**: total import - total export"
+      description: 'Returns a list of auction flows per area for a market, date and list of areas.
+
+
+        Flows are describing how much power are exchanged in between areas.
+
+
+        This is the flow coming from Euphemia - note that in the Nordic region a post coupling calculation is done to adjust this flow. See Scheduled Physical Flows for Nordic Day-ahead flows after 30th of October 2024.
+
+
+        Flows are always described from an area point of view. Some flows will have a loss on the cable - imports in an area is always after losses, and exports are before losses.
+
+
+        ### Response field descriptions
+
+        - **status**: Missing if data does not exist. Preliminary if the market coupling session is not complete. Final once the market coupling session is complete. Cancelled if the auction is cancelled.
+
+        - **dailyTotalImport**: total MWh imported volume
+
+        - **dailyTotalExport**: total MWh exported volume
+
+        - **dailyTotalNetPosition**: total net position in MWh (total import - total export).
+
+
+        **flows**: a list of delivery periods, containing all flows for that period
+
+        - **byConnection**: a list of all connections that has a flow for the period. Each connection is identified by an area and optionally by a connection name. The Connection name is only present if multiple connections exists on the same border. **import** gives the import volume in MW, **export** the export volume in MW and **netPosition** describes import-export
+
+        - **totalImport**: sum of all connection import volumes given in MW
+
+        - **totalExport**: sum of all connection export volumes given in MW
+
+        - **totalNetPosition**: total import - total export'
       externalDocs:
         description: Data portal link
         url: https://data.nordpoolgroup.com/auction/day-ahead/flows?deliveryDate=latest&deliveryArea=EE&displayImportExport=false
@@ -421,12 +561,47 @@ paths:
             text/json:
               schema:
                 $ref: '#/components/schemas/ValidationProblemDetails'
+      operationId: getApiV2AuctionFlowsByAreas
+      x-operation-id-source: derived
   /api/v2/Auction/Flows/Yearly/ByArea:
     get:
       tags:
       - Auction
       summary: Yearly Auction Flows
-      description: "Returns a list of auction flows for a market, year and one area.\n            \nFlows are describing how much power are exchanged in between areas.\n            \nThis is the flow coming from Euphemia - note that in the Nordic region a post coupling calculation is done to adjust this flow. See Scheduled Physical Flows for Nordic Day-ahead flows after 30th of October 2024.\n            \nFlows are always described from an area point of view. Some flows will have a loss on the cable - imports in an area is always after losses, and exports are before losses.\n            \n### Response field descriptions\n**dailySummaries**: contains a list of daily summaries for all flows for that day\n- **totalImport**: total import volume for the day, in MWh\n- **totalExport**: total export volume for the day, in MWh\n- **totalNetPosition**: total net position for the day (total import - total export), in MWh\n- **connectionSummaries**: list of all connections used for the day, with total imports and exports given in MWh \n            \n**flows**: a list of delivery periods, containing all flows for that period\n- **byConnection**: a list of all connections that has a flow for the period. Each connection is identified by an area and optionally by a connection name. The Connection name is only present if multiple connections exists on the same border. **import** gives the import volume in MW, **export** the export volume in MW and **netPosition** describes import-export\n- **totalImport**: sum of all connection import volumes given in MW\n- **totalExport**: sum of all connection export volumes given in MW\n- **totalNetPosition**: total import - total export"
+      description: 'Returns a list of auction flows for a market, year and one area.
+
+
+        Flows are describing how much power are exchanged in between areas.
+
+
+        This is the flow coming from Euphemia - note that in the Nordic region a post coupling calculation is done to adjust this flow. See Scheduled Physical Flows for Nordic Day-ahead flows after 30th of October 2024.
+
+
+        Flows are always described from an area point of view. Some flows will have a loss on the cable - imports in an area is always after losses, and exports are before losses.
+
+
+        ### Response field descriptions
+
+        **dailySummaries**: contains a list of daily summaries for all flows for that day
+
+        - **totalImport**: total import volume for the day, in MWh
+
+        - **totalExport**: total export volume for the day, in MWh
+
+        - **totalNetPosition**: total net position for the day (total import - total export), in MWh
+
+        - **connectionSummaries**: list of all connections used for the day, with total imports and exports given in MWh
+
+
+        **flows**: a list of delivery periods, containing all flows for that period
+
+        - **byConnection**: a list of all connections that has a flow for the period. Each connection is identified by an area and optionally by a connection name. The Connection name is only present if multiple connections exists on the same border. **import** gives the import volume in MW, **export** the export volume in MW and **netPosition** describes import-export
+
+        - **totalImport**: sum of all connection import volumes given in MW
+
+        - **totalExport**: sum of all connection export volumes given in MW
+
+        - **totalNetPosition**: total import - total export'
       parameters:
       - name: market
         in: query
@@ -498,12 +673,31 @@ paths:
             text/json:
               schema:
                 $ref: '#/components/schemas/ValidationProblemDetails'
+      operationId: getApiV2AuctionFlowsYearlyByArea
+      x-operation-id-source: derived
   /api/v2/Auction/PriceIndices/ByIndexNames:
     get:
       tags:
       - Auction
       summary: Auction Price Indices
-      description: " Price indices are normalized prices for a set resolution, for one delivery area or a group of delivery areas.\n            \nIf official prices exists in a certain resolution, then official prices are used. If no centrally agreed official price exists for a resolution, then an average price is calculated.\n            \nNote that settlement is always done in the lowest trading resolution for the market and area, price indices are just an indication of what the average price would be in different resolutions.\n            \n### Response field descriptions\n- **status**: Missing if data does not exist. Preliminary if the market coupling session is not complete, or the exchange rate has not been finalized yet. Final once exchange rate is set and market coupling session is complete. Cancelled if the auction is cancelled.\n- **exchangeRate**: the exchange rate used to calculate the currency price. 1 if the currency is the same as the main market currency.\n- **deliveryAreas**: the areas used to build up this index. In most cases, this is the same as the index name.\n- **baseResolution**: the base resolution of the market for this day"
+      description: 'Price indices are normalized prices for a set resolution, for one delivery area or a group of delivery areas.
+
+
+        If official prices exists in a certain resolution, then official prices are used. If no centrally agreed official price exists for a resolution, then an average price is calculated.
+
+
+        Note that settlement is always done in the lowest trading resolution for the market and area, price indices are just an indication of what the average price would be in different resolutions.
+
+
+        ### Response field descriptions
+
+        - **status**: Missing if data does not exist. Preliminary if the market coupling session is not complete, or the exchange rate has not been finalized yet. Final once exchange rate is set and market coupling session is complete. Cancelled if the auction is cancelled.
+
+        - **exchangeRate**: the exchange rate used to calculate the currency price. 1 if the currency is the same as the main market currency.
+
+        - **deliveryAreas**: the areas used to build up this index. In most cases, this is the same as the index name.
+
+        - **baseResolution**: the base resolution of the market for this day'
       externalDocs:
         description: Data portal link
         url: https://data.nordpoolgroup.com/auction/day-ahead/price-indices?deliveryDate=latest&currency=EUR&resolutionInMinutes=15&indexNames=AT
@@ -604,12 +798,30 @@ paths:
             text/json:
               schema:
                 $ref: '#/components/schemas/ValidationProblemDetails'
+      operationId: getApiV2AuctionPriceIndicesByIndexNames
+      x-operation-id-source: derived
   /api/v2/Auction/PriceIndices/Yearly/ByIndexName:
     get:
       tags:
       - Auction
       summary: Yearly Auction Price Indices
-      description: " Price indices are normalized prices for a set resolution, for one delivery area or a group of delivery areas.\n            \nIf official prices exists in a certain resolution, then official prices are used. If no centrally agreed official price exists for a resolution, then an average price is calculated.\n            \nNote that settlement is always done in the lowest trading resolution for the market and area, price indices are just an indication of what the average price would be in different resolutions.\n            \n### Response field descriptions\n- **exchangeRate**: the exchange rate used to calculate the currency price. 1 if the currency is the same as the main market currency.\n- **deliveryAreas**: the areas used to build up this index. In most cases, this is the same as the index name.\n            \nOnly final price indices are included in this endpoint."
+      description: 'Price indices are normalized prices for a set resolution, for one delivery area or a group of delivery areas.
+
+
+        If official prices exists in a certain resolution, then official prices are used. If no centrally agreed official price exists for a resolution, then an average price is calculated.
+
+
+        Note that settlement is always done in the lowest trading resolution for the market and area, price indices are just an indication of what the average price would be in different resolutions.
+
+
+        ### Response field descriptions
+
+        - **exchangeRate**: the exchange rate used to calculate the currency price. 1 if the currency is the same as the main market currency.
+
+        - **deliveryAreas**: the areas used to build up this index. In most cases, this is the same as the index name.
+
+
+        Only final price indices are included in this endpoint.'
       parameters:
       - name: market
         in: query
@@ -699,12 +911,30 @@ paths:
             text/json:
               schema:
                 $ref: '#/components/schemas/ValidationProblemDetails'
+      operationId: getApiV2AuctionPriceIndicesYearlyByIndexName
+      x-operation-id-source: derived
   /api/v2/Auction/Prices/ByAreas:
     get:
       tags:
       - Auction
       summary: Auction Prices
-      description: "Returns a list of auction prices for a market, currency, date and list of areas.\n### Response field descriptions\n- **status**: Missing if data does not exist. Preliminary if the market coupling session is not complete, or the exchange rate has not been finalized yet. Final once exchange rate is set and market coupling session is complete. Cancelled if the auction is cancelled.\n- **exchangeRate**: the exchange rate used to calculate the currency price. 1 if the currency is the same as the main market currency.\n- **prices**: the settlement price for each period. If no trading happens, then the price might be null\n- **blockPrices**: average price for periods (block) of the day\n            \nNote that settlement will only be done for Final prices - preliminary prices can change either due to updated exchange rate, or in rare cases from a re-opening of order books and re-calculating prices.\n            \nPreliminary prices can change, and exchange rates for local currencies are only finalized on Norwegian banking days."
+      description: 'Returns a list of auction prices for a market, currency, date and list of areas.
+
+        ### Response field descriptions
+
+        - **status**: Missing if data does not exist. Preliminary if the market coupling session is not complete, or the exchange rate has not been finalized yet. Final once exchange rate is set and market coupling session is complete. Cancelled if the auction is cancelled.
+
+        - **exchangeRate**: the exchange rate used to calculate the currency price. 1 if the currency is the same as the main market currency.
+
+        - **prices**: the settlement price for each period. If no trading happens, then the price might be null
+
+        - **blockPrices**: average price for periods (block) of the day
+
+
+        Note that settlement will only be done for Final prices - preliminary prices can change either due to updated exchange rate, or in rare cases from a re-opening of order books and re-calculating prices.
+
+
+        Preliminary prices can change, and exchange rates for local currencies are only finalized on Norwegian banking days.'
       externalDocs:
         description: Data portal link
         url: https://data.nordpoolgroup.com/auction/day-ahead/prices?deliveryDate=latest&currency=EUR&aggregation=DeliveryPeriod&deliveryAreas=NO1
@@ -797,12 +1027,32 @@ paths:
             text/json:
               schema:
                 $ref: '#/components/schemas/ValidationProblemDetails'
+      operationId: getApiV2AuctionPricesByAreas
+      x-operation-id-source: derived
   /api/v2/Auction/Prices/Yearly/ByArea:
     get:
       tags:
       - Auction
       summary: Yearly Auction Prices
-      description: " Returns a list of auction prices for a market, currency, year and one area.\n            \n### Response field descriptions\n- **prices**: the settlement price for each period. If no trading happens, then the price might be null\n- **blockPrices**: average price for a periods of the day, called blocks.\n- **dailySummaries**: contains min, max and average price for each day in the year\n- **monthlySummaries**: contains min, max and average price for each month of the year\n- **weeklySummaries**: contains min, max and average price for each week of the year. Note this can include date ranges outside the actual year, since weeks do not align nicely with the yearly calendar.\n- **yearlySummary**: min, max and average price for the full year.\n  \n Only final prices are included in this endpoint."
+      description: 'Returns a list of auction prices for a market, currency, year and one area.
+
+
+        ### Response field descriptions
+
+        - **prices**: the settlement price for each period. If no trading happens, then the price might be null
+
+        - **blockPrices**: average price for a periods of the day, called blocks.
+
+        - **dailySummaries**: contains min, max and average price for each day in the year
+
+        - **monthlySummaries**: contains min, max and average price for each month of the year
+
+        - **weeklySummaries**: contains min, max and average price for each week of the year. Note this can include date ranges outside the actual year, since weeks do not align nicely with the yearly calendar.
+
+        - **yearlySummary**: min, max and average price for the full year.
+
+
+        Only final prices are included in this endpoint.'
       parameters:
       - name: market
         in: query
@@ -884,12 +1134,48 @@ paths:
             text/json:
               schema:
                 $ref: '#/components/schemas/ValidationProblemDetails'
+      operationId: getApiV2AuctionPricesYearlyByArea
+      x-operation-id-source: derived
   /api/v2/Auction/ScheduledPhysicalFlows/ByAreas:
     get:
       tags:
       - Auction
       summary: Auction Scheduled Physical Flows
-      description: "Scheduled physical flows are published for the day-ahead market after the Nordic Flow-based go-live on the 30th of October 2024.\n            \nScheduled physical flows are re-calculated flows for Nordic flow-based regions. The Nordic Flow-based implementation sometimes ends up breaching physical constraints in the power grid, and a post-coupling re-calculation is done and published to the JAO publication tool, which is the source of this data.\n            \nThe re-calculated flows should end up with every area having the same net position (+/- ~0.1MW) as the original flows coming from Euphemia, but internal flows inside the regions might be re-routed. \n            \nScheduled physical flows are the basis of what capacities are later released to intraday auctions as well as the intraday market. The need to re-calculate flows coming from Euphemia only exist in the Nordic flow-based regions. \n            \nScheduled physical flows are always described from an area point of view. Some flows will have a loss on the cable - imports in an area is always after losses, and exports are before losses.\n            \n### Response field descriptions\n- **status**: Missing if data does not exist. Final once the market coupling session is complete.\n- **dailyTotalImport**: total MWh imported volume\n- **dailyTotalExport**: total MWh exported volume\n- **dailyTotalNetPosition**: total net position in MWh (total import - total export).\n            \n**flows**: a list of delivery periods, containing all flows for that period\n- **byConnection**: a list of all connections that has a flow for the period. Each connection is identified by an area and optionally by a connection name. The Connection name is only present if multiple connections exists on the same border. **import** gives the import volume in MW, **export** the export volume in MW and **netPosition** describes import-export\n- **totalImport**: sum of all connection import volumes given in MW\n- **totalExport**: sum of all connection export volumes given in MW\n- **totalNetPosition**: total import - total export"
+      description: 'Scheduled physical flows are published for the day-ahead market after the Nordic Flow-based go-live on the 30th of October 2024.
+
+
+        Scheduled physical flows are re-calculated flows for Nordic flow-based regions. The Nordic Flow-based implementation sometimes ends up breaching physical constraints in the power grid, and a post-coupling re-calculation is done and published to the JAO publication tool, which is the source of this data.
+
+
+        The re-calculated flows should end up with every area having the same net position (+/- ~0.1MW) as the original flows coming from Euphemia, but internal flows inside the regions might be re-routed.
+
+
+        Scheduled physical flows are the basis of what capacities are later released to intraday auctions as well as the intraday market. The need to re-calculate flows coming from Euphemia only exist in the Nordic flow-based regions.
+
+
+        Scheduled physical flows are always described from an area point of view. Some flows will have a loss on the cable - imports in an area is always after losses, and exports are before losses.
+
+
+        ### Response field descriptions
+
+        - **status**: Missing if data does not exist. Final once the market coupling session is complete.
+
+        - **dailyTotalImport**: total MWh imported volume
+
+        - **dailyTotalExport**: total MWh exported volume
+
+        - **dailyTotalNetPosition**: total net position in MWh (total import - total export).
+
+
+        **flows**: a list of delivery periods, containing all flows for that period
+
+        - **byConnection**: a list of all connections that has a flow for the period. Each connection is identified by an area and optionally by a connection name. The Connection name is only present if multiple connections exists on the same border. **import** gives the import volume in MW, **export** the export volume in MW and **netPosition** describes import-export
+
+        - **totalImport**: sum of all connection import volumes given in MW
+
+        - **totalExport**: sum of all connection export volumes given in MW
+
+        - **totalNetPosition**: total import - total export'
       externalDocs:
         description: Data portal link
         url: https://data.nordpoolgroup.com/auction/day-ahead/scheduled-physical-flows?deliveryDate=latest&deliveryArea=DK1&displayImportExport=true
@@ -973,12 +1259,50 @@ paths:
             text/json:
               schema:
                 $ref: '#/components/schemas/ValidationProblemDetails'
+      operationId: getApiV2AuctionScheduledPhysicalFlowsByAreas
+      x-operation-id-source: derived
   /api/v2/Auction/ScheduledPhysicalFlows/Yearly/ByArea:
     get:
       tags:
       - Auction
       summary: Yearly Scheduled Physical Flows
-      description: "Scheduled physical flows are published for the day-ahead market after the Nordic Flow-based go-live on the 30th of October 2024.\n            \nScheduled physical flows are re-calculated flows for Nordic flow-based regions. The Nordic Flow-based implementation sometimes ends up breaching physical constraints in the power grid, and a post-coupling re-calculation is done and published to the JAO publication tool, which is the source of this data.\n            \nThe re-calculated flows should end up with every area having the same net position (+/- ~0.1MW) as the original flows coming from Euphemia, but internal flows inside the regions might be re-routed. \n            \nScheduled physical flows are the basis of what capacities are later released to intraday auctions as well as the intraday market. The need to re-calculate flows coming from Euphemia only exist in the Nordic flow-based regions.\n            \nThis endpoint returns all scheduled physical flows for a year and area.\n            \n### Response field descriptions\n**dailySummaries**: contains a list of daily summaries for all flows for that day\n- **totalImport**: total import volume for the day, in MWh\n- **totalExport**: total export volume for the day, in MWh\n- **totalNetPosition**: total net position for the day (total import - total export), in MWh\n- **connectionSummaries**: list of all connections used for the day, with total imports and exports given in MWh \n            \n**flows**: a list of delivery periods, containing all flows for that period\n- **byConnection**: a list of all connections that has a flow for the period. Each connection is identified by an area and optionally by a connection name. The Connection name is only present if multiple connections exists on the same border. **import** gives the import volume in MW, **export** the export volume in MW and **netPosition** describes import-export\n- **totalImport**: sum of all connection import volumes given in MW\n- **totalExport**: sum of all connection export volumes given in MW\n- **totalNetPosition**: total import - total export"
+      description: 'Scheduled physical flows are published for the day-ahead market after the Nordic Flow-based go-live on the 30th of October 2024.
+
+
+        Scheduled physical flows are re-calculated flows for Nordic flow-based regions. The Nordic Flow-based implementation sometimes ends up breaching physical constraints in the power grid, and a post-coupling re-calculation is done and published to the JAO publication tool, which is the source of this data.
+
+
+        The re-calculated flows should end up with every area having the same net position (+/- ~0.1MW) as the original flows coming from Euphemia, but internal flows inside the regions might be re-routed.
+
+
+        Scheduled physical flows are the basis of what capacities are later released to intraday auctions as well as the intraday market. The need to re-calculate flows coming from Euphemia only exist in the Nordic flow-based regions.
+
+
+        This endpoint returns all scheduled physical flows for a year and area.
+
+
+        ### Response field descriptions
+
+        **dailySummaries**: contains a list of daily summaries for all flows for that day
+
+        - **totalImport**: total import volume for the day, in MWh
+
+        - **totalExport**: total export volume for the day, in MWh
+
+        - **totalNetPosition**: total net position for the day (total import - total export), in MWh
+
+        - **connectionSummaries**: list of all connections used for the day, with total imports and exports given in MWh
+
+
+        **flows**: a list of delivery periods, containing all flows for that period
+
+        - **byConnection**: a list of all connections that has a flow for the period. Each connection is identified by an area and optionally by a connection name. The Connection name is only present if multiple connections exists on the same border. **import** gives the import volume in MW, **export** the export volume in MW and **netPosition** describes import-export
+
+        - **totalImport**: sum of all connection import volumes given in MW
+
+        - **totalExport**: sum of all connection export volumes given in MW
+
+        - **totalNetPosition**: total import - total export'
       parameters:
       - name: market
         in: query
@@ -1050,12 +1374,56 @@ paths:
             text/json:
               schema:
                 $ref: '#/components/schemas/ValidationProblemDetails'
+      operationId: getApiV2AuctionScheduledPhysicalFlowsYearlyByArea
+      x-operation-id-source: derived
   /api/v2/Auction/Volumes/ByAreas:
     get:
       tags:
       - Auction
       summary: Auction Volumes
-      description: "Returns a list of auction volumes for a market, date and list of areas.\n            \nNote that this volume only reflect Nord Pool's part of the traded volume, not the market total volume.\n            \n### Response field descriptions\n- **status**: Missing if data does not exist. Preliminary if the market coupling session is not complete. Final once the market coupling session is complete. Cancelled if the auction is cancelled.\n            \n**totalVolume**\n- **buy**: total MWh bought in the area across all delivery periods\n- **sell**: total MWh sold in the area across all delivery periods\n            \n**averageVolume**\n- **buy**: average MW of bought volume across all delivery periods\n- **sell**: average MW of sold volume across all delivery periods\n            \n**minVolume**\n- **buy**: minimum MW bought across all delivery periods\n- **sell**: minimum MW sold across all delivery periods\n            \n**maxVolume**\n- **buy**: maximum MW bought across all delivery periods\n- **sell**: maximum MW sold across all delivery periods\n            \n**blockVolumes**: List of MWh buy and sell volumes for a period of the day.\n            \n**volumes**: List of MW buy and sell volumes per delivery period"
+      description: 'Returns a list of auction volumes for a market, date and list of areas.
+
+
+        Note that this volume only reflect Nord Pool''s part of the traded volume, not the market total volume.
+
+
+        ### Response field descriptions
+
+        - **status**: Missing if data does not exist. Preliminary if the market coupling session is not complete. Final once the market coupling session is complete. Cancelled if the auction is cancelled.
+
+
+        **totalVolume**
+
+        - **buy**: total MWh bought in the area across all delivery periods
+
+        - **sell**: total MWh sold in the area across all delivery periods
+
+
+        **averageVolume**
+
+        - **buy**: average MW of bought volume across all delivery periods
+
+        - **sell**: average MW of sold volume across all delivery periods
+
+
+        **minVolume**
+
+        - **buy**: minimum MW bought across all delivery periods
+
+        - **sell**: minimum MW sold across all delivery periods
+
+
+        **maxVolume**
+
+        - **buy**: maximum MW bought across all delivery periods
+
+        - **sell**: maximum MW sold across all delivery periods
+
+
+        **blockVolumes**: List of MWh buy and sell volumes for a period of the day.
+
+
+        **volumes**: List of MW buy and sell volumes per delivery period'
       externalDocs:
         description: Data portal link
         url: https://data.nordpoolgroup.com/auction/day-ahead/volumes?deliveryDate=latest&deliveryAreas=NO1
@@ -1138,12 +1506,61 @@ paths:
             text/json:
               schema:
                 $ref: '#/components/schemas/ValidationProblemDetails'
+      operationId: getApiV2AuctionVolumesByAreas
+      x-operation-id-source: derived
   /api/v2/Auction/Volumes/Yearly/ByArea:
     get:
       tags:
       - Auction
       summary: Yearly Auction Volumes
-      description: "Returns a list of auction volumes for a market, year and one area.\n            \nNote that this volume only reflect Nord Pool's part of the traded volume, not the market total volume.\n            \n            \n### Response field descriptions\n**yearlySummary**: \n - **totalVolume**: contains total bought and sold MWh for the year\n - **averageVolume**: the average bought and sold MW across all delivery periods\n - **minVolume**: the minimum bought and sold MW across all delivery periods\n - **maxVolume**: the maximum bought and sold MW across all delivery periods\n            \n**monthlySummary**: a list of monthly aggregate values\n - **totalVolume**: contains total bought and sold MWh for the month\n - **averageVolume**: the average bought and sold MW across all delivery periods in the month\n - **minVolume**: the minimum bought and sold MW across all delivery periods in the month\n - **maxVolume**: the maximum bought and sold MW across all delivery periods in the month\n            \n**dailySummary**: a list of daily aggregate values\n - **totalVolume**: contains total bought and sold MWh for the day\n - **averageVolume**: the average bought and sold MW across all delivery periods in the day\n - **minVolume**: the minimum bought and sold MW across all delivery periods in the day\n - **maxVolume**: the maximum bought and sold MW across all delivery periods in the day\n\n**blockVolumes**: a list of MWh buy and sell volumes for a period of the day.\n            \n**volumes**: a list of MW buy and sell volumes per delivery period\n\nOnly final volumes are included in this endpoint."
+      description: 'Returns a list of auction volumes for a market, year and one area.
+
+
+        Note that this volume only reflect Nord Pool''s part of the traded volume, not the market total volume.
+
+
+        ### Response field descriptions
+
+        **yearlySummary**:
+
+        - **totalVolume**: contains total bought and sold MWh for the year
+
+        - **averageVolume**: the average bought and sold MW across all delivery periods
+
+        - **minVolume**: the minimum bought and sold MW across all delivery periods
+
+        - **maxVolume**: the maximum bought and sold MW across all delivery periods
+
+
+        **monthlySummary**: a list of monthly aggregate values
+
+        - **totalVolume**: contains total bought and sold MWh for the month
+
+        - **averageVolume**: the average bought and sold MW across all delivery periods in the month
+
+        - **minVolume**: the minimum bought and sold MW across all delivery periods in the month
+
+        - **maxVolume**: the maximum bought and sold MW across all delivery periods in the month
+
+
+        **dailySummary**: a list of daily aggregate values
+
+        - **totalVolume**: contains total bought and sold MWh for the day
+
+        - **averageVolume**: the average bought and sold MW across all delivery periods in the day
+
+        - **minVolume**: the minimum bought and sold MW across all delivery periods in the day
+
+        - **maxVolume**: the maximum bought and sold MW across all delivery periods in the day
+
+
+        **blockVolumes**: a list of MWh buy and sell volumes for a period of the day.
+
+
+        **volumes**: a list of MW buy and sell volumes per delivery period
+
+
+        Only final volumes are included in this endpoint.'
       parameters:
       - name: market
         in: query
@@ -1215,8 +1632,1139 @@ paths:
             text/json:
               schema:
                 $ref: '#/components/schemas/ValidationProblemDetails'
+      operationId: getApiV2AuctionVolumesYearlyByArea
+      x-operation-id-source: derived
 components:
   schemas:
+    VolumeSummary:
+      type: object
+      properties:
+        totalVolume:
+          $ref: '#/components/schemas/VolumeAggregate'
+        averageVolume:
+          $ref: '#/components/schemas/VolumeAggregate'
+        minVolume:
+          $ref: '#/components/schemas/VolumeAggregate'
+        maxVolume:
+          $ref: '#/components/schemas/VolumeAggregate'
+      additionalProperties: false
+    PriceEntry:
+      type: object
+      properties:
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        price:
+          type:
+          - number
+          - 'null'
+          format: double
+      additionalProperties: false
+    BlockVolumeAggregate:
+      type: object
+      properties:
+        blockName:
+          type:
+          - string
+          - 'null'
+        blockStart:
+          type: string
+          format: date-time
+        blockEnd:
+          type: string
+          format: date-time
+        buy:
+          type:
+          - number
+          - 'null'
+          format: double
+        sell:
+          type:
+          - number
+          - 'null'
+          format: double
+      additionalProperties: false
+    ApiAuctionYearlyCapacity:
+      required:
+      - deliveryArea
+      - unit
+      type: object
+      properties:
+        market:
+          $ref: '#/components/schemas/Market'
+        deliveryArea:
+          type:
+          - string
+          - 'null'
+        year:
+          type: integer
+          format: int32
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        updatedAt:
+          type: string
+          format: date-time
+        unit:
+          type:
+          - string
+          - 'null'
+        capacities:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/AtcCapacity'
+        dailyTotalUnit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        dailySummaries:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/CapacityDailySummary'
+      additionalProperties: false
+    AuctionCapacityMarkets:
+      enum:
+      - DayAhead
+      - N2EX_DayAhead
+      - SIDC_IntradayAuction1
+      - SIDC_IntradayAuction2
+      - SIDC_IntradayAuction3
+      type: string
+    AtcCapacity:
+      type: object
+      properties:
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        importsByConnection:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ConnectionAtcCapacity'
+        exportsByConnection:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ConnectionAtcCapacity'
+        importsByGroupRestriction:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/GroupRestrictionAtcCapacity'
+        exportsByGroupRestriction:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/GroupRestrictionAtcCapacity'
+        externalImportConstraint:
+          type:
+          - number
+          - 'null'
+          format: double
+        externalExportConstraint:
+          type:
+          - number
+          - 'null'
+          format: double
+        totalImport:
+          type:
+          - number
+          - 'null'
+          format: double
+        totalExport:
+          type:
+          - number
+          - 'null'
+          format: double
+      additionalProperties: false
+    AggregatedBidCurveMarkets:
+      enum:
+      - DayAhead
+      - SIDC_IntradayAuction1
+      - SIDC_IntradayAuction2
+      - SIDC_IntradayAuction3
+      type: string
+    ApiFlowBasedConstraint:
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        updatedAt:
+          type: string
+          format: date-time
+        market:
+          $ref: '#/components/schemas/Market'
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        flowBasedDomain:
+          $ref: '#/components/schemas/FlowBasedDomainType'
+        remainingAvailableMarginUnit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        periods:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/FlowBasedPeriodItem'
+      additionalProperties: false
+    ApiAuctionYearlyPrice:
+      required:
+      - currency
+      - deliveryArea
+      - marketMainCurrency
+      - unit
+      type: object
+      properties:
+        market:
+          $ref: '#/components/schemas/Market'
+        deliveryArea:
+          type:
+          - string
+          - 'null'
+        year:
+          type: integer
+          format: int32
+        status:
+          $ref: '#/components/schemas/ApiAuctionStatus'
+        unit:
+          type:
+          - string
+          - 'null'
+        currency:
+          type:
+          - string
+          - 'null'
+        marketMainCurrency:
+          type:
+          - string
+          - 'null'
+        blockPrices:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/BlockPriceAggregate'
+        prices:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/PriceEntry'
+        yearlySummary:
+          $ref: '#/components/schemas/Summary'
+        dailySummaries:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/SummaryPrice'
+        weeklySummaries:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/WeeklyPriceSummary'
+        monthlySummaries:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/MonthlyPriceSummary'
+        updatedAt:
+          type: string
+          format: date-time
+      additionalProperties: false
+    FlowBasedDomainType:
+      enum:
+      - Core
+      - Nordic
+      - DK1
+      type: string
+    VolumeAggregate:
+      type: object
+      properties:
+        buy:
+          type:
+          - number
+          - 'null'
+          format: double
+        sell:
+          type:
+          - number
+          - 'null'
+          format: double
+      additionalProperties: false
+    BlockPriceAggregate:
+      type: object
+      properties:
+        blockName:
+          type:
+          - string
+          - 'null'
+        blockStart:
+          type: string
+          format: date-time
+        blockEnd:
+          type: string
+          format: date-time
+        minPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        maxPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        averagePrice:
+          type:
+          - number
+          - 'null'
+          format: double
+      additionalProperties: false
+    ApiFlow:
+      required:
+      - deliveryArea
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        updatedAt:
+          type: string
+          format: date-time
+        deliveryArea:
+          type:
+          - string
+          - 'null'
+        market:
+          $ref: '#/components/schemas/Market'
+        status:
+          $ref: '#/components/schemas/ApiAuctionStatus'
+        unit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        dailyTotalUnit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        dailyTotalImport:
+          type:
+          - number
+          - 'null'
+          format: double
+        dailyTotalExport:
+          type:
+          - number
+          - 'null'
+          format: double
+        dailyTotalNetPosition:
+          type:
+          - number
+          - 'null'
+          format: double
+        flows:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiTransfer'
+      additionalProperties: false
+    ApiAvailableStatus:
+      enum:
+      - Missing
+      - Available
+      type: string
+    ApiAuctionStatus:
+      enum:
+      - Missing
+      - Preliminary
+      - Final
+      - Cancelled
+      type: string
+    AuctionsVolumeEntry:
+      type: object
+      properties:
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        buy:
+          type: number
+          format: double
+        sell:
+          type: number
+          format: double
+      additionalProperties: false
+    VolumeDailySummary:
+      type: object
+      properties:
+        totalVolume:
+          $ref: '#/components/schemas/VolumeAggregate'
+        averageVolume:
+          $ref: '#/components/schemas/VolumeAggregate'
+        minVolume:
+          $ref: '#/components/schemas/VolumeAggregate'
+        maxVolume:
+          $ref: '#/components/schemas/VolumeAggregate'
+        deliveryDateCET:
+          type: string
+          format: date
+      additionalProperties: false
+    ApiAggregatedCluster:
+      required:
+      - region
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        region:
+          type:
+          - string
+          - 'null'
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        currencyUnit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        volumeUnit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        market:
+          $ref: '#/components/schemas/AggregatedBidCurveMarkets'
+        aggregatedOrderPositions:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiAggregatedOrderPosition'
+        blockOrders:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiBlockOrder'
+      additionalProperties: false
+    WeeklyPriceSummary:
+      type: object
+      properties:
+        averagePrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        minPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        maxPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        isoWeekNumber:
+          type: integer
+          format: int32
+        deliveryDateStartCET:
+          type: string
+          format: date
+        deliveryDateEndCET:
+          type: string
+          format: date
+      additionalProperties: false
+    ApiByConnection:
+      required:
+      - area
+      type: object
+      properties:
+        area:
+          type:
+          - string
+          - 'null'
+        connection:
+          type:
+          - string
+          - 'null'
+        import:
+          type:
+          - number
+          - 'null'
+          format: double
+        export:
+          type:
+          - number
+          - 'null'
+          format: double
+        netPosition:
+          type:
+          - number
+          - 'null'
+          format: double
+          readOnly: true
+      additionalProperties: false
+    ApiAuctionVolume:
+      required:
+      - deliveryArea
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        updatedAt:
+          type: string
+          format: date-time
+        deliveryArea:
+          type:
+          - string
+          - 'null'
+        market:
+          $ref: '#/components/schemas/Market'
+        status:
+          $ref: '#/components/schemas/ApiAuctionStatus'
+        unit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        totalVolumeUnit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        totalVolume:
+          $ref: '#/components/schemas/VolumeAggregate'
+        averageVolume:
+          $ref: '#/components/schemas/VolumeAggregate'
+        minVolume:
+          $ref: '#/components/schemas/VolumeAggregate'
+        maxVolume:
+          $ref: '#/components/schemas/VolumeAggregate'
+        blockVolumesUnit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        blockVolumes:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/BlockVolumeAggregate'
+        volumes:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/AuctionsVolumeEntry'
+      additionalProperties: false
+    OrderSide:
+      enum:
+      - Buy
+      - Sell
+      type: string
+    ApiAuctionYearlyPriceIndex:
+      required:
+      - currency
+      - indexName
+      - marketMainCurrency
+      - unit
+      type: object
+      properties:
+        market:
+          $ref: '#/components/schemas/Market'
+        indexName:
+          type:
+          - string
+          - 'null'
+        deliveryAreas:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+        resolution:
+          type: string
+          format: date-span
+        year:
+          type: integer
+          format: int32
+        currency:
+          type:
+          - string
+          - 'null'
+        marketMainCurrency:
+          type:
+          - string
+          - 'null'
+        unit:
+          type:
+          - string
+          - 'null'
+        status:
+          $ref: '#/components/schemas/ApiAuctionStatus'
+        updatedAt:
+          type: string
+          format: date-time
+        prices:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/PriceEntry'
+      additionalProperties: false
+    ApiAuctionYearlyScheduledPhysicalFlow:
+      required:
+      - deliveryArea
+      - unit
+      type: object
+      properties:
+        market:
+          $ref: '#/components/schemas/Market'
+        deliveryArea:
+          type:
+          - string
+          - 'null'
+        year:
+          type: integer
+          format: int32
+        status:
+          $ref: '#/components/schemas/ApiAuctionStatus'
+        updatedAt:
+          type: string
+          format: date-time
+        dailyTotalUnit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        dailySummaries:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/FlowDailySummary'
+        unit:
+          type:
+          - string
+          - 'null'
+        flows:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiTransfer'
+      additionalProperties: false
+    ConnectionAtcCapacity:
+      type: object
+      properties:
+        area:
+          type:
+          - string
+          - 'null'
+        connection:
+          type:
+          - string
+          - 'null'
+        capacity:
+          type: number
+          format: double
+        lossFactor:
+          type:
+          - number
+          - 'null'
+          format: double
+        rampingRestriction:
+          type:
+          - number
+          - 'null'
+          format: double
+        alreadyAllocatedCapacity:
+          type:
+          - number
+          - 'null'
+          format: double
+      additionalProperties: false
+    Resolution:
+      enum:
+      - PT1H
+      - PT15M
+      - PT30M
+      type: string
+    Summary:
+      type: object
+      properties:
+        averagePrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        minPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        maxPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+      additionalProperties: false
+    ApiAuctionPrice:
+      required:
+      - currency
+      - deliveryArea
+      - marketMainCurrency
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        updatedAt:
+          type: string
+          format: date-time
+        status:
+          $ref: '#/components/schemas/ApiAuctionStatus'
+        unit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        currency:
+          type:
+          - string
+          - 'null'
+        exchangeRate:
+          type:
+          - number
+          - 'null'
+          format: double
+        marketMainCurrency:
+          type:
+          - string
+          - 'null'
+        averagePrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        minPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        maxPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        prices:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/PriceEntry'
+        market:
+          $ref: '#/components/schemas/Market'
+        deliveryArea:
+          type:
+          - string
+          - 'null'
+        blockPrices:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/BlockPriceAggregate'
+      additionalProperties: false
+    AuctionFlowBasedConstraintMarkets:
+      enum:
+      - DayAhead
+      type: string
+    ApiAuctionYearlyVolume:
+      required:
+      - deliveryArea
+      type: object
+      properties:
+        market:
+          $ref: '#/components/schemas/Market'
+        deliveryArea:
+          type:
+          - string
+          - 'null'
+        year:
+          type: integer
+          format: int32
+        status:
+          $ref: '#/components/schemas/ApiAuctionStatus'
+        blockVolumeUnit:
+          type:
+          - string
+          - 'null'
+        blockVolumes:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/BlockVolumeAggregate'
+        unit:
+          type:
+          - string
+          - 'null'
+        volumes:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/AuctionsVolumeEntry'
+        totalVolumeUnit:
+          type:
+          - string
+          - 'null'
+        yearlySummary:
+          $ref: '#/components/schemas/VolumeSummary'
+        monthlySummaries:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/VolumeMonthlySummary'
+        dailySummaries:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/VolumeDailySummary'
+        updatedAt:
+          type: string
+          format: date-time
+      additionalProperties: false
+    ApiAuctionYearlyFlow:
+      required:
+      - deliveryArea
+      - unit
+      type: object
+      properties:
+        market:
+          $ref: '#/components/schemas/Market'
+        deliveryArea:
+          type:
+          - string
+          - 'null'
+        year:
+          type: integer
+          format: int32
+        status:
+          $ref: '#/components/schemas/ApiAuctionStatus'
+        updatedAt:
+          type: string
+          format: date-time
+        dailyTotalUnit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        dailySummaries:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/FlowDailySummary'
+        unit:
+          type:
+          - string
+          - 'null'
+        flows:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiTransfer'
+      additionalProperties: false
+    ApiAggregatedOrderPosition:
+      type: object
+      properties:
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        exportVolume:
+          type: number
+          format: double
+        importVolume:
+          type: number
+          format: double
+        realizedCurveDemandVolume:
+          type: number
+          format: double
+        realizedCurveSupplyVolume:
+          type: number
+          format: double
+        realizedNonCurveDemandVolume:
+          type: number
+          format: double
+        realizedNonCurveSupplyVolume:
+          type: number
+          format: double
+        demandCurve:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiPricePoint'
+        supplyCurve:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiPricePoint'
+        aggregatedDemandCurve:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiPricePoint'
+        aggregatedSupplyCurve:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiPricePoint'
+      additionalProperties: false
+    FlowBasedPeriodItem:
+      type: object
+      properties:
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        constraints:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/FlowBasedConstraintItem'
+      additionalProperties: false
+    VolumeMonthlySummary:
+      type: object
+      properties:
+        totalVolume:
+          $ref: '#/components/schemas/VolumeAggregate'
+        averageVolume:
+          $ref: '#/components/schemas/VolumeAggregate'
+        minVolume:
+          $ref: '#/components/schemas/VolumeAggregate'
+        maxVolume:
+          $ref: '#/components/schemas/VolumeAggregate'
+        deliveryDateStartCET:
+          type: string
+          format: date
+        deliveryDateEndCET:
+          type: string
+          format: date
+      additionalProperties: false
+    FlowBasedConstraintItem:
+      type: object
+      properties:
+        id:
+          type:
+          - string
+          - 'null'
+        name:
+          type:
+          - string
+          - 'null'
+        remainingAvailableMargin:
+          type: number
+          format: double
+        powerTransferDistributionFactors:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/PowerTransferDistributionItem'
+      additionalProperties: false
+    Market:
+      enum:
+      - DayAhead
+      - GbHalfHour_DayAhead
+      - N2EX_DayAhead
+      - NP_IntradayAuction1
+      - NP_IntradayAuction2
+      - SemGb_IntradayAuction1
+      - SemGb_IntradayAuction2
+      - SIDC_IntradayAuction1
+      - SIDC_IntradayAuction2
+      - SIDC_IntradayAuction3
+      type: string
+    ClusterType:
+      enum:
+      - Austria
+      - Baltic
+      - Belgium
+      - Bulgaria
+      - Denmark
+      - Finland
+      - France
+      - Germany
+      - Netherlands
+      - Norway
+      - Poland
+      - Romania
+      - Sweden
+      type: string
+    ApiTransfer:
+      type: object
+      properties:
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        byConnections:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiByConnection'
+        totalImport:
+          type:
+          - number
+          - 'null'
+          format: double
+          readOnly: true
+        totalExport:
+          type:
+          - number
+          - 'null'
+          format: double
+          readOnly: true
+        totalNetPosition:
+          type:
+          - number
+          - 'null'
+          format: double
+          readOnly: true
+      additionalProperties: false
+    ApiAuctionCapacity:
+      required:
+      - deliveryArea
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        updatedAt:
+          type: string
+          format: date-time
+        market:
+          $ref: '#/components/schemas/Market'
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        deliveryArea:
+          type:
+          - string
+          - 'null'
+        unit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        dailyTotalUnit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        dailyTotalExport:
+          type:
+          - number
+          - 'null'
+          format: double
+        dailyTotalImport:
+          type:
+          - number
+          - 'null'
+          format: double
+        capacities:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/AtcCapacity'
+        maxNtcValues:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/MaxNtcValue'
+      additionalProperties: false
+    ValidationProblemDetails:
+      type: object
+      properties:
+        type:
+          type:
+          - string
+          - 'null'
+        title:
+          type:
+          - string
+          - 'null'
+        status:
+          type:
+          - integer
+          - 'null'
+          format: int32
+        detail:
+          type:
+          - string
+          - 'null'
+        instance:
+          type:
+          - string
+          - 'null'
+        errors:
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: array
+            items:
+              type: string
+      additionalProperties: {}
     MonthlyPriceSummary:
       type: object
       properties:
@@ -1242,7 +2790,98 @@ components:
           type: string
           format: date
       additionalProperties: false
-    AuctionsVolumeEntry:
+    ApiScheduledPhysicalFlow:
+      required:
+      - deliveryArea
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        updatedAt:
+          type: string
+          format: date-time
+        deliveryArea:
+          type:
+          - string
+          - 'null'
+        market:
+          $ref: '#/components/schemas/Market'
+        status:
+          $ref: '#/components/schemas/ApiAuctionStatus'
+        unit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        dailyTotalUnit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        dailyTotalImport:
+          type:
+          - number
+          - 'null'
+          format: double
+        dailyTotalExport:
+          type:
+          - number
+          - 'null'
+          format: double
+        dailyTotalNetPosition:
+          type:
+          - number
+          - 'null'
+          format: double
+        flows:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiTransfer'
+      additionalProperties: false
+    GroupRestrictionAtcCapacity:
+      type: object
+      properties:
+        areas:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+        capacity:
+          type: number
+          format: double
+      additionalProperties: false
+    FlowConnectionDailySummary:
+      type: object
+      properties:
+        totalImport:
+          type:
+          - number
+          - 'null'
+          format: double
+        totalExport:
+          type:
+          - number
+          - 'null'
+          format: double
+        totalNetPosition:
+          type:
+          - number
+          - 'null'
+          format: double
+        area:
+          type:
+          - string
+          - 'null'
+        connection:
+          type:
+          - string
+          - 'null'
+      additionalProperties: false
+    ApiBlockOrderInterval:
       type: object
       properties:
         deliveryStart:
@@ -1251,12 +2890,124 @@ components:
         deliveryEnd:
           type: string
           format: date-time
-        buy:
+        volume:
           type: number
           format: double
-        sell:
+        acceptedVolume:
+          type:
+          - number
+          - 'null'
+          format: double
+      additionalProperties: false
+    AuctionScheduledPhysicalFlowMarkets:
+      enum:
+      - DayAhead
+      type: string
+    FlowDailySummary:
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        totalImport:
+          type:
+          - number
+          - 'null'
+          format: double
+        totalExport:
+          type:
+          - number
+          - 'null'
+          format: double
+        totalNetPosition:
+          type:
+          - number
+          - 'null'
+          format: double
+        connectionSummaries:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/FlowConnectionDailySummary'
+      additionalProperties: false
+    AuctionMarkets:
+      enum:
+      - DayAhead
+      - GbHalfHour_DayAhead
+      - N2EX_DayAhead
+      - SemGb_IntradayAuction1
+      - SemGb_IntradayAuction2
+      - SIDC_IntradayAuction1
+      - SIDC_IntradayAuction2
+      - SIDC_IntradayAuction3
+      type: string
+    AuctionFlowMarkets:
+      enum:
+      - DayAhead
+      - N2EX_DayAhead
+      - SemGb_IntradayAuction1
+      - SemGb_IntradayAuction2
+      - SIDC_IntradayAuction1
+      - SIDC_IntradayAuction2
+      - SIDC_IntradayAuction3
+      type: string
+    CapacityDailySummary:
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        totalImport:
+          type:
+          - number
+          - 'null'
+          format: double
+        totalExport:
+          type:
+          - number
+          - 'null'
+          format: double
+      additionalProperties: false
+    ApiBlockOrder:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        side:
+          $ref: '#/components/schemas/OrderSide'
+        exclusiveGroupId:
+          type:
+          - integer
+          - 'null'
+          format: int32
+        minimumAcceptanceRatio:
           type: number
           format: double
+        linkedOrderId:
+          type:
+          - integer
+          - 'null'
+          format: int32
+        price:
+          type: number
+          format: double
+        paradoxicallyRejected:
+          type:
+          - boolean
+          - 'null'
+        actualAcceptanceRatio:
+          type:
+          - number
+          - 'null'
+          format: double
+        intervals:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiBlockOrderInterval'
       additionalProperties: false
     ApiAuctionPriceIndex:
       required:
@@ -1353,23 +3104,6 @@ components:
           type: string
           format: date
       additionalProperties: false
-    FlowBasedDomainType:
-      enum:
-      - Core
-      - Nordic
-      - DK1
-      type: string
-    AuctionFlowBasedConstraintMarkets:
-      enum:
-      - DayAhead
-      type: string
-    AggregatedBidCurveMarkets:
-      enum:
-      - DayAhead
-      - SIDC_IntradayAuction1
-      - SIDC_IntradayAuction2
-      - SIDC_IntradayAuction3
-      type: string
     ApiPricePoint:
       type: object
       properties:
@@ -1380,756 +3114,17 @@ components:
           type: number
           format: double
       additionalProperties: false
-    ApiAuctionYearlyPrice:
-      required:
-      - currency
-      - deliveryArea
-      - marketMainCurrency
-      - unit
+    PowerTransferDistributionItem:
       type: object
       properties:
-        market:
-          $ref: '#/components/schemas/Market'
-        deliveryArea:
-          type:
-          - string
-          - 'null'
-        year:
-          type: integer
-          format: int32
-        status:
-          $ref: '#/components/schemas/ApiAuctionStatus'
-        unit:
-          type:
-          - string
-          - 'null'
-        currency:
-          type:
-          - string
-          - 'null'
-        marketMainCurrency:
-          type:
-          - string
-          - 'null'
-        blockPrices:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/BlockPriceAggregate'
-        prices:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/PriceEntry'
-        yearlySummary:
-          $ref: '#/components/schemas/Summary'
-        dailySummaries:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/SummaryPrice'
-        weeklySummaries:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/WeeklyPriceSummary'
-        monthlySummaries:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/MonthlyPriceSummary'
-        updatedAt:
-          type: string
-          format: date-time
-      additionalProperties: false
-    FlowDailySummary:
-      type: object
-      properties:
-        deliveryDateCET:
-          type: string
-          format: date
-        totalImport:
-          type:
-          - number
-          - 'null'
-          format: double
-        totalExport:
-          type:
-          - number
-          - 'null'
-          format: double
-        totalNetPosition:
-          type:
-          - number
-          - 'null'
-          format: double
-        connectionSummaries:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/FlowConnectionDailySummary'
-      additionalProperties: false
-    CapacityDailySummary:
-      type: object
-      properties:
-        deliveryDateCET:
-          type: string
-          format: date
-        totalImport:
-          type:
-          - number
-          - 'null'
-          format: double
-        totalExport:
-          type:
-          - number
-          - 'null'
-          format: double
-      additionalProperties: false
-    FlowConnectionDailySummary:
-      type: object
-      properties:
-        totalImport:
-          type:
-          - number
-          - 'null'
-          format: double
-        totalExport:
-          type:
-          - number
-          - 'null'
-          format: double
-        totalNetPosition:
-          type:
-          - number
-          - 'null'
-          format: double
         area:
           type:
           - string
           - 'null'
-        connection:
-          type:
-          - string
-          - 'null'
-      additionalProperties: false
-    Resolution:
-      enum:
-      - PT1H
-      - PT15M
-      - PT30M
-      type: string
-    AuctionScheduledPhysicalFlowMarkets:
-      enum:
-      - DayAhead
-      type: string
-    WeeklyPriceSummary:
-      type: object
-      properties:
-        averagePrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        minPrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        maxPrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        isoWeekNumber:
-          type: integer
-          format: int32
-        deliveryDateStartCET:
-          type: string
-          format: date
-        deliveryDateEndCET:
-          type: string
-          format: date
-      additionalProperties: false
-    VolumeDailySummary:
-      type: object
-      properties:
-        totalVolume:
-          $ref: '#/components/schemas/VolumeAggregate'
-        averageVolume:
-          $ref: '#/components/schemas/VolumeAggregate'
-        minVolume:
-          $ref: '#/components/schemas/VolumeAggregate'
-        maxVolume:
-          $ref: '#/components/schemas/VolumeAggregate'
-        deliveryDateCET:
-          type: string
-          format: date
-      additionalProperties: false
-    VolumeAggregate:
-      type: object
-      properties:
-        buy:
-          type:
-          - number
-          - 'null'
-          format: double
-        sell:
-          type:
-          - number
-          - 'null'
-          format: double
-      additionalProperties: false
-    ApiAuctionYearlyCapacity:
-      required:
-      - deliveryArea
-      - unit
-      type: object
-      properties:
-        market:
-          $ref: '#/components/schemas/Market'
-        deliveryArea:
-          type:
-          - string
-          - 'null'
-        year:
-          type: integer
-          format: int32
-        status:
-          $ref: '#/components/schemas/ApiAvailableStatus'
-        updatedAt:
-          type: string
-          format: date-time
-        unit:
-          type:
-          - string
-          - 'null'
-        capacities:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/AtcCapacity'
-        dailyTotalUnit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        dailySummaries:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/CapacityDailySummary'
-      additionalProperties: false
-    ClusterType:
-      enum:
-      - Austria
-      - Baltic
-      - Belgium
-      - Bulgaria
-      - Denmark
-      - Finland
-      - France
-      - Germany
-      - Netherlands
-      - Norway
-      - Poland
-      - Romania
-      - Sweden
-      type: string
-    ApiAuctionYearlyFlow:
-      required:
-      - deliveryArea
-      - unit
-      type: object
-      properties:
-        market:
-          $ref: '#/components/schemas/Market'
-        deliveryArea:
-          type:
-          - string
-          - 'null'
-        year:
-          type: integer
-          format: int32
-        status:
-          $ref: '#/components/schemas/ApiAuctionStatus'
-        updatedAt:
-          type: string
-          format: date-time
-        dailyTotalUnit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        dailySummaries:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/FlowDailySummary'
-        unit:
-          type:
-          - string
-          - 'null'
-        flows:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiTransfer'
-      additionalProperties: false
-    ApiAvailableStatus:
-      enum:
-      - Missing
-      - Available
-      type: string
-    AuctionMarkets:
-      enum:
-      - DayAhead
-      - GbHalfHour_DayAhead
-      - N2EX_DayAhead
-      - SemGb_IntradayAuction1
-      - SemGb_IntradayAuction2
-      - SIDC_IntradayAuction1
-      - SIDC_IntradayAuction2
-      - SIDC_IntradayAuction3
-      type: string
-    FlowBasedConstraintItem:
-      type: object
-      properties:
-        id:
-          type:
-          - string
-          - 'null'
-        name:
-          type:
-          - string
-          - 'null'
-        remainingAvailableMargin:
+        powerTransferDistributionFactor:
           type: number
           format: double
-        powerTransferDistributionFactors:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/PowerTransferDistributionItem'
       additionalProperties: false
-    ApiAggregatedOrderPosition:
-      type: object
-      properties:
-        deliveryStart:
-          type: string
-          format: date-time
-        deliveryEnd:
-          type: string
-          format: date-time
-        exportVolume:
-          type: number
-          format: double
-        importVolume:
-          type: number
-          format: double
-        realizedCurveDemandVolume:
-          type: number
-          format: double
-        realizedCurveSupplyVolume:
-          type: number
-          format: double
-        realizedNonCurveDemandVolume:
-          type: number
-          format: double
-        realizedNonCurveSupplyVolume:
-          type: number
-          format: double
-        demandCurve:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiPricePoint'
-        supplyCurve:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiPricePoint'
-        aggregatedDemandCurve:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiPricePoint'
-        aggregatedSupplyCurve:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiPricePoint'
-      additionalProperties: false
-    AuctionCapacityMarkets:
-      enum:
-      - DayAhead
-      - N2EX_DayAhead
-      - SIDC_IntradayAuction1
-      - SIDC_IntradayAuction2
-      - SIDC_IntradayAuction3
-      type: string
-    FlowBasedPeriodItem:
-      type: object
-      properties:
-        deliveryStart:
-          type: string
-          format: date-time
-        deliveryEnd:
-          type: string
-          format: date-time
-        constraints:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/FlowBasedConstraintItem'
-      additionalProperties: false
-    ApiAuctionStatus:
-      enum:
-      - Missing
-      - Preliminary
-      - Final
-      - Cancelled
-      type: string
-    ApiAggregatedCluster:
-      required:
-      - region
-      type: object
-      properties:
-        deliveryDateCET:
-          type: string
-          format: date
-        region:
-          type:
-          - string
-          - 'null'
-        status:
-          $ref: '#/components/schemas/ApiAvailableStatus'
-        currencyUnit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        volumeUnit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        market:
-          $ref: '#/components/schemas/AggregatedBidCurveMarkets'
-        aggregatedOrderPositions:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiAggregatedOrderPosition'
-        blockOrders:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiBlockOrder'
-      additionalProperties: false
-    ApiBlockOrderInterval:
-      type: object
-      properties:
-        deliveryStart:
-          type: string
-          format: date-time
-        deliveryEnd:
-          type: string
-          format: date-time
-        volume:
-          type: number
-          format: double
-        acceptedVolume:
-          type:
-          - number
-          - 'null'
-          format: double
-      additionalProperties: false
-    VolumeSummary:
-      type: object
-      properties:
-        totalVolume:
-          $ref: '#/components/schemas/VolumeAggregate'
-        averageVolume:
-          $ref: '#/components/schemas/VolumeAggregate'
-        minVolume:
-          $ref: '#/components/schemas/VolumeAggregate'
-        maxVolume:
-          $ref: '#/components/schemas/VolumeAggregate'
-      additionalProperties: false
-    Summary:
-      type: object
-      properties:
-        averagePrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        minPrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        maxPrice:
-          type:
-          - number
-          - 'null'
-          format: double
-      additionalProperties: false
-    BlockVolumeAggregate:
-      type: object
-      properties:
-        blockName:
-          type:
-          - string
-          - 'null'
-        blockStart:
-          type: string
-          format: date-time
-        blockEnd:
-          type: string
-          format: date-time
-        buy:
-          type:
-          - number
-          - 'null'
-          format: double
-        sell:
-          type:
-          - number
-          - 'null'
-          format: double
-      additionalProperties: false
-    ApiScheduledPhysicalFlow:
-      required:
-      - deliveryArea
-      type: object
-      properties:
-        deliveryDateCET:
-          type: string
-          format: date
-        updatedAt:
-          type: string
-          format: date-time
-        deliveryArea:
-          type:
-          - string
-          - 'null'
-        market:
-          $ref: '#/components/schemas/Market'
-        status:
-          $ref: '#/components/schemas/ApiAuctionStatus'
-        unit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        dailyTotalUnit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        dailyTotalImport:
-          type:
-          - number
-          - 'null'
-          format: double
-        dailyTotalExport:
-          type:
-          - number
-          - 'null'
-          format: double
-        dailyTotalNetPosition:
-          type:
-          - number
-          - 'null'
-          format: double
-        flows:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiTransfer'
-      additionalProperties: false
-    ApiTransfer:
-      type: object
-      properties:
-        deliveryStart:
-          type: string
-          format: date-time
-        deliveryEnd:
-          type: string
-          format: date-time
-        byConnections:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiByConnection'
-        totalImport:
-          type:
-          - number
-          - 'null'
-          format: double
-          readOnly: true
-        totalExport:
-          type:
-          - number
-          - 'null'
-          format: double
-          readOnly: true
-        totalNetPosition:
-          type:
-          - number
-          - 'null'
-          format: double
-          readOnly: true
-      additionalProperties: false
-    ApiBlockOrder:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int32
-        side:
-          $ref: '#/components/schemas/OrderSide'
-        exclusiveGroupId:
-          type:
-          - integer
-          - 'null'
-          format: int32
-        minimumAcceptanceRatio:
-          type: number
-          format: double
-        linkedOrderId:
-          type:
-          - integer
-          - 'null'
-          format: int32
-        price:
-          type: number
-          format: double
-        paradoxicallyRejected:
-          type:
-          - boolean
-          - 'null'
-        actualAcceptanceRatio:
-          type:
-          - number
-          - 'null'
-          format: double
-        intervals:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiBlockOrderInterval'
-      additionalProperties: false
-    ApiAuctionYearlyPriceIndex:
-      required:
-      - currency
-      - indexName
-      - marketMainCurrency
-      - unit
-      type: object
-      properties:
-        market:
-          $ref: '#/components/schemas/Market'
-        indexName:
-          type:
-          - string
-          - 'null'
-        deliveryAreas:
-          type:
-          - array
-          - 'null'
-          items:
-            type: string
-        resolution:
-          type: string
-          format: date-span
-        year:
-          type: integer
-          format: int32
-        currency:
-          type:
-          - string
-          - 'null'
-        marketMainCurrency:
-          type:
-          - string
-          - 'null'
-        unit:
-          type:
-          - string
-          - 'null'
-        status:
-          $ref: '#/components/schemas/ApiAuctionStatus'
-        updatedAt:
-          type: string
-          format: date-time
-        prices:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/PriceEntry'
-      additionalProperties: false
-    ApiFlowBasedConstraint:
-      type: object
-      properties:
-        deliveryDateCET:
-          type: string
-          format: date
-        updatedAt:
-          type: string
-          format: date-time
-        market:
-          $ref: '#/components/schemas/Market'
-        status:
-          $ref: '#/components/schemas/ApiAvailableStatus'
-        flowBasedDomain:
-          $ref: '#/components/schemas/FlowBasedDomainType'
-        remainingAvailableMarginUnit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        periods:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/FlowBasedPeriodItem'
-      additionalProperties: false
-    AuctionFlowMarkets:
-      enum:
-      - DayAhead
-      - N2EX_DayAhead
-      - SemGb_IntradayAuction1
-      - SemGb_IntradayAuction2
-      - SIDC_IntradayAuction1
-      - SIDC_IntradayAuction2
-      - SIDC_IntradayAuction3
-      type: string
     MaxNtcValue:
       type: object
       properties:
@@ -2151,582 +3146,6 @@ components:
           - 'null'
           format: int32
       additionalProperties: false
-    Market:
-      enum:
-      - DayAhead
-      - GbHalfHour_DayAhead
-      - N2EX_DayAhead
-      - NP_IntradayAuction1
-      - NP_IntradayAuction2
-      - SemGb_IntradayAuction1
-      - SemGb_IntradayAuction2
-      - SIDC_IntradayAuction1
-      - SIDC_IntradayAuction2
-      - SIDC_IntradayAuction3
-      type: string
-    ApiByConnection:
-      required:
-      - area
-      type: object
-      properties:
-        area:
-          type:
-          - string
-          - 'null'
-        connection:
-          type:
-          - string
-          - 'null'
-        import:
-          type:
-          - number
-          - 'null'
-          format: double
-        export:
-          type:
-          - number
-          - 'null'
-          format: double
-        netPosition:
-          type:
-          - number
-          - 'null'
-          format: double
-          readOnly: true
-      additionalProperties: false
-    ApiFlow:
-      required:
-      - deliveryArea
-      type: object
-      properties:
-        deliveryDateCET:
-          type: string
-          format: date
-        updatedAt:
-          type: string
-          format: date-time
-        deliveryArea:
-          type:
-          - string
-          - 'null'
-        market:
-          $ref: '#/components/schemas/Market'
-        status:
-          $ref: '#/components/schemas/ApiAuctionStatus'
-        unit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        dailyTotalUnit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        dailyTotalImport:
-          type:
-          - number
-          - 'null'
-          format: double
-        dailyTotalExport:
-          type:
-          - number
-          - 'null'
-          format: double
-        dailyTotalNetPosition:
-          type:
-          - number
-          - 'null'
-          format: double
-        flows:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiTransfer'
-      additionalProperties: false
-    AtcCapacity:
-      type: object
-      properties:
-        deliveryStart:
-          type: string
-          format: date-time
-        deliveryEnd:
-          type: string
-          format: date-time
-        importsByConnection:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ConnectionAtcCapacity'
-        exportsByConnection:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ConnectionAtcCapacity'
-        importsByGroupRestriction:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/GroupRestrictionAtcCapacity'
-        exportsByGroupRestriction:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/GroupRestrictionAtcCapacity'
-        externalImportConstraint:
-          type:
-          - number
-          - 'null'
-          format: double
-        externalExportConstraint:
-          type:
-          - number
-          - 'null'
-          format: double
-        totalImport:
-          type:
-          - number
-          - 'null'
-          format: double
-        totalExport:
-          type:
-          - number
-          - 'null'
-          format: double
-      additionalProperties: false
-    ApiAuctionYearlyScheduledPhysicalFlow:
-      required:
-      - deliveryArea
-      - unit
-      type: object
-      properties:
-        market:
-          $ref: '#/components/schemas/Market'
-        deliveryArea:
-          type:
-          - string
-          - 'null'
-        year:
-          type: integer
-          format: int32
-        status:
-          $ref: '#/components/schemas/ApiAuctionStatus'
-        updatedAt:
-          type: string
-          format: date-time
-        dailyTotalUnit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        dailySummaries:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/FlowDailySummary'
-        unit:
-          type:
-          - string
-          - 'null'
-        flows:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiTransfer'
-      additionalProperties: false
-    ApiAuctionVolume:
-      required:
-      - deliveryArea
-      type: object
-      properties:
-        deliveryDateCET:
-          type: string
-          format: date
-        updatedAt:
-          type: string
-          format: date-time
-        deliveryArea:
-          type:
-          - string
-          - 'null'
-        market:
-          $ref: '#/components/schemas/Market'
-        status:
-          $ref: '#/components/schemas/ApiAuctionStatus'
-        unit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        totalVolumeUnit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        totalVolume:
-          $ref: '#/components/schemas/VolumeAggregate'
-        averageVolume:
-          $ref: '#/components/schemas/VolumeAggregate'
-        minVolume:
-          $ref: '#/components/schemas/VolumeAggregate'
-        maxVolume:
-          $ref: '#/components/schemas/VolumeAggregate'
-        blockVolumesUnit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        blockVolumes:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/BlockVolumeAggregate'
-        volumes:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/AuctionsVolumeEntry'
-      additionalProperties: false
-    OrderSide:
-      enum:
-      - Buy
-      - Sell
-      type: string
-    ApiAuctionYearlyVolume:
-      required:
-      - deliveryArea
-      type: object
-      properties:
-        market:
-          $ref: '#/components/schemas/Market'
-        deliveryArea:
-          type:
-          - string
-          - 'null'
-        year:
-          type: integer
-          format: int32
-        status:
-          $ref: '#/components/schemas/ApiAuctionStatus'
-        blockVolumeUnit:
-          type:
-          - string
-          - 'null'
-        blockVolumes:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/BlockVolumeAggregate'
-        unit:
-          type:
-          - string
-          - 'null'
-        volumes:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/AuctionsVolumeEntry'
-        totalVolumeUnit:
-          type:
-          - string
-          - 'null'
-        yearlySummary:
-          $ref: '#/components/schemas/VolumeSummary'
-        monthlySummaries:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/VolumeMonthlySummary'
-        dailySummaries:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/VolumeDailySummary'
-        updatedAt:
-          type: string
-          format: date-time
-      additionalProperties: false
-    ApiAuctionCapacity:
-      required:
-      - deliveryArea
-      type: object
-      properties:
-        deliveryDateCET:
-          type: string
-          format: date
-        updatedAt:
-          type: string
-          format: date-time
-        market:
-          $ref: '#/components/schemas/Market'
-        status:
-          $ref: '#/components/schemas/ApiAvailableStatus'
-        deliveryArea:
-          type:
-          - string
-          - 'null'
-        unit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        dailyTotalUnit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        dailyTotalExport:
-          type:
-          - number
-          - 'null'
-          format: double
-        dailyTotalImport:
-          type:
-          - number
-          - 'null'
-          format: double
-        capacities:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/AtcCapacity'
-        maxNtcValues:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/MaxNtcValue'
-      additionalProperties: false
-    BlockPriceAggregate:
-      type: object
-      properties:
-        blockName:
-          type:
-          - string
-          - 'null'
-        blockStart:
-          type: string
-          format: date-time
-        blockEnd:
-          type: string
-          format: date-time
-        minPrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        maxPrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        averagePrice:
-          type:
-          - number
-          - 'null'
-          format: double
-      additionalProperties: false
-    ConnectionAtcCapacity:
-      type: object
-      properties:
-        area:
-          type:
-          - string
-          - 'null'
-        connection:
-          type:
-          - string
-          - 'null'
-        capacity:
-          type: number
-          format: double
-        lossFactor:
-          type:
-          - number
-          - 'null'
-          format: double
-        rampingRestriction:
-          type:
-          - number
-          - 'null'
-          format: double
-        alreadyAllocatedCapacity:
-          type:
-          - number
-          - 'null'
-          format: double
-      additionalProperties: false
-    VolumeMonthlySummary:
-      type: object
-      properties:
-        totalVolume:
-          $ref: '#/components/schemas/VolumeAggregate'
-        averageVolume:
-          $ref: '#/components/schemas/VolumeAggregate'
-        minVolume:
-          $ref: '#/components/schemas/VolumeAggregate'
-        maxVolume:
-          $ref: '#/components/schemas/VolumeAggregate'
-        deliveryDateStartCET:
-          type: string
-          format: date
-        deliveryDateEndCET:
-          type: string
-          format: date
-      additionalProperties: false
-    PowerTransferDistributionItem:
-      type: object
-      properties:
-        area:
-          type:
-          - string
-          - 'null'
-        powerTransferDistributionFactor:
-          type: number
-          format: double
-      additionalProperties: false
-    ApiAuctionPrice:
-      required:
-      - currency
-      - deliveryArea
-      - marketMainCurrency
-      type: object
-      properties:
-        deliveryDateCET:
-          type: string
-          format: date
-        updatedAt:
-          type: string
-          format: date-time
-        status:
-          $ref: '#/components/schemas/ApiAuctionStatus'
-        unit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        currency:
-          type:
-          - string
-          - 'null'
-        exchangeRate:
-          type:
-          - number
-          - 'null'
-          format: double
-        marketMainCurrency:
-          type:
-          - string
-          - 'null'
-        averagePrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        minPrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        maxPrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        prices:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/PriceEntry'
-        market:
-          $ref: '#/components/schemas/Market'
-        deliveryArea:
-          type:
-          - string
-          - 'null'
-        blockPrices:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/BlockPriceAggregate'
-      additionalProperties: false
-    PriceEntry:
-      type: object
-      properties:
-        deliveryStart:
-          type: string
-          format: date-time
-        deliveryEnd:
-          type: string
-          format: date-time
-        price:
-          type:
-          - number
-          - 'null'
-          format: double
-      additionalProperties: false
-    GroupRestrictionAtcCapacity:
-      type: object
-      properties:
-        areas:
-          type:
-          - array
-          - 'null'
-          items:
-            type: string
-        capacity:
-          type: number
-          format: double
-      additionalProperties: false
-    ValidationProblemDetails:
-      type: object
-      properties:
-        type:
-          type:
-          - string
-          - 'null'
-        title:
-          type:
-          - string
-          - 'null'
-        status:
-          type:
-          - integer
-          - 'null'
-          format: int32
-        detail:
-          type:
-          - string
-          - 'null'
-        instance:
-          type:
-          - string
-          - 'null'
-        errors:
-          type:
-          - object
-          - 'null'
-          additionalProperties:
-            type: array
-            items:
-              type: string
-      additionalProperties: {}
   securitySchemes:
     oauth2:
       type: oauth2

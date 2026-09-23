@@ -1,7 +1,7 @@
 openapi: 3.2.0
 info:
   title: Nord Pool Market Data System API
-  description: 'Nord Pool''s Market Data API (v2) provides programmatic access to European power exchange market data: day-ahead auction prices, price indices, volumes, capacities, flows and aggregated bid curves; intraday continuous statistics, orders, trades and order books; balance market (mFRR) data; power system data (production, consumption, forecasts, hydro reservoir reserves); system price and turnover; and exchange rates. This document is the provider''s published OpenAPI definition, retrieved from https://data-api.nordpoolgroup.com/swagger/v2/swagger.json on 2026-07-11. Access to the data requires a paid Nord Pool Power Data Services subscription; authentication is OAuth 2.0 against https://sts.nordpoolgroup.com.'
+  description: 'Nord Pool''s Market Data API (v2) provides programmatic access to European power exchange market data: day-ahead auction prices, price indices, volumes, capacities, flows and aggregated bid curves; intraday continuous statistics, orders, trades and order books; balance market (mFRR) data; power system data (production, consumption, forecasts, hydro reservoir reserves); system price and turnover; and exchange rates.'
   version: v2
   contact:
     name: Nord Pool Power Data Services
@@ -19,7 +19,24 @@ paths:
       tags:
       - System
       summary: System Price
-      description: "Returns the system price for a delivery date and currency.\n            \nSystem price is an artificial index price based on orders from the Day-ahead auction. The system price is calculating a single price for the Nordic region (Sweden, Finland, Norway, Denmark) based on orders from all power exchanges in the Nordics. Import and export flows from other regions are set to the same as the Day-ahead auction outcome. All capacity constraints are removed within the Nordic region, and a single price is gotten by matching all orders from the Nordic region.\n            \n### Response field descriptions\n- **status**: Missing if data does not exist. Preliminary if the market coupling session is not complete, or the exchange rate has not been finalized yet. Final once exchange rate is set and market coupling session is complete. Cancelled if the auction is cancelled.\n- **exchangeRate**: the exchange rate used to calculate the currency price. 1 if the currency is the same as the main market currency.\n- **prices**: the settlement price for each period. If no trading happens, then the price might be null\n- **blockPrices**: average price for periods (block) of the day\n            \nPreliminary prices can change, and exchange rates for local currencies are only finalized on Norwegian banking days."
+      description: 'Returns the system price for a delivery date and currency.
+
+
+        System price is an artificial index price based on orders from the Day-ahead auction. The system price is calculating a single price for the Nordic region (Sweden, Finland, Norway, Denmark) based on orders from all power exchanges in the Nordics. Import and export flows from other regions are set to the same as the Day-ahead auction outcome. All capacity constraints are removed within the Nordic region, and a single price is gotten by matching all orders from the Nordic region.
+
+
+        ### Response field descriptions
+
+        - **status**: Missing if data does not exist. Preliminary if the market coupling session is not complete, or the exchange rate has not been finalized yet. Final once exchange rate is set and market coupling session is complete. Cancelled if the auction is cancelled.
+
+        - **exchangeRate**: the exchange rate used to calculate the currency price. 1 if the currency is the same as the main market currency.
+
+        - **prices**: the settlement price for each period. If no trading happens, then the price might be null
+
+        - **blockPrices**: average price for periods (block) of the day
+
+
+        Preliminary prices can change, and exchange rates for local currencies are only finalized on Norwegian banking days.'
       externalDocs:
         description: Data portal link
         url: https://data.nordpoolgroup.com/auction/day-ahead/system?deliveryDate=latest&currency=EUR
@@ -88,12 +105,35 @@ paths:
             text/json:
               schema:
                 $ref: '#/components/schemas/ValidationProblemDetails'
+      operationId: getApiV2SystemPrice
+      x-operation-id-source: derived
   /api/v2/System/Price/Yearly:
     get:
       tags:
       - System
       summary: Yearly System Price
-      description: " Returns system prices for a year and currency\n            \nSystem price is an artificial index price based on orders from the Day-ahead auction. The system price is calculating a single price for the Nordic region (Sweden, Finland, Norway, Denmark) based on orders from all power exchanges in the Nordics. Import and export flows from other regions are set to the same as the Day-ahead auction outcome. All capacity constraints are removed within the Nordic region, and a single price is gotten by matching all orders from the Nordic region.\n            \n### Response field descriptions\n- **prices**: the settlement price for each period. If no trading happens, then the price might be null\n- **blockPrices**: average price for a periods of the day, called blocks.\n- **dailySummaries**: contains min, max and average price for each day in the year\n- **monthlySummaries**: contains min, max and average price for each month of the year\n- **weeklySummaries**: contains min, max and average price for each week of the year. Note this can include date ranges outside the actual year, since weeks do not align nicely with the yearly calendar.\n- **yearlySummary**: min, max and average price for the full year.\n            \n Only final system prices are included in this endpoint."
+      description: 'Returns system prices for a year and currency
+
+
+        System price is an artificial index price based on orders from the Day-ahead auction. The system price is calculating a single price for the Nordic region (Sweden, Finland, Norway, Denmark) based on orders from all power exchanges in the Nordics. Import and export flows from other regions are set to the same as the Day-ahead auction outcome. All capacity constraints are removed within the Nordic region, and a single price is gotten by matching all orders from the Nordic region.
+
+
+        ### Response field descriptions
+
+        - **prices**: the settlement price for each period. If no trading happens, then the price might be null
+
+        - **blockPrices**: average price for a periods of the day, called blocks.
+
+        - **dailySummaries**: contains min, max and average price for each day in the year
+
+        - **monthlySummaries**: contains min, max and average price for each month of the year
+
+        - **weeklySummaries**: contains min, max and average price for each week of the year. Note this can include date ranges outside the actual year, since weeks do not align nicely with the yearly calendar.
+
+        - **yearlySummary**: min, max and average price for the full year.
+
+
+        Only final system prices are included in this endpoint.'
       parameters:
       - name: currency
         in: query
@@ -159,12 +199,34 @@ paths:
             text/json:
               schema:
                 $ref: '#/components/schemas/ValidationProblemDetails'
+      operationId: getApiV2SystemPriceYearly
+      x-operation-id-source: derived
   /api/v2/System/Turnover:
     get:
       tags:
       - System
       summary: System Turnover
-      description: "Returns the system turnover volume for a date.\n            \nSystem turnover refers to the total purchase volume that comes from the system price calculation across the whole Nordic region.\n            \n### Response field descriptions\n- **status**: Missing if data does not exist. Preliminary if the market coupling session is not complete. Final once the market coupling session is complete. Cancelled if the auction is cancelled.\n- **totalTurnover**: the total daily turnover in MWh\n- **averageTurnover**: the average turnover for the day across all delivery periods\n- **minTurnover**: the minimum turnover for the day\n- **maxTurnover**: the maximum turnover for the day\n- **volumes**: the turnover volume in MW for each delivery period\n- **blockVolumes**: list of turnover in MWh for a period of the day."
+      description: 'Returns the system turnover volume for a date.
+
+
+        System turnover refers to the total purchase volume that comes from the system price calculation across the whole Nordic region.
+
+
+        ### Response field descriptions
+
+        - **status**: Missing if data does not exist. Preliminary if the market coupling session is not complete. Final once the market coupling session is complete. Cancelled if the auction is cancelled.
+
+        - **totalTurnover**: the total daily turnover in MWh
+
+        - **averageTurnover**: the average turnover for the day across all delivery periods
+
+        - **minTurnover**: the minimum turnover for the day
+
+        - **maxTurnover**: the maximum turnover for the day
+
+        - **volumes**: the turnover volume in MW for each delivery period
+
+        - **blockVolumes**: list of turnover in MWh for a period of the day.'
       externalDocs:
         description: Data portal link
         url: https://data.nordpoolgroup.com/auction/day-ahead/system?deliveryDate=latest&currency=EUR
@@ -225,12 +287,61 @@ paths:
             text/json:
               schema:
                 $ref: '#/components/schemas/ValidationProblemDetails'
+      operationId: getApiV2SystemTurnover
+      x-operation-id-source: derived
   /api/v2/System/Turnover/Yearly:
     get:
       tags:
       - System
       summary: Yearly System Turnover
-      description: "Returns system turnover volumes for a year\n            \nSystem turnover refers to the total purchase volume that comes from the system price calculation across the whole Nordic region.\n            \n### Response field descriptions\n**yearlySummary**: \n - **totalTurnover**: contains total turnover volume in MWh for the year\n - **averageTurnover**: the average turnover volume in MW across all delivery periods\n - **minTurnover**: the minimum turnover in MW across all delivery periods\n - **maxTurnover**: the maximum turnover in MW across all delivery periods\n            \n**monthlySummary**: a list of monthly aggregate values\n - **totalTurnover**: contains total turnover volume in MWh for the month\n - **averageTurnover**: the average turnover volume in MW across all delivery periods in the month\n - **minTurnover**: the minimum turnover in MW across all delivery periods in the month\n - **maxTurnover**: the maximum turnover in MW across all delivery periods in the month\n            \n**dailySummary**: a list of daily aggregate values\n - **totalTurnover**: contains total turnover volume in MWh for the day\n - **averageTurnover**: the average turnover volume in MW across all delivery periods in the day\n - **minTurnover**: the minimum turnover in MW across all delivery periods in the day\n - **maxTurnover**: the maximum turnover in MW across all delivery periods in the day\n\n**blockSummaries**: a list of turnover volumes in MWh for a period of the day.\n            \n**volumes**: a list of turnover volumes in MW per delivery period\n\nOnly final system turnover volumes are included in this endpoint."
+      description: 'Returns system turnover volumes for a year
+
+
+        System turnover refers to the total purchase volume that comes from the system price calculation across the whole Nordic region.
+
+
+        ### Response field descriptions
+
+        **yearlySummary**:
+
+        - **totalTurnover**: contains total turnover volume in MWh for the year
+
+        - **averageTurnover**: the average turnover volume in MW across all delivery periods
+
+        - **minTurnover**: the minimum turnover in MW across all delivery periods
+
+        - **maxTurnover**: the maximum turnover in MW across all delivery periods
+
+
+        **monthlySummary**: a list of monthly aggregate values
+
+        - **totalTurnover**: contains total turnover volume in MWh for the month
+
+        - **averageTurnover**: the average turnover volume in MW across all delivery periods in the month
+
+        - **minTurnover**: the minimum turnover in MW across all delivery periods in the month
+
+        - **maxTurnover**: the maximum turnover in MW across all delivery periods in the month
+
+
+        **dailySummary**: a list of daily aggregate values
+
+        - **totalTurnover**: contains total turnover volume in MWh for the day
+
+        - **averageTurnover**: the average turnover volume in MW across all delivery periods in the day
+
+        - **minTurnover**: the minimum turnover in MW across all delivery periods in the day
+
+        - **maxTurnover**: the maximum turnover in MW across all delivery periods in the day
+
+
+        **blockSummaries**: a list of turnover volumes in MWh for a period of the day.
+
+
+        **volumes**: a list of turnover volumes in MW per delivery period
+
+
+        Only final system turnover volumes are included in this endpoint.'
       parameters:
       - name: year
         in: query
@@ -288,27 +399,10 @@ paths:
             text/json:
               schema:
                 $ref: '#/components/schemas/ValidationProblemDetails'
+      operationId: getApiV2SystemTurnoverYearly
+      x-operation-id-source: derived
 components:
   schemas:
-    Summary:
-      type: object
-      properties:
-        averagePrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        minPrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        maxPrice:
-          type:
-          - number
-          - 'null'
-          format: double
-      additionalProperties: false
     ApiSystemYearlyTurnover:
       type: object
       properties:
@@ -362,20 +456,7 @@ components:
           items:
             $ref: '#/components/schemas/SystemVolumeEntry'
       additionalProperties: false
-    SystemVolumeEntry:
-      type: object
-      properties:
-        deliveryStart:
-          type: string
-          format: date-time
-        deliveryEnd:
-          type: string
-          format: date-time
-        turnover:
-          type: number
-          format: double
-      additionalProperties: false
-    MonthlyPriceSummary:
+    Summary:
       type: object
       properties:
         averagePrice:
@@ -389,142 +470,6 @@ components:
           - 'null'
           format: double
         maxPrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        deliveryDateStartCET:
-          type: string
-          format: date
-        deliveryDateEndCET:
-          type: string
-          format: date
-      additionalProperties: false
-    ApiSystemPrice:
-      required:
-      - currency
-      - marketMainCurrency
-      type: object
-      properties:
-        deliveryDateCET:
-          type: string
-          format: date
-        updatedAt:
-          type: string
-          format: date-time
-        status:
-          $ref: '#/components/schemas/ApiAuctionStatus'
-        unit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        currency:
-          type:
-          - string
-          - 'null'
-        exchangeRate:
-          type:
-          - number
-          - 'null'
-          format: double
-        marketMainCurrency:
-          type:
-          - string
-          - 'null'
-        averagePrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        minPrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        maxPrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        prices:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/PriceEntry'
-        blockPrices:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/BlockPriceAggregate'
-      additionalProperties: false
-    SummaryPrice:
-      type: object
-      properties:
-        averagePrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        minPrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        maxPrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        deliveryDateCET:
-          type: string
-          format: date
-      additionalProperties: false
-    SystemVolumeDailySummary:
-      type: object
-      properties:
-        totalTurnover:
-          type: number
-          format: double
-        averageTurnover:
-          type: number
-          format: double
-        minTurnover:
-          type: number
-          format: double
-        maxTurnover:
-          type: number
-          format: double
-        deliveryDateCET:
-          type: string
-          format: date
-      additionalProperties: false
-    BlockPriceAggregate:
-      type: object
-      properties:
-        blockName:
-          type:
-          - string
-          - 'null'
-        blockStart:
-          type: string
-          format: date-time
-        blockEnd:
-          type: string
-          format: date-time
-        minPrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        maxPrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        averagePrice:
           type:
           - number
           - 'null'
@@ -590,7 +535,7 @@ components:
           type: string
           format: date-time
       additionalProperties: false
-    SystemVolumeSummary:
+    SystemVolumeDailySummary:
       type: object
       properties:
         totalTurnover:
@@ -604,6 +549,24 @@ components:
           format: double
         maxTurnover:
           type: number
+          format: double
+        deliveryDateCET:
+          type: string
+          format: date
+      additionalProperties: false
+    PriceEntry:
+      type: object
+      properties:
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        price:
+          type:
+          - number
+          - 'null'
           format: double
       additionalProperties: false
     SystemVolumeBlockAggregate:
@@ -625,57 +588,7 @@ components:
           - 'null'
           format: double
       additionalProperties: false
-    ApiAuctionStatus:
-      enum:
-      - Missing
-      - Preliminary
-      - Final
-      - Cancelled
-      type: string
-    WeeklyPriceSummary:
-      type: object
-      properties:
-        averagePrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        minPrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        maxPrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        isoWeekNumber:
-          type: integer
-          format: int32
-        deliveryDateStartCET:
-          type: string
-          format: date
-        deliveryDateEndCET:
-          type: string
-          format: date
-      additionalProperties: false
-    PriceEntry:
-      type: object
-      properties:
-        deliveryStart:
-          type: string
-          format: date-time
-        deliveryEnd:
-          type: string
-          format: date-time
-        price:
-          type:
-          - number
-          - 'null'
-          format: double
-      additionalProperties: false
-    SystemVolumeMonthlySummary:
+    SystemVolumeSummary:
       type: object
       properties:
         totalTurnover:
@@ -690,12 +603,6 @@ components:
         maxTurnover:
           type: number
           format: double
-        deliveryDateStartCET:
-          type: string
-          format: date
-        deliveryDateEndCET:
-          type: string
-          format: date
       additionalProperties: false
     ValidationProblemDetails:
       type: object
@@ -730,6 +637,142 @@ components:
             items:
               type: string
       additionalProperties: {}
+    ApiSystemPrice:
+      required:
+      - currency
+      - marketMainCurrency
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        updatedAt:
+          type: string
+          format: date-time
+        status:
+          $ref: '#/components/schemas/ApiAuctionStatus'
+        unit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        currency:
+          type:
+          - string
+          - 'null'
+        exchangeRate:
+          type:
+          - number
+          - 'null'
+          format: double
+        marketMainCurrency:
+          type:
+          - string
+          - 'null'
+        averagePrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        minPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        maxPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        prices:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/PriceEntry'
+        blockPrices:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/BlockPriceAggregate'
+      additionalProperties: false
+    MonthlyPriceSummary:
+      type: object
+      properties:
+        averagePrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        minPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        maxPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        deliveryDateStartCET:
+          type: string
+          format: date
+        deliveryDateEndCET:
+          type: string
+          format: date
+      additionalProperties: false
+    SummaryPrice:
+      type: object
+      properties:
+        averagePrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        minPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        maxPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        deliveryDateCET:
+          type: string
+          format: date
+      additionalProperties: false
+    BlockPriceAggregate:
+      type: object
+      properties:
+        blockName:
+          type:
+          - string
+          - 'null'
+        blockStart:
+          type: string
+          format: date-time
+        blockEnd:
+          type: string
+          format: date-time
+        minPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        maxPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        averagePrice:
+          type:
+          - number
+          - 'null'
+          format: double
+      additionalProperties: false
     ApiSystemTurnover:
       type: object
       properties:
@@ -788,6 +831,76 @@ components:
           - 'null'
           items:
             $ref: '#/components/schemas/SystemVolumeEntry'
+      additionalProperties: false
+    SystemVolumeMonthlySummary:
+      type: object
+      properties:
+        totalTurnover:
+          type: number
+          format: double
+        averageTurnover:
+          type: number
+          format: double
+        minTurnover:
+          type: number
+          format: double
+        maxTurnover:
+          type: number
+          format: double
+        deliveryDateStartCET:
+          type: string
+          format: date
+        deliveryDateEndCET:
+          type: string
+          format: date
+      additionalProperties: false
+    ApiAuctionStatus:
+      enum:
+      - Missing
+      - Preliminary
+      - Final
+      - Cancelled
+      type: string
+    WeeklyPriceSummary:
+      type: object
+      properties:
+        averagePrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        minPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        maxPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        isoWeekNumber:
+          type: integer
+          format: int32
+        deliveryDateStartCET:
+          type: string
+          format: date
+        deliveryDateEndCET:
+          type: string
+          format: date
+      additionalProperties: false
+    SystemVolumeEntry:
+      type: object
+      properties:
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        turnover:
+          type: number
+          format: double
       additionalProperties: false
   securitySchemes:
     oauth2:
