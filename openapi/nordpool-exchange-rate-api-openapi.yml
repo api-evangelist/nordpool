@@ -219,25 +219,23 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    ApiExchangeRate:
-      required:
-      - rates
+    ApiYearlyExchangeRate:
       type: object
       properties:
-        dateCET:
-          type: string
-          format: date
+        year:
+          type: integer
+          format: int32
         status:
           $ref: '#/components/schemas/ApiAvailableStatus'
-        updatedAt:
-          type: string
-          format: date-time
-        rates:
+        dailyExchangeRates:
           type:
           - array
           - 'null'
           items:
-            $ref: '#/components/schemas/ExchangeRates'
+            $ref: '#/components/schemas/ExchangeRateDataLake'
+        updatedAt:
+          type: string
+          format: date-time
       additionalProperties: false
     ValidationProblemDetails:
       type: object
@@ -272,6 +270,47 @@ components:
             items:
               type: string
       additionalProperties: {}
+    ExchangeRateDataLake:
+      type: object
+      properties:
+        rates:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ExchangeRates'
+        dateCET:
+          type: string
+          format: date
+        updatedAt:
+          type: string
+          format: date-time
+      additionalProperties: false
+    ApiAvailableStatus:
+      enum:
+      - Missing
+      - Available
+      type: string
+    ApiExchangeRate:
+      required:
+      - rates
+      type: object
+      properties:
+        dateCET:
+          type: string
+          format: date
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        updatedAt:
+          type: string
+          format: date-time
+        rates:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ExchangeRates'
+      additionalProperties: false
     ExchangeRates:
       type: object
       properties:
@@ -297,45 +336,6 @@ components:
       - Preliminary
       - Final
       type: string
-    ApiYearlyExchangeRate:
-      type: object
-      properties:
-        year:
-          type: integer
-          format: int32
-        status:
-          $ref: '#/components/schemas/ApiAvailableStatus'
-        dailyExchangeRates:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ExchangeRateDataLake'
-        updatedAt:
-          type: string
-          format: date-time
-      additionalProperties: false
-    ApiAvailableStatus:
-      enum:
-      - Missing
-      - Available
-      type: string
-    ExchangeRateDataLake:
-      type: object
-      properties:
-        rates:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ExchangeRates'
-        dateCET:
-          type: string
-          format: date
-        updatedAt:
-          type: string
-          format: date-time
-      additionalProperties: false
   securitySchemes:
     oauth2:
       type: oauth2

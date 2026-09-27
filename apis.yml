@@ -9,17 +9,22 @@ description: Nord Pool, part of the Euronext group, operates Europe's leading po
   capacities, flows, and power system data, while WebSocket and REST trading APIs
   serve exchange members.
 deliveryModel:
-  model: unknown
+  model: saas
+  license_evidence:
+    not_product:
+    - nordpool/auctionapi-starterkit
+    - nordpool/public-intraday-api
+    - nordpool/public-intraday-api-example
   open_source: unknown
   commercial: true
   callable_host: true
-  label: Delivery model not determined — needs a product licence on record
+  label: Hosted service · you call their endpoint
   confidence: low
   source:
   - openapi
   - pricing
-  - repository-unlicensed
-  generated: '2026-08-28'
+  - repository-not-product
+  generated: '2026-09-25'
   method: derived
 accessModel:
   pricing: paid
@@ -43,6 +48,7 @@ tags:
 - Intraday Trading
 - Market Data
 - Europe
+- Real-Time
 created: '2026-07-11'
 modified: '2026-07-11'
 specificationVersion: '0.23'

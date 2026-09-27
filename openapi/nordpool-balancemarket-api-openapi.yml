@@ -315,159 +315,45 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    ApiMfrr:
-      required:
-      - currency
+    MfrrDailySummary:
       type: object
       properties:
+        acceptedUpBidVolume:
+          type:
+          - number
+          - 'null'
+          format: double
+        acceptedDownBidVolume:
+          type:
+          - number
+          - 'null'
+          format: double
+        activatedUpVolume:
+          type:
+          - number
+          - 'null'
+          format: double
+        activatedDownVolume:
+          type:
+          - number
+          - 'null'
+          format: double
+        downPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        upPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        imbalancePrice:
+          type:
+          - number
+          - 'null'
+          format: double
         deliveryDateCET:
-          type: string
-          format: date
-        updatedAt:
-          type: string
-          format: date-time
-        deliveryArea:
-          type:
-          - string
-          - 'null'
-        status:
-          $ref: '#/components/schemas/ApiAvailableStatus'
-        currency:
-          type:
-          - string
-          - 'null'
-        exchangeRate:
-          type:
-          - number
-          - 'null'
-          format: double
-        manualFrequencyRestorationReserves:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiMfrrEntry'
-      additionalProperties: false
-    ApiMfrrEntry:
-      type: object
-      properties:
-        deliveryStart:
-          type: string
-          format: date-time
-        deliveryEnd:
-          type: string
-          format: date-time
-        acceptedUpBidVolume:
-          type:
-          - number
-          - 'null'
-          format: double
-        acceptedDownBidVolume:
-          type:
-          - number
-          - 'null'
-          format: double
-        activatedUpVolume:
-          type:
-          - number
-          - 'null'
-          format: double
-        activatedDownVolume:
-          type:
-          - number
-          - 'null'
-          format: double
-        downPrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        upPrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        imbalancePrice:
-          type:
-          - number
-          - 'null'
-          format: double
-      additionalProperties: false
-    ValidationProblemDetails:
-      type: object
-      properties:
-        type:
-          type:
-          - string
-          - 'null'
-        title:
-          type:
-          - string
-          - 'null'
-        status:
-          type:
-          - integer
-          - 'null'
-          format: int32
-        detail:
-          type:
-          - string
-          - 'null'
-        instance:
-          type:
-          - string
-          - 'null'
-        errors:
-          type:
-          - object
-          - 'null'
-          additionalProperties:
-            type: array
-            items:
-              type: string
-      additionalProperties: {}
-    MfrrMonthlySummary:
-      type: object
-      properties:
-        acceptedUpBidVolume:
-          type:
-          - number
-          - 'null'
-          format: double
-        acceptedDownBidVolume:
-          type:
-          - number
-          - 'null'
-          format: double
-        activatedUpVolume:
-          type:
-          - number
-          - 'null'
-          format: double
-        activatedDownVolume:
-          type:
-          - number
-          - 'null'
-          format: double
-        downPrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        upPrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        imbalancePrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        deliveryDateStartCET:
-          type: string
-          format: date
-        deliveryDateEndCET:
           type: string
           format: date
       additionalProperties: false
@@ -524,6 +410,89 @@ components:
           items:
             $ref: '#/components/schemas/YearlyMfrrEntry'
       additionalProperties: false
+    MfrrMonthlySummary:
+      type: object
+      properties:
+        acceptedUpBidVolume:
+          type:
+          - number
+          - 'null'
+          format: double
+        acceptedDownBidVolume:
+          type:
+          - number
+          - 'null'
+          format: double
+        activatedUpVolume:
+          type:
+          - number
+          - 'null'
+          format: double
+        activatedDownVolume:
+          type:
+          - number
+          - 'null'
+          format: double
+        downPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        upPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        imbalancePrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        deliveryDateStartCET:
+          type: string
+          format: date
+        deliveryDateEndCET:
+          type: string
+          format: date
+      additionalProperties: false
+    ValidationProblemDetails:
+      type: object
+      properties:
+        type:
+          type:
+          - string
+          - 'null'
+        title:
+          type:
+          - string
+          - 'null'
+        status:
+          type:
+          - integer
+          - 'null'
+          format: int32
+        detail:
+          type:
+          - string
+          - 'null'
+        instance:
+          type:
+          - string
+          - 'null'
+        errors:
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: array
+            items:
+              type: string
+      additionalProperties: {}
+    ApiAvailableStatus:
+      enum:
+      - Missing
+      - Available
+      type: string
     MfrrEntry:
       type: object
       properties:
@@ -563,9 +532,15 @@ components:
           - 'null'
           format: double
       additionalProperties: false
-    MfrrDailySummary:
+    ApiMfrrEntry:
       type: object
       properties:
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
         acceptedUpBidVolume:
           type:
           - number
@@ -601,9 +576,6 @@ components:
           - number
           - 'null'
           format: double
-        deliveryDateCET:
-          type: string
-          format: date
       additionalProperties: false
     YearlyMfrrEntry:
       type: object
@@ -650,11 +622,39 @@ components:
           type: string
           format: date-time
       additionalProperties: false
-    ApiAvailableStatus:
-      enum:
-      - Missing
-      - Available
-      type: string
+    ApiMfrr:
+      required:
+      - currency
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        updatedAt:
+          type: string
+          format: date-time
+        deliveryArea:
+          type:
+          - string
+          - 'null'
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        currency:
+          type:
+          - string
+          - 'null'
+        exchangeRate:
+          type:
+          - number
+          - 'null'
+          format: double
+        manualFrequencyRestorationReserves:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiMfrrEntry'
+      additionalProperties: false
   securitySchemes:
     oauth2:
       type: oauth2

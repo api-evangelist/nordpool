@@ -1636,281 +1636,94 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    VolumeSummary:
+    ConnectionAtcCapacity:
       type: object
       properties:
-        totalVolume:
-          $ref: '#/components/schemas/VolumeAggregate'
-        averageVolume:
-          $ref: '#/components/schemas/VolumeAggregate'
-        minVolume:
-          $ref: '#/components/schemas/VolumeAggregate'
-        maxVolume:
-          $ref: '#/components/schemas/VolumeAggregate'
-      additionalProperties: false
-    PriceEntry:
-      type: object
-      properties:
-        deliveryStart:
-          type: string
-          format: date-time
-        deliveryEnd:
-          type: string
-          format: date-time
-        price:
-          type:
-          - number
-          - 'null'
-          format: double
-      additionalProperties: false
-    BlockVolumeAggregate:
-      type: object
-      properties:
-        blockName:
+        area:
           type:
           - string
           - 'null'
-        blockStart:
-          type: string
-          format: date-time
-        blockEnd:
-          type: string
-          format: date-time
-        buy:
+        connection:
+          type:
+          - string
+          - 'null'
+        capacity:
+          type: number
+          format: double
+        lossFactor:
           type:
           - number
           - 'null'
           format: double
-        sell:
+        rampingRestriction:
+          type:
+          - number
+          - 'null'
+          format: double
+        alreadyAllocatedCapacity:
           type:
           - number
           - 'null'
           format: double
       additionalProperties: false
-    ApiAuctionYearlyCapacity:
+    GroupRestrictionAtcCapacity:
+      type: object
+      properties:
+        areas:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+        capacity:
+          type: number
+          format: double
+      additionalProperties: false
+    ApiAuctionStatus:
+      enum:
+      - Missing
+      - Preliminary
+      - Final
+      - Cancelled
+      type: string
+    ApiAggregatedCluster:
       required:
-      - deliveryArea
-      - unit
-      type: object
-      properties:
-        market:
-          $ref: '#/components/schemas/Market'
-        deliveryArea:
-          type:
-          - string
-          - 'null'
-        year:
-          type: integer
-          format: int32
-        status:
-          $ref: '#/components/schemas/ApiAvailableStatus'
-        updatedAt:
-          type: string
-          format: date-time
-        unit:
-          type:
-          - string
-          - 'null'
-        capacities:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/AtcCapacity'
-        dailyTotalUnit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        dailySummaries:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/CapacityDailySummary'
-      additionalProperties: false
-    AuctionCapacityMarkets:
-      enum:
-      - DayAhead
-      - N2EX_DayAhead
-      - SIDC_IntradayAuction1
-      - SIDC_IntradayAuction2
-      - SIDC_IntradayAuction3
-      type: string
-    AtcCapacity:
-      type: object
-      properties:
-        deliveryStart:
-          type: string
-          format: date-time
-        deliveryEnd:
-          type: string
-          format: date-time
-        importsByConnection:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ConnectionAtcCapacity'
-        exportsByConnection:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ConnectionAtcCapacity'
-        importsByGroupRestriction:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/GroupRestrictionAtcCapacity'
-        exportsByGroupRestriction:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/GroupRestrictionAtcCapacity'
-        externalImportConstraint:
-          type:
-          - number
-          - 'null'
-          format: double
-        externalExportConstraint:
-          type:
-          - number
-          - 'null'
-          format: double
-        totalImport:
-          type:
-          - number
-          - 'null'
-          format: double
-        totalExport:
-          type:
-          - number
-          - 'null'
-          format: double
-      additionalProperties: false
-    AggregatedBidCurveMarkets:
-      enum:
-      - DayAhead
-      - SIDC_IntradayAuction1
-      - SIDC_IntradayAuction2
-      - SIDC_IntradayAuction3
-      type: string
-    ApiFlowBasedConstraint:
+      - region
       type: object
       properties:
         deliveryDateCET:
           type: string
           format: date
-        updatedAt:
-          type: string
-          format: date-time
-        market:
-          $ref: '#/components/schemas/Market'
+        region:
+          type:
+          - string
+          - 'null'
         status:
           $ref: '#/components/schemas/ApiAvailableStatus'
-        flowBasedDomain:
-          $ref: '#/components/schemas/FlowBasedDomainType'
-        remainingAvailableMarginUnit:
+        currencyUnit:
           type:
           - string
           - 'null'
           readOnly: true
-        periods:
+        volumeUnit:
           type:
-          - array
+          - string
           - 'null'
-          items:
-            $ref: '#/components/schemas/FlowBasedPeriodItem'
-      additionalProperties: false
-    ApiAuctionYearlyPrice:
-      required:
-      - currency
-      - deliveryArea
-      - marketMainCurrency
-      - unit
-      type: object
-      properties:
+          readOnly: true
         market:
-          $ref: '#/components/schemas/Market'
-        deliveryArea:
-          type:
-          - string
-          - 'null'
-        year:
-          type: integer
-          format: int32
-        status:
-          $ref: '#/components/schemas/ApiAuctionStatus'
-        unit:
-          type:
-          - string
-          - 'null'
-        currency:
-          type:
-          - string
-          - 'null'
-        marketMainCurrency:
-          type:
-          - string
-          - 'null'
-        blockPrices:
+          $ref: '#/components/schemas/AggregatedBidCurveMarkets'
+        aggregatedOrderPositions:
           type:
           - array
           - 'null'
           items:
-            $ref: '#/components/schemas/BlockPriceAggregate'
-        prices:
+            $ref: '#/components/schemas/ApiAggregatedOrderPosition'
+        blockOrders:
           type:
           - array
           - 'null'
           items:
-            $ref: '#/components/schemas/PriceEntry'
-        yearlySummary:
-          $ref: '#/components/schemas/Summary'
-        dailySummaries:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/SummaryPrice'
-        weeklySummaries:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/WeeklyPriceSummary'
-        monthlySummaries:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/MonthlyPriceSummary'
-        updatedAt:
-          type: string
-          format: date-time
-      additionalProperties: false
-    FlowBasedDomainType:
-      enum:
-      - Core
-      - Nordic
-      - DK1
-      type: string
-    VolumeAggregate:
-      type: object
-      properties:
-        buy:
-          type:
-          - number
-          - 'null'
-          format: double
-        sell:
-          type:
-          - number
-          - 'null'
-          format: double
+            $ref: '#/components/schemas/ApiBlockOrder'
       additionalProperties: false
     BlockPriceAggregate:
       type: object
@@ -1939,6 +1752,54 @@ components:
           type:
           - number
           - 'null'
+          format: double
+      additionalProperties: false
+    AuctionsVolumeEntry:
+      type: object
+      properties:
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        buy:
+          type: number
+          format: double
+        sell:
+          type: number
+          format: double
+      additionalProperties: false
+    VolumeDailySummary:
+      type: object
+      properties:
+        totalVolume:
+          $ref: '#/components/schemas/VolumeAggregate'
+        averageVolume:
+          $ref: '#/components/schemas/VolumeAggregate'
+        minVolume:
+          $ref: '#/components/schemas/VolumeAggregate'
+        maxVolume:
+          $ref: '#/components/schemas/VolumeAggregate'
+        deliveryDateCET:
+          type: string
+          format: date
+      additionalProperties: false
+    FlowBasedDomainType:
+      enum:
+      - Core
+      - Nordic
+      - DK1
+      type: string
+    PowerTransferDistributionItem:
+      type: object
+      properties:
+        area:
+          type:
+          - string
+          - 'null'
+        powerTransferDistributionFactor:
+          type: number
           format: double
       additionalProperties: false
     ApiFlow:
@@ -1992,592 +1853,6 @@ components:
           items:
             $ref: '#/components/schemas/ApiTransfer'
       additionalProperties: false
-    ApiAvailableStatus:
-      enum:
-      - Missing
-      - Available
-      type: string
-    ApiAuctionStatus:
-      enum:
-      - Missing
-      - Preliminary
-      - Final
-      - Cancelled
-      type: string
-    AuctionsVolumeEntry:
-      type: object
-      properties:
-        deliveryStart:
-          type: string
-          format: date-time
-        deliveryEnd:
-          type: string
-          format: date-time
-        buy:
-          type: number
-          format: double
-        sell:
-          type: number
-          format: double
-      additionalProperties: false
-    VolumeDailySummary:
-      type: object
-      properties:
-        totalVolume:
-          $ref: '#/components/schemas/VolumeAggregate'
-        averageVolume:
-          $ref: '#/components/schemas/VolumeAggregate'
-        minVolume:
-          $ref: '#/components/schemas/VolumeAggregate'
-        maxVolume:
-          $ref: '#/components/schemas/VolumeAggregate'
-        deliveryDateCET:
-          type: string
-          format: date
-      additionalProperties: false
-    ApiAggregatedCluster:
-      required:
-      - region
-      type: object
-      properties:
-        deliveryDateCET:
-          type: string
-          format: date
-        region:
-          type:
-          - string
-          - 'null'
-        status:
-          $ref: '#/components/schemas/ApiAvailableStatus'
-        currencyUnit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        volumeUnit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        market:
-          $ref: '#/components/schemas/AggregatedBidCurveMarkets'
-        aggregatedOrderPositions:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiAggregatedOrderPosition'
-        blockOrders:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiBlockOrder'
-      additionalProperties: false
-    WeeklyPriceSummary:
-      type: object
-      properties:
-        averagePrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        minPrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        maxPrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        isoWeekNumber:
-          type: integer
-          format: int32
-        deliveryDateStartCET:
-          type: string
-          format: date
-        deliveryDateEndCET:
-          type: string
-          format: date
-      additionalProperties: false
-    ApiByConnection:
-      required:
-      - area
-      type: object
-      properties:
-        area:
-          type:
-          - string
-          - 'null'
-        connection:
-          type:
-          - string
-          - 'null'
-        import:
-          type:
-          - number
-          - 'null'
-          format: double
-        export:
-          type:
-          - number
-          - 'null'
-          format: double
-        netPosition:
-          type:
-          - number
-          - 'null'
-          format: double
-          readOnly: true
-      additionalProperties: false
-    ApiAuctionVolume:
-      required:
-      - deliveryArea
-      type: object
-      properties:
-        deliveryDateCET:
-          type: string
-          format: date
-        updatedAt:
-          type: string
-          format: date-time
-        deliveryArea:
-          type:
-          - string
-          - 'null'
-        market:
-          $ref: '#/components/schemas/Market'
-        status:
-          $ref: '#/components/schemas/ApiAuctionStatus'
-        unit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        totalVolumeUnit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        totalVolume:
-          $ref: '#/components/schemas/VolumeAggregate'
-        averageVolume:
-          $ref: '#/components/schemas/VolumeAggregate'
-        minVolume:
-          $ref: '#/components/schemas/VolumeAggregate'
-        maxVolume:
-          $ref: '#/components/schemas/VolumeAggregate'
-        blockVolumesUnit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        blockVolumes:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/BlockVolumeAggregate'
-        volumes:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/AuctionsVolumeEntry'
-      additionalProperties: false
-    OrderSide:
-      enum:
-      - Buy
-      - Sell
-      type: string
-    ApiAuctionYearlyPriceIndex:
-      required:
-      - currency
-      - indexName
-      - marketMainCurrency
-      - unit
-      type: object
-      properties:
-        market:
-          $ref: '#/components/schemas/Market'
-        indexName:
-          type:
-          - string
-          - 'null'
-        deliveryAreas:
-          type:
-          - array
-          - 'null'
-          items:
-            type: string
-        resolution:
-          type: string
-          format: date-span
-        year:
-          type: integer
-          format: int32
-        currency:
-          type:
-          - string
-          - 'null'
-        marketMainCurrency:
-          type:
-          - string
-          - 'null'
-        unit:
-          type:
-          - string
-          - 'null'
-        status:
-          $ref: '#/components/schemas/ApiAuctionStatus'
-        updatedAt:
-          type: string
-          format: date-time
-        prices:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/PriceEntry'
-      additionalProperties: false
-    ApiAuctionYearlyScheduledPhysicalFlow:
-      required:
-      - deliveryArea
-      - unit
-      type: object
-      properties:
-        market:
-          $ref: '#/components/schemas/Market'
-        deliveryArea:
-          type:
-          - string
-          - 'null'
-        year:
-          type: integer
-          format: int32
-        status:
-          $ref: '#/components/schemas/ApiAuctionStatus'
-        updatedAt:
-          type: string
-          format: date-time
-        dailyTotalUnit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        dailySummaries:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/FlowDailySummary'
-        unit:
-          type:
-          - string
-          - 'null'
-        flows:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiTransfer'
-      additionalProperties: false
-    ConnectionAtcCapacity:
-      type: object
-      properties:
-        area:
-          type:
-          - string
-          - 'null'
-        connection:
-          type:
-          - string
-          - 'null'
-        capacity:
-          type: number
-          format: double
-        lossFactor:
-          type:
-          - number
-          - 'null'
-          format: double
-        rampingRestriction:
-          type:
-          - number
-          - 'null'
-          format: double
-        alreadyAllocatedCapacity:
-          type:
-          - number
-          - 'null'
-          format: double
-      additionalProperties: false
-    Resolution:
-      enum:
-      - PT1H
-      - PT15M
-      - PT30M
-      type: string
-    Summary:
-      type: object
-      properties:
-        averagePrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        minPrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        maxPrice:
-          type:
-          - number
-          - 'null'
-          format: double
-      additionalProperties: false
-    ApiAuctionPrice:
-      required:
-      - currency
-      - deliveryArea
-      - marketMainCurrency
-      type: object
-      properties:
-        deliveryDateCET:
-          type: string
-          format: date
-        updatedAt:
-          type: string
-          format: date-time
-        status:
-          $ref: '#/components/schemas/ApiAuctionStatus'
-        unit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        currency:
-          type:
-          - string
-          - 'null'
-        exchangeRate:
-          type:
-          - number
-          - 'null'
-          format: double
-        marketMainCurrency:
-          type:
-          - string
-          - 'null'
-        averagePrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        minPrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        maxPrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        prices:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/PriceEntry'
-        market:
-          $ref: '#/components/schemas/Market'
-        deliveryArea:
-          type:
-          - string
-          - 'null'
-        blockPrices:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/BlockPriceAggregate'
-      additionalProperties: false
-    AuctionFlowBasedConstraintMarkets:
-      enum:
-      - DayAhead
-      type: string
-    ApiAuctionYearlyVolume:
-      required:
-      - deliveryArea
-      type: object
-      properties:
-        market:
-          $ref: '#/components/schemas/Market'
-        deliveryArea:
-          type:
-          - string
-          - 'null'
-        year:
-          type: integer
-          format: int32
-        status:
-          $ref: '#/components/schemas/ApiAuctionStatus'
-        blockVolumeUnit:
-          type:
-          - string
-          - 'null'
-        blockVolumes:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/BlockVolumeAggregate'
-        unit:
-          type:
-          - string
-          - 'null'
-        volumes:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/AuctionsVolumeEntry'
-        totalVolumeUnit:
-          type:
-          - string
-          - 'null'
-        yearlySummary:
-          $ref: '#/components/schemas/VolumeSummary'
-        monthlySummaries:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/VolumeMonthlySummary'
-        dailySummaries:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/VolumeDailySummary'
-        updatedAt:
-          type: string
-          format: date-time
-      additionalProperties: false
-    ApiAuctionYearlyFlow:
-      required:
-      - deliveryArea
-      - unit
-      type: object
-      properties:
-        market:
-          $ref: '#/components/schemas/Market'
-        deliveryArea:
-          type:
-          - string
-          - 'null'
-        year:
-          type: integer
-          format: int32
-        status:
-          $ref: '#/components/schemas/ApiAuctionStatus'
-        updatedAt:
-          type: string
-          format: date-time
-        dailyTotalUnit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        dailySummaries:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/FlowDailySummary'
-        unit:
-          type:
-          - string
-          - 'null'
-        flows:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiTransfer'
-      additionalProperties: false
-    ApiAggregatedOrderPosition:
-      type: object
-      properties:
-        deliveryStart:
-          type: string
-          format: date-time
-        deliveryEnd:
-          type: string
-          format: date-time
-        exportVolume:
-          type: number
-          format: double
-        importVolume:
-          type: number
-          format: double
-        realizedCurveDemandVolume:
-          type: number
-          format: double
-        realizedCurveSupplyVolume:
-          type: number
-          format: double
-        realizedNonCurveDemandVolume:
-          type: number
-          format: double
-        realizedNonCurveSupplyVolume:
-          type: number
-          format: double
-        demandCurve:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiPricePoint'
-        supplyCurve:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiPricePoint'
-        aggregatedDemandCurve:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiPricePoint'
-        aggregatedSupplyCurve:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiPricePoint'
-      additionalProperties: false
-    FlowBasedPeriodItem:
-      type: object
-      properties:
-        deliveryStart:
-          type: string
-          format: date-time
-        deliveryEnd:
-          type: string
-          format: date-time
-        constraints:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/FlowBasedConstraintItem'
-      additionalProperties: false
     VolumeMonthlySummary:
       type: object
       properties:
@@ -2595,419 +1870,6 @@ components:
         deliveryDateEndCET:
           type: string
           format: date
-      additionalProperties: false
-    FlowBasedConstraintItem:
-      type: object
-      properties:
-        id:
-          type:
-          - string
-          - 'null'
-        name:
-          type:
-          - string
-          - 'null'
-        remainingAvailableMargin:
-          type: number
-          format: double
-        powerTransferDistributionFactors:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/PowerTransferDistributionItem'
-      additionalProperties: false
-    Market:
-      enum:
-      - DayAhead
-      - GbHalfHour_DayAhead
-      - N2EX_DayAhead
-      - NP_IntradayAuction1
-      - NP_IntradayAuction2
-      - SemGb_IntradayAuction1
-      - SemGb_IntradayAuction2
-      - SIDC_IntradayAuction1
-      - SIDC_IntradayAuction2
-      - SIDC_IntradayAuction3
-      type: string
-    ClusterType:
-      enum:
-      - Austria
-      - Baltic
-      - Belgium
-      - Bulgaria
-      - Denmark
-      - Finland
-      - France
-      - Germany
-      - Netherlands
-      - Norway
-      - Poland
-      - Romania
-      - Sweden
-      type: string
-    ApiTransfer:
-      type: object
-      properties:
-        deliveryStart:
-          type: string
-          format: date-time
-        deliveryEnd:
-          type: string
-          format: date-time
-        byConnections:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiByConnection'
-        totalImport:
-          type:
-          - number
-          - 'null'
-          format: double
-          readOnly: true
-        totalExport:
-          type:
-          - number
-          - 'null'
-          format: double
-          readOnly: true
-        totalNetPosition:
-          type:
-          - number
-          - 'null'
-          format: double
-          readOnly: true
-      additionalProperties: false
-    ApiAuctionCapacity:
-      required:
-      - deliveryArea
-      type: object
-      properties:
-        deliveryDateCET:
-          type: string
-          format: date
-        updatedAt:
-          type: string
-          format: date-time
-        market:
-          $ref: '#/components/schemas/Market'
-        status:
-          $ref: '#/components/schemas/ApiAvailableStatus'
-        deliveryArea:
-          type:
-          - string
-          - 'null'
-        unit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        dailyTotalUnit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        dailyTotalExport:
-          type:
-          - number
-          - 'null'
-          format: double
-        dailyTotalImport:
-          type:
-          - number
-          - 'null'
-          format: double
-        capacities:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/AtcCapacity'
-        maxNtcValues:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/MaxNtcValue'
-      additionalProperties: false
-    ValidationProblemDetails:
-      type: object
-      properties:
-        type:
-          type:
-          - string
-          - 'null'
-        title:
-          type:
-          - string
-          - 'null'
-        status:
-          type:
-          - integer
-          - 'null'
-          format: int32
-        detail:
-          type:
-          - string
-          - 'null'
-        instance:
-          type:
-          - string
-          - 'null'
-        errors:
-          type:
-          - object
-          - 'null'
-          additionalProperties:
-            type: array
-            items:
-              type: string
-      additionalProperties: {}
-    MonthlyPriceSummary:
-      type: object
-      properties:
-        averagePrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        minPrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        maxPrice:
-          type:
-          - number
-          - 'null'
-          format: double
-        deliveryDateStartCET:
-          type: string
-          format: date
-        deliveryDateEndCET:
-          type: string
-          format: date
-      additionalProperties: false
-    ApiScheduledPhysicalFlow:
-      required:
-      - deliveryArea
-      type: object
-      properties:
-        deliveryDateCET:
-          type: string
-          format: date
-        updatedAt:
-          type: string
-          format: date-time
-        deliveryArea:
-          type:
-          - string
-          - 'null'
-        market:
-          $ref: '#/components/schemas/Market'
-        status:
-          $ref: '#/components/schemas/ApiAuctionStatus'
-        unit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        dailyTotalUnit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        dailyTotalImport:
-          type:
-          - number
-          - 'null'
-          format: double
-        dailyTotalExport:
-          type:
-          - number
-          - 'null'
-          format: double
-        dailyTotalNetPosition:
-          type:
-          - number
-          - 'null'
-          format: double
-        flows:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiTransfer'
-      additionalProperties: false
-    GroupRestrictionAtcCapacity:
-      type: object
-      properties:
-        areas:
-          type:
-          - array
-          - 'null'
-          items:
-            type: string
-        capacity:
-          type: number
-          format: double
-      additionalProperties: false
-    FlowConnectionDailySummary:
-      type: object
-      properties:
-        totalImport:
-          type:
-          - number
-          - 'null'
-          format: double
-        totalExport:
-          type:
-          - number
-          - 'null'
-          format: double
-        totalNetPosition:
-          type:
-          - number
-          - 'null'
-          format: double
-        area:
-          type:
-          - string
-          - 'null'
-        connection:
-          type:
-          - string
-          - 'null'
-      additionalProperties: false
-    ApiBlockOrderInterval:
-      type: object
-      properties:
-        deliveryStart:
-          type: string
-          format: date-time
-        deliveryEnd:
-          type: string
-          format: date-time
-        volume:
-          type: number
-          format: double
-        acceptedVolume:
-          type:
-          - number
-          - 'null'
-          format: double
-      additionalProperties: false
-    AuctionScheduledPhysicalFlowMarkets:
-      enum:
-      - DayAhead
-      type: string
-    FlowDailySummary:
-      type: object
-      properties:
-        deliveryDateCET:
-          type: string
-          format: date
-        totalImport:
-          type:
-          - number
-          - 'null'
-          format: double
-        totalExport:
-          type:
-          - number
-          - 'null'
-          format: double
-        totalNetPosition:
-          type:
-          - number
-          - 'null'
-          format: double
-        connectionSummaries:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/FlowConnectionDailySummary'
-      additionalProperties: false
-    AuctionMarkets:
-      enum:
-      - DayAhead
-      - GbHalfHour_DayAhead
-      - N2EX_DayAhead
-      - SemGb_IntradayAuction1
-      - SemGb_IntradayAuction2
-      - SIDC_IntradayAuction1
-      - SIDC_IntradayAuction2
-      - SIDC_IntradayAuction3
-      type: string
-    AuctionFlowMarkets:
-      enum:
-      - DayAhead
-      - N2EX_DayAhead
-      - SemGb_IntradayAuction1
-      - SemGb_IntradayAuction2
-      - SIDC_IntradayAuction1
-      - SIDC_IntradayAuction2
-      - SIDC_IntradayAuction3
-      type: string
-    CapacityDailySummary:
-      type: object
-      properties:
-        deliveryDateCET:
-          type: string
-          format: date
-        totalImport:
-          type:
-          - number
-          - 'null'
-          format: double
-        totalExport:
-          type:
-          - number
-          - 'null'
-          format: double
-      additionalProperties: false
-    ApiBlockOrder:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int32
-        side:
-          $ref: '#/components/schemas/OrderSide'
-        exclusiveGroupId:
-          type:
-          - integer
-          - 'null'
-          format: int32
-        minimumAcceptanceRatio:
-          type: number
-          format: double
-        linkedOrderId:
-          type:
-          - integer
-          - 'null'
-          format: int32
-        price:
-          type: number
-          format: double
-        paradoxicallyRejected:
-          type:
-          - boolean
-          - 'null'
-        actualAcceptanceRatio:
-          type:
-          - number
-          - 'null'
-          format: double
-        intervals:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiBlockOrderInterval'
       additionalProperties: false
     ApiAuctionPriceIndex:
       required:
@@ -3082,6 +1944,725 @@ components:
           items:
             type: string
       additionalProperties: false
+    ApiAuctionYearlyPrice:
+      required:
+      - currency
+      - deliveryArea
+      - marketMainCurrency
+      - unit
+      type: object
+      properties:
+        market:
+          $ref: '#/components/schemas/Market'
+        deliveryArea:
+          type:
+          - string
+          - 'null'
+        year:
+          type: integer
+          format: int32
+        status:
+          $ref: '#/components/schemas/ApiAuctionStatus'
+        unit:
+          type:
+          - string
+          - 'null'
+        currency:
+          type:
+          - string
+          - 'null'
+        marketMainCurrency:
+          type:
+          - string
+          - 'null'
+        blockPrices:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/BlockPriceAggregate'
+        prices:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/PriceEntry'
+        yearlySummary:
+          $ref: '#/components/schemas/Summary'
+        dailySummaries:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/SummaryPrice'
+        weeklySummaries:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/WeeklyPriceSummary'
+        monthlySummaries:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/MonthlyPriceSummary'
+        updatedAt:
+          type: string
+          format: date-time
+      additionalProperties: false
+    VolumeSummary:
+      type: object
+      properties:
+        totalVolume:
+          $ref: '#/components/schemas/VolumeAggregate'
+        averageVolume:
+          $ref: '#/components/schemas/VolumeAggregate'
+        minVolume:
+          $ref: '#/components/schemas/VolumeAggregate'
+        maxVolume:
+          $ref: '#/components/schemas/VolumeAggregate'
+      additionalProperties: false
+    ApiFlowBasedConstraint:
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        updatedAt:
+          type: string
+          format: date-time
+        market:
+          $ref: '#/components/schemas/Market'
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        flowBasedDomain:
+          $ref: '#/components/schemas/FlowBasedDomainType'
+        remainingAvailableMarginUnit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        periods:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/FlowBasedPeriodItem'
+      additionalProperties: false
+    Market:
+      enum:
+      - DayAhead
+      - GbHalfHour_DayAhead
+      - N2EX_DayAhead
+      - NP_IntradayAuction1
+      - NP_IntradayAuction2
+      - SemGb_IntradayAuction1
+      - SemGb_IntradayAuction2
+      - SIDC_IntradayAuction1
+      - SIDC_IntradayAuction2
+      - SIDC_IntradayAuction3
+      type: string
+    ValidationProblemDetails:
+      type: object
+      properties:
+        type:
+          type:
+          - string
+          - 'null'
+        title:
+          type:
+          - string
+          - 'null'
+        status:
+          type:
+          - integer
+          - 'null'
+          format: int32
+        detail:
+          type:
+          - string
+          - 'null'
+        instance:
+          type:
+          - string
+          - 'null'
+        errors:
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: array
+            items:
+              type: string
+      additionalProperties: {}
+    FlowBasedConstraintItem:
+      type: object
+      properties:
+        id:
+          type:
+          - string
+          - 'null'
+        name:
+          type:
+          - string
+          - 'null'
+        remainingAvailableMargin:
+          type: number
+          format: double
+        powerTransferDistributionFactors:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/PowerTransferDistributionItem'
+      additionalProperties: false
+    ApiTransfer:
+      type: object
+      properties:
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        byConnections:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiByConnection'
+        totalImport:
+          type:
+          - number
+          - 'null'
+          format: double
+          readOnly: true
+        totalExport:
+          type:
+          - number
+          - 'null'
+          format: double
+          readOnly: true
+        totalNetPosition:
+          type:
+          - number
+          - 'null'
+          format: double
+          readOnly: true
+      additionalProperties: false
+    ApiAvailableStatus:
+      enum:
+      - Missing
+      - Available
+      type: string
+    AuctionMarkets:
+      enum:
+      - DayAhead
+      - GbHalfHour_DayAhead
+      - N2EX_DayAhead
+      - SemGb_IntradayAuction1
+      - SemGb_IntradayAuction2
+      - SIDC_IntradayAuction1
+      - SIDC_IntradayAuction2
+      - SIDC_IntradayAuction3
+      type: string
+    FlowConnectionDailySummary:
+      type: object
+      properties:
+        totalImport:
+          type:
+          - number
+          - 'null'
+          format: double
+        totalExport:
+          type:
+          - number
+          - 'null'
+          format: double
+        totalNetPosition:
+          type:
+          - number
+          - 'null'
+          format: double
+        area:
+          type:
+          - string
+          - 'null'
+        connection:
+          type:
+          - string
+          - 'null'
+      additionalProperties: false
+    AggregatedBidCurveMarkets:
+      enum:
+      - DayAhead
+      - SIDC_IntradayAuction1
+      - SIDC_IntradayAuction2
+      - SIDC_IntradayAuction3
+      type: string
+    CapacityDailySummary:
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        totalImport:
+          type:
+          - number
+          - 'null'
+          format: double
+        totalExport:
+          type:
+          - number
+          - 'null'
+          format: double
+      additionalProperties: false
+    ApiAuctionYearlyScheduledPhysicalFlow:
+      required:
+      - deliveryArea
+      - unit
+      type: object
+      properties:
+        market:
+          $ref: '#/components/schemas/Market'
+        deliveryArea:
+          type:
+          - string
+          - 'null'
+        year:
+          type: integer
+          format: int32
+        status:
+          $ref: '#/components/schemas/ApiAuctionStatus'
+        updatedAt:
+          type: string
+          format: date-time
+        dailyTotalUnit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        dailySummaries:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/FlowDailySummary'
+        unit:
+          type:
+          - string
+          - 'null'
+        flows:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiTransfer'
+      additionalProperties: false
+    VolumeAggregate:
+      type: object
+      properties:
+        buy:
+          type:
+          - number
+          - 'null'
+          format: double
+        sell:
+          type:
+          - number
+          - 'null'
+          format: double
+      additionalProperties: false
+    FlowDailySummary:
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        totalImport:
+          type:
+          - number
+          - 'null'
+          format: double
+        totalExport:
+          type:
+          - number
+          - 'null'
+          format: double
+        totalNetPosition:
+          type:
+          - number
+          - 'null'
+          format: double
+        connectionSummaries:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/FlowConnectionDailySummary'
+      additionalProperties: false
+    ApiBlockOrderInterval:
+      type: object
+      properties:
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        volume:
+          type: number
+          format: double
+        acceptedVolume:
+          type:
+          - number
+          - 'null'
+          format: double
+      additionalProperties: false
+    WeeklyPriceSummary:
+      type: object
+      properties:
+        averagePrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        minPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        maxPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        isoWeekNumber:
+          type: integer
+          format: int32
+        deliveryDateStartCET:
+          type: string
+          format: date
+        deliveryDateEndCET:
+          type: string
+          format: date
+      additionalProperties: false
+    ApiAggregatedOrderPosition:
+      type: object
+      properties:
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        exportVolume:
+          type: number
+          format: double
+        importVolume:
+          type: number
+          format: double
+        realizedCurveDemandVolume:
+          type: number
+          format: double
+        realizedCurveSupplyVolume:
+          type: number
+          format: double
+        realizedNonCurveDemandVolume:
+          type: number
+          format: double
+        realizedNonCurveSupplyVolume:
+          type: number
+          format: double
+        demandCurve:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiPricePoint'
+        supplyCurve:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiPricePoint'
+        aggregatedDemandCurve:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiPricePoint'
+        aggregatedSupplyCurve:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiPricePoint'
+      additionalProperties: false
+    PriceEntry:
+      type: object
+      properties:
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        price:
+          type:
+          - number
+          - 'null'
+          format: double
+      additionalProperties: false
+    Resolution:
+      enum:
+      - PT1H
+      - PT15M
+      - PT30M
+      type: string
+    BlockVolumeAggregate:
+      type: object
+      properties:
+        blockName:
+          type:
+          - string
+          - 'null'
+        blockStart:
+          type: string
+          format: date-time
+        blockEnd:
+          type: string
+          format: date-time
+        buy:
+          type:
+          - number
+          - 'null'
+          format: double
+        sell:
+          type:
+          - number
+          - 'null'
+          format: double
+      additionalProperties: false
+    ApiAuctionYearlyPriceIndex:
+      required:
+      - currency
+      - indexName
+      - marketMainCurrency
+      - unit
+      type: object
+      properties:
+        market:
+          $ref: '#/components/schemas/Market'
+        indexName:
+          type:
+          - string
+          - 'null'
+        deliveryAreas:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+        resolution:
+          type: string
+          format: date-span
+        year:
+          type: integer
+          format: int32
+        currency:
+          type:
+          - string
+          - 'null'
+        marketMainCurrency:
+          type:
+          - string
+          - 'null'
+        unit:
+          type:
+          - string
+          - 'null'
+        status:
+          $ref: '#/components/schemas/ApiAuctionStatus'
+        updatedAt:
+          type: string
+          format: date-time
+        prices:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/PriceEntry'
+      additionalProperties: false
+    ApiAuctionVolume:
+      required:
+      - deliveryArea
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        updatedAt:
+          type: string
+          format: date-time
+        deliveryArea:
+          type:
+          - string
+          - 'null'
+        market:
+          $ref: '#/components/schemas/Market'
+        status:
+          $ref: '#/components/schemas/ApiAuctionStatus'
+        unit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        totalVolumeUnit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        totalVolume:
+          $ref: '#/components/schemas/VolumeAggregate'
+        averageVolume:
+          $ref: '#/components/schemas/VolumeAggregate'
+        minVolume:
+          $ref: '#/components/schemas/VolumeAggregate'
+        maxVolume:
+          $ref: '#/components/schemas/VolumeAggregate'
+        blockVolumesUnit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        blockVolumes:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/BlockVolumeAggregate'
+        volumes:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/AuctionsVolumeEntry'
+      additionalProperties: false
+    OrderSide:
+      enum:
+      - Buy
+      - Sell
+      type: string
+    AuctionFlowMarkets:
+      enum:
+      - DayAhead
+      - N2EX_DayAhead
+      - SemGb_IntradayAuction1
+      - SemGb_IntradayAuction2
+      - SIDC_IntradayAuction1
+      - SIDC_IntradayAuction2
+      - SIDC_IntradayAuction3
+      type: string
+    AtcCapacity:
+      type: object
+      properties:
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        importsByConnection:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ConnectionAtcCapacity'
+        exportsByConnection:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ConnectionAtcCapacity'
+        importsByGroupRestriction:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/GroupRestrictionAtcCapacity'
+        exportsByGroupRestriction:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/GroupRestrictionAtcCapacity'
+        externalImportConstraint:
+          type:
+          - number
+          - 'null'
+          format: double
+        externalExportConstraint:
+          type:
+          - number
+          - 'null'
+          format: double
+        totalImport:
+          type:
+          - number
+          - 'null'
+          format: double
+        totalExport:
+          type:
+          - number
+          - 'null'
+          format: double
+      additionalProperties: false
+    ApiByConnection:
+      required:
+      - area
+      type: object
+      properties:
+        area:
+          type:
+          - string
+          - 'null'
+        connection:
+          type:
+          - string
+          - 'null'
+        import:
+          type:
+          - number
+          - 'null'
+          format: double
+        export:
+          type:
+          - number
+          - 'null'
+          format: double
+        netPosition:
+          type:
+          - number
+          - 'null'
+          format: double
+          readOnly: true
+      additionalProperties: false
+    ApiPricePoint:
+      type: object
+      properties:
+        price:
+          type: number
+          format: double
+        volume:
+          type: number
+          format: double
+      additionalProperties: false
+    AuctionScheduledPhysicalFlowMarkets:
+      enum:
+      - DayAhead
+      type: string
     SummaryPrice:
       type: object
       properties:
@@ -3104,25 +2685,94 @@ components:
           type: string
           format: date
       additionalProperties: false
-    ApiPricePoint:
+    ApiAuctionYearlyCapacity:
+      required:
+      - deliveryArea
+      - unit
       type: object
       properties:
-        price:
-          type: number
-          format: double
-        volume:
-          type: number
-          format: double
-      additionalProperties: false
-    PowerTransferDistributionItem:
-      type: object
-      properties:
-        area:
+        market:
+          $ref: '#/components/schemas/Market'
+        deliveryArea:
           type:
           - string
           - 'null'
-        powerTransferDistributionFactor:
-          type: number
+        year:
+          type: integer
+          format: int32
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        updatedAt:
+          type: string
+          format: date-time
+        unit:
+          type:
+          - string
+          - 'null'
+        capacities:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/AtcCapacity'
+        dailyTotalUnit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        dailySummaries:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/CapacityDailySummary'
+      additionalProperties: false
+    MonthlyPriceSummary:
+      type: object
+      properties:
+        averagePrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        minPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        maxPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        deliveryDateStartCET:
+          type: string
+          format: date
+        deliveryDateEndCET:
+          type: string
+          format: date
+      additionalProperties: false
+    AuctionFlowBasedConstraintMarkets:
+      enum:
+      - DayAhead
+      type: string
+    Summary:
+      type: object
+      properties:
+        averagePrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        minPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        maxPrice:
+          type:
+          - number
+          - 'null'
           format: double
       additionalProperties: false
     MaxNtcValue:
@@ -3145,6 +2795,356 @@ components:
           - integer
           - 'null'
           format: int32
+      additionalProperties: false
+    ApiScheduledPhysicalFlow:
+      required:
+      - deliveryArea
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        updatedAt:
+          type: string
+          format: date-time
+        deliveryArea:
+          type:
+          - string
+          - 'null'
+        market:
+          $ref: '#/components/schemas/Market'
+        status:
+          $ref: '#/components/schemas/ApiAuctionStatus'
+        unit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        dailyTotalUnit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        dailyTotalImport:
+          type:
+          - number
+          - 'null'
+          format: double
+        dailyTotalExport:
+          type:
+          - number
+          - 'null'
+          format: double
+        dailyTotalNetPosition:
+          type:
+          - number
+          - 'null'
+          format: double
+        flows:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiTransfer'
+      additionalProperties: false
+    ApiAuctionYearlyFlow:
+      required:
+      - deliveryArea
+      - unit
+      type: object
+      properties:
+        market:
+          $ref: '#/components/schemas/Market'
+        deliveryArea:
+          type:
+          - string
+          - 'null'
+        year:
+          type: integer
+          format: int32
+        status:
+          $ref: '#/components/schemas/ApiAuctionStatus'
+        updatedAt:
+          type: string
+          format: date-time
+        dailyTotalUnit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        dailySummaries:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/FlowDailySummary'
+        unit:
+          type:
+          - string
+          - 'null'
+        flows:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiTransfer'
+      additionalProperties: false
+    AuctionCapacityMarkets:
+      enum:
+      - DayAhead
+      - N2EX_DayAhead
+      - SIDC_IntradayAuction1
+      - SIDC_IntradayAuction2
+      - SIDC_IntradayAuction3
+      type: string
+    FlowBasedPeriodItem:
+      type: object
+      properties:
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        constraints:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/FlowBasedConstraintItem'
+      additionalProperties: false
+    ApiBlockOrder:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        side:
+          $ref: '#/components/schemas/OrderSide'
+        exclusiveGroupId:
+          type:
+          - integer
+          - 'null'
+          format: int32
+        minimumAcceptanceRatio:
+          type: number
+          format: double
+        linkedOrderId:
+          type:
+          - integer
+          - 'null'
+          format: int32
+        price:
+          type: number
+          format: double
+        paradoxicallyRejected:
+          type:
+          - boolean
+          - 'null'
+        actualAcceptanceRatio:
+          type:
+          - number
+          - 'null'
+          format: double
+        intervals:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiBlockOrderInterval'
+      additionalProperties: false
+    ApiAuctionYearlyVolume:
+      required:
+      - deliveryArea
+      type: object
+      properties:
+        market:
+          $ref: '#/components/schemas/Market'
+        deliveryArea:
+          type:
+          - string
+          - 'null'
+        year:
+          type: integer
+          format: int32
+        status:
+          $ref: '#/components/schemas/ApiAuctionStatus'
+        blockVolumeUnit:
+          type:
+          - string
+          - 'null'
+        blockVolumes:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/BlockVolumeAggregate'
+        unit:
+          type:
+          - string
+          - 'null'
+        volumes:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/AuctionsVolumeEntry'
+        totalVolumeUnit:
+          type:
+          - string
+          - 'null'
+        yearlySummary:
+          $ref: '#/components/schemas/VolumeSummary'
+        monthlySummaries:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/VolumeMonthlySummary'
+        dailySummaries:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/VolumeDailySummary'
+        updatedAt:
+          type: string
+          format: date-time
+      additionalProperties: false
+    ApiAuctionPrice:
+      required:
+      - currency
+      - deliveryArea
+      - marketMainCurrency
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        updatedAt:
+          type: string
+          format: date-time
+        status:
+          $ref: '#/components/schemas/ApiAuctionStatus'
+        unit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        currency:
+          type:
+          - string
+          - 'null'
+        exchangeRate:
+          type:
+          - number
+          - 'null'
+          format: double
+        marketMainCurrency:
+          type:
+          - string
+          - 'null'
+        averagePrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        minPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        maxPrice:
+          type:
+          - number
+          - 'null'
+          format: double
+        prices:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/PriceEntry'
+        market:
+          $ref: '#/components/schemas/Market'
+        deliveryArea:
+          type:
+          - string
+          - 'null'
+        blockPrices:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/BlockPriceAggregate'
+      additionalProperties: false
+    ClusterType:
+      enum:
+      - Austria
+      - Baltic
+      - Belgium
+      - Bulgaria
+      - Denmark
+      - Finland
+      - France
+      - Germany
+      - Netherlands
+      - Norway
+      - Poland
+      - Romania
+      - Sweden
+      type: string
+    ApiAuctionCapacity:
+      required:
+      - deliveryArea
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        updatedAt:
+          type: string
+          format: date-time
+        market:
+          $ref: '#/components/schemas/Market'
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        deliveryArea:
+          type:
+          - string
+          - 'null'
+        unit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        dailyTotalUnit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        dailyTotalExport:
+          type:
+          - number
+          - 'null'
+          format: double
+        dailyTotalImport:
+          type:
+          - number
+          - 'null'
+          format: double
+        capacities:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/AtcCapacity'
+        maxNtcValues:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/MaxNtcValue'
       additionalProperties: false
   securitySchemes:
     oauth2:
