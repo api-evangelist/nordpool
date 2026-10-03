@@ -123,6 +123,39 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    ValidationProblemDetails:
+      type: object
+      properties:
+        type:
+          type:
+          - string
+          - 'null'
+        title:
+          type:
+          - string
+          - 'null'
+        status:
+          type:
+          - integer
+          - 'null'
+          format: int32
+        detail:
+          type:
+          - string
+          - 'null'
+        instance:
+          type:
+          - string
+          - 'null'
+        errors:
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            type: array
+            items:
+              type: string
+      additionalProperties: {}
     ApiUkBlockOrderInterval:
       type: object
       properties:
@@ -139,47 +172,64 @@ components:
           type: number
           format: double
       additionalProperties: false
-    BlockOrderSide:
+    Market:
       enum:
-      - Buy
-      - Sell
+      - DayAhead
+      - GbHalfHour_DayAhead
+      - N2EX_DayAhead
+      - NP_IntradayAuction1
+      - NP_IntradayAuction2
+      - SemGb_IntradayAuction1
+      - SemGb_IntradayAuction2
+      - SIDC_IntradayAuction1
+      - SIDC_IntradayAuction2
+      - SIDC_IntradayAuction3
       type: string
     ApiAvailableStatus:
       enum:
       - Missing
       - Available
       type: string
-    ApiUkPeriod:
+    BlockOrderSide:
+      enum:
+      - Buy
+      - Sell
+      type: string
+    ApiUkBlockOrder:
       type: object
       properties:
-        deliveryStart:
-          type: string
-          format: date-time
-        deliveryEnd:
-          type: string
-          format: date-time
-        demandCurve:
+        id:
+          type: integer
+          format: int32
+        side:
+          $ref: '#/components/schemas/BlockOrderSide'
+        exclusiveGroupId:
           type:
-          - array
+          - integer
           - 'null'
-          items:
-            $ref: '#/components/schemas/ApiPricePoint'
-        supplyCurve:
+          format: int32
+        minimumAcceptanceRatio:
+          type: number
+          format: double
+        linkedOrderId:
           type:
-          - array
+          - integer
           - 'null'
-          items:
-            $ref: '#/components/schemas/ApiPricePoint'
-      additionalProperties: false
-    ApiPricePoint:
-      type: object
-      properties:
+          format: int32
         price:
           type: number
           format: double
-        volume:
+        paradoxicallyRejected:
+          type: boolean
+        actualAcceptanceRatio:
           type: number
           format: double
+        intervals:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiUkBlockOrderInterval'
       additionalProperties: false
     ApiUkPriceCurve:
       type: object
@@ -219,87 +269,37 @@ components:
           items:
             $ref: '#/components/schemas/ApiUkBlockOrder'
       additionalProperties: false
-    Market:
-      enum:
-      - DayAhead
-      - GbHalfHour_DayAhead
-      - N2EX_DayAhead
-      - NP_IntradayAuction1
-      - NP_IntradayAuction2
-      - SemGb_IntradayAuction1
-      - SemGb_IntradayAuction2
-      - SIDC_IntradayAuction1
-      - SIDC_IntradayAuction2
-      - SIDC_IntradayAuction3
-      type: string
-    ValidationProblemDetails:
+    ApiPricePoint:
       type: object
       properties:
-        type:
-          type:
-          - string
-          - 'null'
-        title:
-          type:
-          - string
-          - 'null'
-        status:
-          type:
-          - integer
-          - 'null'
-          format: int32
-        detail:
-          type:
-          - string
-          - 'null'
-        instance:
-          type:
-          - string
-          - 'null'
-        errors:
-          type:
-          - object
-          - 'null'
-          additionalProperties:
-            type: array
-            items:
-              type: string
-      additionalProperties: {}
-    ApiUkBlockOrder:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int32
-        side:
-          $ref: '#/components/schemas/BlockOrderSide'
-        exclusiveGroupId:
-          type:
-          - integer
-          - 'null'
-          format: int32
-        minimumAcceptanceRatio:
-          type: number
-          format: double
-        linkedOrderId:
-          type:
-          - integer
-          - 'null'
-          format: int32
         price:
           type: number
           format: double
-        paradoxicallyRejected:
-          type: boolean
-        actualAcceptanceRatio:
+        volume:
           type: number
           format: double
-        intervals:
+      additionalProperties: false
+    ApiUkPeriod:
+      type: object
+      properties:
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        demandCurve:
           type:
           - array
           - 'null'
           items:
-            $ref: '#/components/schemas/ApiUkBlockOrderInterval'
+            $ref: '#/components/schemas/ApiPricePoint'
+        supplyCurve:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiPricePoint'
       additionalProperties: false
   securitySchemes:
     oauth2:
