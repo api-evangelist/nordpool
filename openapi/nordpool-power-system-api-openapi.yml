@@ -2026,15 +2026,88 @@ components:
             items:
               type: string
       additionalProperties: {}
-    ApiProductionMonthlySummary:
+    LocationType:
+      enum:
+      - Country
+      - Region
+      type: string
+    FreeStorageIndexValue:
       type: object
       properties:
-        deliveryDateStartCET:
+        utcMonth:
           type: string
           format: date
-        deliveryDateEndCET:
+        index1h:
+          type: number
+          format: double
+        index2h:
+          type: number
+          format: double
+        index4h:
+          type: number
+          format: double
+      additionalProperties: false
+    ApiTransfer:
+      type: object
+      properties:
+        deliveryStart:
           type: string
-          format: date
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        byConnections:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiByConnection'
+        totalImport:
+          type:
+          - number
+          - 'null'
+          format: double
+          readOnly: true
+        totalExport:
+          type:
+          - number
+          - 'null'
+          format: double
+          readOnly: true
+        totalNetPosition:
+          type:
+          - number
+          - 'null'
+          format: double
+          readOnly: true
+      additionalProperties: false
+    StorageIndexRevenueMarket:
+      enum:
+      - DayAhead
+      - FCR
+      - FcrN
+      - FcrDUp
+      - FcrUp
+      - FcrDDown
+      - FcrDown
+      - FFR
+      - aFRRCapacityReservation
+      - aFRRCapacityReservationUp
+      - aFRRCapacityReservationDown
+      - aFRREnergyActivation
+      - mFRRCapacityReservation
+      - mFRRCapacityReservationUp
+      - mFRRCapacityReservationDown
+      - mFRREnergyActivation
+      - Intraday
+      - MSDReservation
+      - MSDActivation
+      - MBReservation
+      - MBActivation
+      type: string
+    ApiProductionYearlySummary:
+      type: object
+      properties:
         byType:
           type: object
           properties:
@@ -2132,34 +2205,157 @@ components:
           - 'null'
           format: double
       additionalProperties: false
-    ApiProductionForecast:
-      required:
-      - deliveryArea
+    ApiYearlyConsumptionByArea:
       type: object
       properties:
-        deliveryDateCET:
-          type: string
-          format: date
+        year:
+          type: integer
+          format: int32
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
         updatedAt:
           type: string
           format: date-time
-        deliveryArea:
-          type:
-          - string
-          - 'null'
-        status:
-          $ref: '#/components/schemas/ApiAvailableStatus'
         unit:
           type:
           - string
           - 'null'
           readOnly: true
-        productionForecasts:
+        totalVolumeUnit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        dailySummaries:
           type:
           - array
           - 'null'
           items:
-            $ref: '#/components/schemas/ApiProductionForecastEntry'
+            $ref: '#/components/schemas/ConsumptionDailySummary'
+        monthlySummaries:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ConsumptionMonthlySummary'
+        yearlySummary:
+          type:
+          - number
+          - 'null'
+          format: double
+        consumptions:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ConsumptionEntry'
+        deliveryArea:
+          type:
+          - string
+          - 'null'
+      additionalProperties: false
+    ConsumptionEntry:
+      type: object
+      properties:
+        deliveryStart:
+          type: string
+          format: date-time
+        deliveryEnd:
+          type: string
+          format: date-time
+        volume:
+          type:
+          - number
+          - 'null'
+          format: double
+      additionalProperties: false
+    ApiFreeStorageIndex:
+      type: object
+      properties:
+        area:
+          type:
+          - string
+          - 'null'
+        unit:
+          type:
+          - string
+          - 'null'
+        updatedAt:
+          type: string
+          format: date-time
+        markets:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/StorageIndexRevenueMarket'
+        indexValues:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/FreeStorageIndexValue'
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+      additionalProperties: false
+    ApiYearlyConsumptionByLocation:
+      required:
+      - location
+      type: object
+      properties:
+        year:
+          type: integer
+          format: int32
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        updatedAt:
+          type: string
+          format: date-time
+        unit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        totalVolumeUnit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        dailySummaries:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ConsumptionDailySummary'
+        monthlySummaries:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ConsumptionMonthlySummary'
+        yearlySummary:
+          type:
+          - number
+          - 'null'
+          format: double
+        consumptions:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ConsumptionEntry'
+        location:
+          type:
+          - string
+          - 'null'
+        locationType:
+          $ref: '#/components/schemas/LocationType'
+        deliveryAreas:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
       additionalProperties: false
     ApiProductionEntry:
       type: object
@@ -2268,382 +2464,6 @@ components:
           format: double
           readOnly: true
       additionalProperties: false
-    ConsumptionEntry:
-      type: object
-      properties:
-        deliveryStart:
-          type: string
-          format: date-time
-        deliveryEnd:
-          type: string
-          format: date-time
-        volume:
-          type:
-          - number
-          - 'null'
-          format: double
-      additionalProperties: false
-    ApiYearlyProductionByLocation:
-      required:
-      - location
-      type: object
-      properties:
-        year:
-          type: integer
-          format: int32
-        status:
-          $ref: '#/components/schemas/ApiAvailableStatus'
-        updatedAt:
-          type: string
-          format: date-time
-        unit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        totalVolumeUnit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        dailySummaries:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiProductionDailySummary'
-        monthlySummaries:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiProductionMonthlySummary'
-        yearlySummary:
-          $ref: '#/components/schemas/ApiProductionYearlySummary'
-        productions:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiProductionEntry'
-        location:
-          type:
-          - string
-          - 'null'
-        locationType:
-          $ref: '#/components/schemas/LocationType'
-        deliveryAreas:
-          type:
-          - array
-          - 'null'
-          items:
-            type: string
-      additionalProperties: false
-    ApiYearlyProductionByArea:
-      required:
-      - deliveryArea
-      type: object
-      properties:
-        year:
-          type: integer
-          format: int32
-        status:
-          $ref: '#/components/schemas/ApiAvailableStatus'
-        updatedAt:
-          type: string
-          format: date-time
-        unit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        totalVolumeUnit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        dailySummaries:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiProductionDailySummary'
-        monthlySummaries:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiProductionMonthlySummary'
-        yearlySummary:
-          $ref: '#/components/schemas/ApiProductionYearlySummary'
-        productions:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiProductionEntry'
-        deliveryArea:
-          type:
-          - string
-          - 'null'
-      additionalProperties: false
-    ConsumptionMonthlySummary:
-      type: object
-      properties:
-        deliveryDateStartCET:
-          type: string
-          format: date
-        deliveryDateEndCET:
-          type: string
-          format: date
-        totalVolume:
-          type:
-          - number
-          - 'null'
-          format: double
-      additionalProperties: false
-    ApiYearlyConsumptionByArea:
-      type: object
-      properties:
-        year:
-          type: integer
-          format: int32
-        status:
-          $ref: '#/components/schemas/ApiAvailableStatus'
-        updatedAt:
-          type: string
-          format: date-time
-        unit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        totalVolumeUnit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        dailySummaries:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ConsumptionDailySummary'
-        monthlySummaries:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ConsumptionMonthlySummary'
-        yearlySummary:
-          type:
-          - number
-          - 'null'
-          format: double
-        consumptions:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ConsumptionEntry'
-        deliveryArea:
-          type:
-          - string
-          - 'null'
-      additionalProperties: false
-    ApiHydro:
-      required:
-      - deliveryArea
-      type: object
-      properties:
-        year:
-          type: integer
-          format: int32
-        deliveryArea:
-          type:
-          - string
-          - 'null'
-        updatedAt:
-          type: string
-          format: date-time
-        status:
-          $ref: '#/components/schemas/ApiAvailableStatus'
-        unit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        hydroReservoirReserves:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiReservoirWeek'
-      additionalProperties: false
-    ApiProductionForecastByLocation:
-      required:
-      - location
-      type: object
-      properties:
-        deliveryDateCET:
-          type: string
-          format: date
-        updatedAt:
-          type: string
-          format: date-time
-        unit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        status:
-          $ref: '#/components/schemas/ApiAvailableStatus'
-        location:
-          type:
-          - string
-          - 'null'
-        locationType:
-          $ref: '#/components/schemas/LocationType'
-        deliveryAreas:
-          type:
-          - array
-          - 'null'
-          items:
-            type: string
-        productionForecasts:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiProductionForecastEntry'
-      additionalProperties: false
-    ApiProductionForecastEntry:
-      type: object
-      properties:
-        deliveryStart:
-          type: string
-          format: date-time
-        deliveryEnd:
-          type: string
-          format: date-time
-        forecastByType:
-          type: object
-          properties:
-            mixed:
-              $ref: '#/components/schemas/Prognosis'
-            generation:
-              $ref: '#/components/schemas/Prognosis'
-            load:
-              $ref: '#/components/schemas/Prognosis'
-            biomass:
-              $ref: '#/components/schemas/Prognosis'
-            fossilBrownCoal:
-              $ref: '#/components/schemas/Prognosis'
-            fossilCoalDerivedGas:
-              $ref: '#/components/schemas/Prognosis'
-            fossilGas:
-              $ref: '#/components/schemas/Prognosis'
-            fossilHardCoal:
-              $ref: '#/components/schemas/Prognosis'
-            fossilOil:
-              $ref: '#/components/schemas/Prognosis'
-            fossilOilShale:
-              $ref: '#/components/schemas/Prognosis'
-            fossilPeat:
-              $ref: '#/components/schemas/Prognosis'
-            geothermal:
-              $ref: '#/components/schemas/Prognosis'
-            hydroPumpedStorage:
-              $ref: '#/components/schemas/Prognosis'
-            hydroRunOfRiverAndPoundage:
-              $ref: '#/components/schemas/Prognosis'
-            hydroWaterReservoir:
-              $ref: '#/components/schemas/Prognosis'
-            marine:
-              $ref: '#/components/schemas/Prognosis'
-            nuclear:
-              $ref: '#/components/schemas/Prognosis'
-            otherRenewable:
-              $ref: '#/components/schemas/Prognosis'
-            solar:
-              $ref: '#/components/schemas/Prognosis'
-            waste:
-              $ref: '#/components/schemas/Prognosis'
-            windOffshore:
-              $ref: '#/components/schemas/Prognosis'
-            windOnshore:
-              $ref: '#/components/schemas/Prognosis'
-            other:
-              $ref: '#/components/schemas/Prognosis'
-            acLink:
-              $ref: '#/components/schemas/Prognosis'
-            dcLink:
-              $ref: '#/components/schemas/Prognosis'
-            substation:
-              $ref: '#/components/schemas/Prognosis'
-            transformer:
-              $ref: '#/components/schemas/Prognosis'
-            energyStorage:
-              $ref: '#/components/schemas/Prognosis'
-            undefined:
-              $ref: '#/components/schemas/Prognosis'
-          additionalProperties: false
-        totalDayAheadPrognosis:
-          type:
-          - number
-          - 'null'
-          format: double
-      additionalProperties: false
-    ApiExchange:
-      required:
-      - deliveryArea
-      type: object
-      properties:
-        deliveryDateCET:
-          type: string
-          format: date
-        updatedAt:
-          type: string
-          format: date-time
-        deliveryArea:
-          type:
-          - string
-          - 'null'
-        status:
-          $ref: '#/components/schemas/ApiAvailableStatus'
-        unit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        dailyTotalUnit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        dailyTotalImport:
-          type:
-          - number
-          - 'null'
-          format: double
-        dailyTotalExport:
-          type:
-          - number
-          - 'null'
-          format: double
-        dailyTotalNetPosition:
-          type:
-          - number
-          - 'null'
-          format: double
-          readOnly: true
-        exchanges:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiTransfer'
-      additionalProperties: false
     PremiumStorageIndexMarkets:
       type: object
       properties:
@@ -2718,36 +2538,61 @@ components:
           type: number
           format: double
       additionalProperties: false
-    ApiAvailableStatus:
-      enum:
-      - Missing
-      - Available
-      type: string
-    StorageIndexRevenueMarket:
-      enum:
-      - DayAhead
-      - FCR
-      - FcrN
-      - FcrDUp
-      - FcrUp
-      - FcrDDown
-      - FcrDown
-      - FFR
-      - aFRRCapacityReservation
-      - aFRRCapacityReservationUp
-      - aFRRCapacityReservationDown
-      - aFRREnergyActivation
-      - mFRRCapacityReservation
-      - mFRRCapacityReservationUp
-      - mFRRCapacityReservationDown
-      - mFRREnergyActivation
-      - Intraday
-      - MSDReservation
-      - MSDActivation
-      - MBReservation
-      - MBActivation
-      type: string
-    ApiPhysicalFlowDailySummary:
+    ApiConsumption:
+      required:
+      - deliveryArea
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        updatedAt:
+          type: string
+          format: date-time
+        deliveryArea:
+          type:
+          - string
+          - 'null'
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        unit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        consumptions:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ConsumptionEntry'
+      additionalProperties: false
+    ConsumptionDailySummary:
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        totalVolume:
+          type:
+          - number
+          - 'null'
+          format: double
+      additionalProperties: false
+    PremiumStorageIndexValue:
+      type: object
+      properties:
+        utcDay:
+          type: string
+          format: date
+        index1h:
+          $ref: '#/components/schemas/PremiumStorageIndexMarkets'
+        index2h:
+          $ref: '#/components/schemas/PremiumStorageIndexMarkets'
+        index4h:
+          $ref: '#/components/schemas/PremiumStorageIndexMarkets'
+      additionalProperties: false
+    ApiFlowSummary:
       type: object
       properties:
         byConnections:
@@ -2771,9 +2616,167 @@ components:
           - number
           - 'null'
           format: double
+      additionalProperties: false
+    ApiProduction:
+      required:
+      - deliveryArea
+      type: object
+      properties:
         deliveryDateCET:
           type: string
           format: date
+        updatedAt:
+          type: string
+          format: date-time
+        deliveryArea:
+          type:
+          - string
+          - 'null'
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        unit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        productions:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiProductionEntry'
+      additionalProperties: false
+    ApiByConnectionSummary:
+      required:
+      - area
+      type: object
+      properties:
+        area:
+          type:
+          - string
+          - 'null'
+        connection:
+          type:
+          - string
+          - 'null'
+        import:
+          type:
+          - number
+          - 'null'
+          format: double
+        export:
+          type:
+          - number
+          - 'null'
+          format: double
+        netPosition:
+          type:
+          - number
+          - 'null'
+          format: double
+      additionalProperties: false
+    ApiConsumptionByLocation:
+      required:
+      - location
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        updatedAt:
+          type: string
+          format: date-time
+        unit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        location:
+          type:
+          - string
+          - 'null'
+        locationType:
+          $ref: '#/components/schemas/LocationType'
+        deliveryAreas:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+        consumptions:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ConsumptionEntry'
+      additionalProperties: false
+    ApiProductionByLocation:
+      required:
+      - location
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        updatedAt:
+          type: string
+          format: date-time
+        unit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        location:
+          type:
+          - string
+          - 'null'
+        locationType:
+          $ref: '#/components/schemas/LocationType'
+        deliveryAreas:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+        productions:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiProductionEntry'
+      additionalProperties: false
+    ApiHydro:
+      required:
+      - deliveryArea
+      type: object
+      properties:
+        year:
+          type: integer
+          format: int32
+        deliveryArea:
+          type:
+          - string
+          - 'null'
+        updatedAt:
+          type: string
+          format: date-time
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        unit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        hydroReservoirReserves:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiReservoirWeek'
       additionalProperties: false
     ApiTransferSummary:
       type: object
@@ -2805,6 +2808,133 @@ components:
           - number
           - 'null'
           format: double
+      additionalProperties: false
+    ApiProductionForecastByLocation:
+      required:
+      - location
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        updatedAt:
+          type: string
+          format: date-time
+        unit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        location:
+          type:
+          - string
+          - 'null'
+        locationType:
+          $ref: '#/components/schemas/LocationType'
+        deliveryAreas:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+        productionForecasts:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiProductionForecastEntry'
+      additionalProperties: false
+    ApiByConnection:
+      required:
+      - area
+      type: object
+      properties:
+        area:
+          type:
+          - string
+          - 'null'
+        connection:
+          type:
+          - string
+          - 'null'
+        import:
+          type:
+          - number
+          - 'null'
+          format: double
+        export:
+          type:
+          - number
+          - 'null'
+          format: double
+        netPosition:
+          type:
+          - number
+          - 'null'
+          format: double
+          readOnly: true
+      additionalProperties: false
+    ApiPremiumStorageIndex:
+      type: object
+      properties:
+        area:
+          type:
+          - string
+          - 'null'
+        utcMonth:
+          type: string
+          format: date
+        unit:
+          type:
+          - string
+          - 'null'
+        updatedAt:
+          type: string
+          format: date-time
+        indexValues:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/PremiumStorageIndexValue'
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+      additionalProperties: false
+    ApiAvailableStatus:
+      enum:
+      - Missing
+      - Available
+      type: string
+    ApiProductionForecast:
+      required:
+      - deliveryArea
+      type: object
+      properties:
+        deliveryDateCET:
+          type: string
+          format: date
+        updatedAt:
+          type: string
+          format: date-time
+        deliveryArea:
+          type:
+          - string
+          - 'null'
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        unit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        productionForecasts:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiProductionForecastEntry'
       additionalProperties: false
     ApiYearlyExchange:
       required:
@@ -2855,43 +2985,6 @@ components:
           items:
             $ref: '#/components/schemas/ApiTransferSummary'
       additionalProperties: false
-    ApiConsumptionForecastByLocation:
-      required:
-      - location
-      type: object
-      properties:
-        deliveryDateCET:
-          type: string
-          format: date
-        updatedAt:
-          type: string
-          format: date-time
-        unit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        status:
-          $ref: '#/components/schemas/ApiAvailableStatus'
-        location:
-          type:
-          - string
-          - 'null'
-        locationType:
-          $ref: '#/components/schemas/LocationType'
-        deliveryAreas:
-          type:
-          - array
-          - 'null'
-          items:
-            type: string
-        consumptionForecasts:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ConsumptionEntry'
-      additionalProperties: false
     ApiConsumptionForecast:
       required:
       - deliveryArea
@@ -2921,39 +3014,16 @@ components:
           items:
             $ref: '#/components/schemas/ConsumptionEntry'
       additionalProperties: false
-    PremiumStorageIndexValue:
-      type: object
-      properties:
-        utcDay:
-          type: string
-          format: date
-        index1h:
-          $ref: '#/components/schemas/PremiumStorageIndexMarkets'
-        index2h:
-          $ref: '#/components/schemas/PremiumStorageIndexMarkets'
-        index4h:
-          $ref: '#/components/schemas/PremiumStorageIndexMarkets'
-      additionalProperties: false
-    ConsumptionDailySummary:
-      type: object
-      properties:
-        deliveryDateCET:
-          type: string
-          format: date
-        totalVolume:
-          type:
-          - number
-          - 'null'
-          format: double
-      additionalProperties: false
-    ApiProductionByLocation:
+    ApiYearlyProductionByArea:
       required:
-      - location
+      - deliveryArea
       type: object
       properties:
-        deliveryDateCET:
-          type: string
-          format: date
+        year:
+          type: integer
+          format: int32
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
         updatedAt:
           type: string
           format: date-time
@@ -2962,8 +3032,101 @@ components:
           - string
           - 'null'
           readOnly: true
+        totalVolumeUnit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        dailySummaries:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiProductionDailySummary'
+        monthlySummaries:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiProductionMonthlySummary'
+        yearlySummary:
+          $ref: '#/components/schemas/ApiProductionYearlySummary'
+        productions:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiProductionEntry'
+        deliveryArea:
+          type:
+          - string
+          - 'null'
+      additionalProperties: false
+    ApiReservoirWeek:
+      type: object
+      properties:
+        isoWeek:
+          type: integer
+          format: int32
+        weekStartDate:
+          type: string
+          format: date
+        weekEndDate:
+          type: string
+          format: date
+        maxCapacityInGigawattHours:
+          type: number
+          format: double
+        currentCapacityInGigawattHours:
+          type: number
+          format: double
+        utilizationPercentage:
+          type: number
+          format: double
+      additionalProperties: false
+    ApiYearlyProductionByLocation:
+      required:
+      - location
+      type: object
+      properties:
+        year:
+          type: integer
+          format: int32
         status:
           $ref: '#/components/schemas/ApiAvailableStatus'
+        updatedAt:
+          type: string
+          format: date-time
+        unit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        totalVolumeUnit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        dailySummaries:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiProductionDailySummary'
+        monthlySummaries:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiProductionMonthlySummary'
+        yearlySummary:
+          $ref: '#/components/schemas/ApiProductionYearlySummary'
+        productions:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ApiProductionEntry'
         location:
           type:
           - string
@@ -2976,33 +3139,23 @@ components:
           - 'null'
           items:
             type: string
-        productions:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiProductionEntry'
       additionalProperties: false
-    Prognosis:
+    ConsumptionMonthlySummary:
       type: object
       properties:
-        dayAheadPrognosis:
-          type:
-          - number
-          - 'null'
-          format: double
-        intradayPrognosis:
-          type:
-          - number
-          - 'null'
-          format: double
-        currentPrognosis:
+        deliveryDateStartCET:
+          type: string
+          format: date
+        deliveryDateEndCET:
+          type: string
+          format: date
+        totalVolume:
           type:
           - number
           - 'null'
           format: double
       additionalProperties: false
-    ApiConsumption:
+    ApiExchange:
       required:
       - deliveryArea
       type: object
@@ -3024,43 +3177,35 @@ components:
           - string
           - 'null'
           readOnly: true
-        consumptions:
+        dailyTotalUnit:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+        dailyTotalImport:
+          type:
+          - number
+          - 'null'
+          format: double
+        dailyTotalExport:
+          type:
+          - number
+          - 'null'
+          format: double
+        dailyTotalNetPosition:
+          type:
+          - number
+          - 'null'
+          format: double
+          readOnly: true
+        exchanges:
           type:
           - array
           - 'null'
           items:
-            $ref: '#/components/schemas/ConsumptionEntry'
+            $ref: '#/components/schemas/ApiTransfer'
       additionalProperties: false
-    ApiByConnectionSummary:
-      required:
-      - area
-      type: object
-      properties:
-        area:
-          type:
-          - string
-          - 'null'
-        connection:
-          type:
-          - string
-          - 'null'
-        import:
-          type:
-          - number
-          - 'null'
-          format: double
-        export:
-          type:
-          - number
-          - 'null'
-          format: double
-        netPosition:
-          type:
-          - number
-          - 'null'
-          format: double
-      additionalProperties: false
-    ApiFlowSummary:
+    ApiPhysicalFlowDailySummary:
       type: object
       properties:
         byConnections:
@@ -3084,102 +3229,28 @@ components:
           - number
           - 'null'
           format: double
-      additionalProperties: false
-    ApiByConnection:
-      required:
-      - area
-      type: object
-      properties:
-        area:
-          type:
-          - string
-          - 'null'
-        connection:
-          type:
-          - string
-          - 'null'
-        import:
-          type:
-          - number
-          - 'null'
-          format: double
-        export:
-          type:
-          - number
-          - 'null'
-          format: double
-        netPosition:
-          type:
-          - number
-          - 'null'
-          format: double
-          readOnly: true
-      additionalProperties: false
-    ApiProduction:
-      required:
-      - deliveryArea
-      type: object
-      properties:
         deliveryDateCET:
           type: string
           format: date
-        updatedAt:
-          type: string
-          format: date-time
-        deliveryArea:
-          type:
-          - string
-          - 'null'
-        status:
-          $ref: '#/components/schemas/ApiAvailableStatus'
-        unit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        productions:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiProductionEntry'
       additionalProperties: false
-    ApiConsumptionByLocation:
-      required:
-      - location
+    Prognosis:
       type: object
       properties:
-        deliveryDateCET:
-          type: string
-          format: date
-        updatedAt:
-          type: string
-          format: date-time
-        unit:
+        dayAheadPrognosis:
           type:
-          - string
+          - number
           - 'null'
-          readOnly: true
-        status:
-          $ref: '#/components/schemas/ApiAvailableStatus'
-        location:
+          format: double
+        intradayPrognosis:
           type:
-          - string
+          - number
           - 'null'
-        locationType:
-          $ref: '#/components/schemas/LocationType'
-        deliveryAreas:
+          format: double
+        currentPrognosis:
           type:
-          - array
+          - number
           - 'null'
-          items:
-            type: string
-        consumptions:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ConsumptionEntry'
+          format: double
       additionalProperties: false
     ApiProductionDailySummary:
       type: object
@@ -3284,60 +3355,46 @@ components:
           - 'null'
           format: double
       additionalProperties: false
-    ApiReservoirWeek:
+    ApiPhysicalFlowMonthlySummary:
       type: object
       properties:
-        isoWeek:
-          type: integer
-          format: int32
-        weekStartDate:
-          type: string
-          format: date
-        weekEndDate:
-          type: string
-          format: date
-        maxCapacityInGigawattHours:
-          type: number
-          format: double
-        currentCapacityInGigawattHours:
-          type: number
-          format: double
-        utilizationPercentage:
-          type: number
-          format: double
-      additionalProperties: false
-    ApiFreeStorageIndex:
-      type: object
-      properties:
-        area:
-          type:
-          - string
-          - 'null'
-        unit:
-          type:
-          - string
-          - 'null'
-        updatedAt:
-          type: string
-          format: date-time
-        markets:
+        byConnections:
           type:
           - array
           - 'null'
           items:
-            $ref: '#/components/schemas/StorageIndexRevenueMarket'
-        indexValues:
+            $ref: '#/components/schemas/ApiByConnectionSummary'
+        totalImport:
           type:
-          - array
+          - number
           - 'null'
-          items:
-            $ref: '#/components/schemas/FreeStorageIndexValue'
-        status:
-          $ref: '#/components/schemas/ApiAvailableStatus'
+          format: double
+        totalExport:
+          type:
+          - number
+          - 'null'
+          format: double
+        totalNetPosition:
+          type:
+          - number
+          - 'null'
+          format: double
+        deliveryDateStartCET:
+          type: string
+          format: date
+        deliveryDateEndCET:
+          type: string
+          format: date
       additionalProperties: false
-    ApiProductionYearlySummary:
+    ApiProductionMonthlySummary:
       type: object
       properties:
+        deliveryDateStartCET:
+          type: string
+          format: date
+        deliveryDateEndCET:
+          type: string
+          format: date
         byType:
           type: object
           properties:
@@ -3435,7 +3492,7 @@ components:
           - 'null'
           format: double
       additionalProperties: false
-    ApiTransfer:
+    ApiProductionForecastEntry:
       type: object
       properties:
         deliveryStart:
@@ -3444,119 +3501,82 @@ components:
         deliveryEnd:
           type: string
           format: date-time
-        byConnections:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiByConnection'
-        totalImport:
+        forecastByType:
+          type: object
+          properties:
+            mixed:
+              $ref: '#/components/schemas/Prognosis'
+            generation:
+              $ref: '#/components/schemas/Prognosis'
+            load:
+              $ref: '#/components/schemas/Prognosis'
+            biomass:
+              $ref: '#/components/schemas/Prognosis'
+            fossilBrownCoal:
+              $ref: '#/components/schemas/Prognosis'
+            fossilCoalDerivedGas:
+              $ref: '#/components/schemas/Prognosis'
+            fossilGas:
+              $ref: '#/components/schemas/Prognosis'
+            fossilHardCoal:
+              $ref: '#/components/schemas/Prognosis'
+            fossilOil:
+              $ref: '#/components/schemas/Prognosis'
+            fossilOilShale:
+              $ref: '#/components/schemas/Prognosis'
+            fossilPeat:
+              $ref: '#/components/schemas/Prognosis'
+            geothermal:
+              $ref: '#/components/schemas/Prognosis'
+            hydroPumpedStorage:
+              $ref: '#/components/schemas/Prognosis'
+            hydroRunOfRiverAndPoundage:
+              $ref: '#/components/schemas/Prognosis'
+            hydroWaterReservoir:
+              $ref: '#/components/schemas/Prognosis'
+            marine:
+              $ref: '#/components/schemas/Prognosis'
+            nuclear:
+              $ref: '#/components/schemas/Prognosis'
+            otherRenewable:
+              $ref: '#/components/schemas/Prognosis'
+            solar:
+              $ref: '#/components/schemas/Prognosis'
+            waste:
+              $ref: '#/components/schemas/Prognosis'
+            windOffshore:
+              $ref: '#/components/schemas/Prognosis'
+            windOnshore:
+              $ref: '#/components/schemas/Prognosis'
+            other:
+              $ref: '#/components/schemas/Prognosis'
+            acLink:
+              $ref: '#/components/schemas/Prognosis'
+            dcLink:
+              $ref: '#/components/schemas/Prognosis'
+            substation:
+              $ref: '#/components/schemas/Prognosis'
+            transformer:
+              $ref: '#/components/schemas/Prognosis'
+            energyStorage:
+              $ref: '#/components/schemas/Prognosis'
+            undefined:
+              $ref: '#/components/schemas/Prognosis'
+          additionalProperties: false
+        totalDayAheadPrognosis:
           type:
           - number
           - 'null'
-          format: double
-          readOnly: true
-        totalExport:
-          type:
-          - number
-          - 'null'
-          format: double
-          readOnly: true
-        totalNetPosition:
-          type:
-          - number
-          - 'null'
-          format: double
-          readOnly: true
-      additionalProperties: false
-    ApiPhysicalFlowMonthlySummary:
-      type: object
-      properties:
-        byConnections:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ApiByConnectionSummary'
-        totalImport:
-          type:
-          - number
-          - 'null'
-          format: double
-        totalExport:
-          type:
-          - number
-          - 'null'
-          format: double
-        totalNetPosition:
-          type:
-          - number
-          - 'null'
-          format: double
-        deliveryDateStartCET:
-          type: string
-          format: date
-        deliveryDateEndCET:
-          type: string
-          format: date
-      additionalProperties: false
-    FreeStorageIndexValue:
-      type: object
-      properties:
-        utcMonth:
-          type: string
-          format: date
-        index1h:
-          type: number
-          format: double
-        index2h:
-          type: number
-          format: double
-        index4h:
-          type: number
           format: double
       additionalProperties: false
-    LocationType:
-      enum:
-      - Country
-      - Region
-      type: string
-    ApiPremiumStorageIndex:
-      type: object
-      properties:
-        area:
-          type:
-          - string
-          - 'null'
-        utcMonth:
-          type: string
-          format: date
-        unit:
-          type:
-          - string
-          - 'null'
-        updatedAt:
-          type: string
-          format: date-time
-        indexValues:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/PremiumStorageIndexValue'
-        status:
-          $ref: '#/components/schemas/ApiAvailableStatus'
-      additionalProperties: false
-    ApiYearlyConsumptionByLocation:
+    ApiConsumptionForecastByLocation:
       required:
       - location
       type: object
       properties:
-        year:
-          type: integer
-          format: int32
-        status:
-          $ref: '#/components/schemas/ApiAvailableStatus'
+        deliveryDateCET:
+          type: string
+          format: date
         updatedAt:
           type: string
           format: date-time
@@ -3565,34 +3585,8 @@ components:
           - string
           - 'null'
           readOnly: true
-        totalVolumeUnit:
-          type:
-          - string
-          - 'null'
-          readOnly: true
-        dailySummaries:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ConsumptionDailySummary'
-        monthlySummaries:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ConsumptionMonthlySummary'
-        yearlySummary:
-          type:
-          - number
-          - 'null'
-          format: double
-        consumptions:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ConsumptionEntry'
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
         location:
           type:
           - string
@@ -3605,6 +3599,12 @@ components:
           - 'null'
           items:
             type: string
+        consumptionForecasts:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ConsumptionEntry'
       additionalProperties: false
   securitySchemes:
     oauth2:

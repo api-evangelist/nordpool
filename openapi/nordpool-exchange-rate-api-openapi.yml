@@ -219,6 +219,46 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    ApiExchangeRate:
+      required:
+      - rates
+      type: object
+      properties:
+        dateCET:
+          type: string
+          format: date
+        status:
+          $ref: '#/components/schemas/ApiAvailableStatus'
+        updatedAt:
+          type: string
+          format: date-time
+        rates:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/ExchangeRates'
+      additionalProperties: false
+    ExchangeRates:
+      type: object
+      properties:
+        fromCurrency:
+          type:
+          - string
+          - 'null'
+        toCurrency:
+          type:
+          - string
+          - 'null'
+        rate:
+          type: number
+          format: double
+        status:
+          $ref: '#/components/schemas/ExchangeRateStatus'
+        modified:
+          type: string
+          format: date-time
+      additionalProperties: false
     ValidationProblemDetails:
       type: object
       properties:
@@ -252,6 +292,11 @@ components:
             items:
               type: string
       additionalProperties: {}
+    ApiAvailableStatus:
+      enum:
+      - Missing
+      - Available
+      type: string
     ExchangeRateDataLake:
       type: object
       properties:
@@ -268,11 +313,6 @@ components:
           type: string
           format: date-time
       additionalProperties: false
-    ApiAvailableStatus:
-      enum:
-      - Missing
-      - Available
-      type: string
     ApiYearlyExchangeRate:
       type: object
       properties:
@@ -290,46 +330,6 @@ components:
         updatedAt:
           type: string
           format: date-time
-      additionalProperties: false
-    ExchangeRates:
-      type: object
-      properties:
-        fromCurrency:
-          type:
-          - string
-          - 'null'
-        toCurrency:
-          type:
-          - string
-          - 'null'
-        rate:
-          type: number
-          format: double
-        status:
-          $ref: '#/components/schemas/ExchangeRateStatus'
-        modified:
-          type: string
-          format: date-time
-      additionalProperties: false
-    ApiExchangeRate:
-      required:
-      - rates
-      type: object
-      properties:
-        dateCET:
-          type: string
-          format: date
-        status:
-          $ref: '#/components/schemas/ApiAvailableStatus'
-        updatedAt:
-          type: string
-          format: date-time
-        rates:
-          type:
-          - array
-          - 'null'
-          items:
-            $ref: '#/components/schemas/ExchangeRates'
       additionalProperties: false
     ExchangeRateStatus:
       enum:
