@@ -1,0 +1,12 @@
+{
+ "url": "https://data-api.nordpoolgroup.com/swagger/v2/swagger.json",
+ "requested_url": "https://data-api.nordpoolgroup.com/swagger/v2/swagger.json",
+ "status": 200,
+ "content_type": "application/json;charset=utf-8",
+ "bytes": 484151,
+ "sha256": "72b65913d73b7fdebc047b2e7f8e62e8aad0ebf6262ba63337fe0b577233bd45",
+ "fetched_at": "2026-10-04",
+ "fetched_by": "APIEvangelist-Harvest/1.0 (+https://apievangelist.com)",
+ "match": "equivalent",
+ "note": "Re-fetched from the provider by verify-openapi-sources.py; the provider's current document describes the same operations (Jaccard 1.0), but the bytes differ, so the archive is an earlier or reformatted copy."
+}
