@@ -1,0 +1,28 @@
+edges:
+- partner_name: ESMA (EU)
+  partner: null
+  type: contract
+  channel: regulator-register
+  relationship: standard-participant
+  direction: partner-built
+  evidence: https://registers.esma.europa.eu/solr/esma_registers_bench_entities/select
+  source: esma
+  contract_reference:
+    register: 'ESMA Benchmarks Regulation register: administrators (esma_registers_bench_entities)'
+    spec_file: null
+    registered_name: Nord Pool European Market Coupling Operator AS
+    register_id: 5493001NGSYZZQ966V72
+    role: benchmark administrator (Authorisation under Art. 34)
+    competent_authority: Norwegian Financial Supervisory Authority (Finanstilsynet) - NOFI
+    home_member_state: NORWAY
+    authorised: null
+    matched_domain: nordpoolgroup.com
+    matched_by: domain:nordpoolgroup.com
+    detected_by: sweep-capital-markets.py
+    detected: '2026-10-15'
+  detected_by: sweep-capital-markets.py
+  first_seen: '2026-10-15'
+generated: '2026-10-15'
+method: searched
+checked:
+- https://registers.esma.europa.eu/solr/esma_registers_bench_entities/select
